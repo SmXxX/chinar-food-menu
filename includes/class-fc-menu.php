@@ -22,6 +22,12 @@ class FC_Menu {
 		add_filter( 'woocommerce_variation_is_purchasable', array( $this, 'filter_variation_purchasable' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'validate_add_to_cart' ), 10, 3 );
 		add_action( 'woocommerce_check_cart_items', array( $this, 'check_cart_time' ) );
+
+		// If the WooCommerce "Shop" page uses our [fc_shop] menu, hide the default
+		// product-archive loop (result count, sorting, grid) so only the menu shows.
+		add_action( 'pre_get_posts', array( $this, 'maybe_empty_shop_query' ) );
+		add_action( 'wp', array( $this, 'maybe_strip_shop_loop' ) );
+
 		add_action( 'wp_ajax_fc_load_products', array( $this, 'ajax_load_products' ) );
 		add_action( 'wp_ajax_nopriv_fc_load_products', array( $this, 'ajax_load_products' ) );
 		add_action( 'wp_ajax_fc_add_variation', array( $this, 'ajax_add_variation' ) );
@@ -30,6 +36,39 @@ class FC_Menu {
 		add_action( 'wp_ajax_nopriv_fc_get_variations', array( $this, 'ajax_get_variations' ) );
 		add_action( 'wp_ajax_fc_add_simple', array( $this, 'ajax_add_simple' ) );
 		add_action( 'wp_ajax_nopriv_fc_add_simple', array( $this, 'ajax_add_simple' ) );
+	}
+
+	/** Does the WooCommerce Shop page contain our [fc_shop] menu shortcode? */
+	private function shop_uses_fc_shop() {
+		if ( ! function_exists( 'wc_get_page_id' ) ) {
+			return false;
+		}
+		$shop_id = wc_get_page_id( 'shop' );
+		if ( $shop_id <= 0 ) {
+			return false;
+		}
+		return has_shortcode( (string) get_post_field( 'post_content', $shop_id ), 'fc_shop' );
+	}
+
+	/** Empty the default shop archive query when the page shows our menu instead. */
+	public function maybe_empty_shop_query( $query ) {
+		if ( is_admin() || ! $query->is_main_query() || ! $query->is_post_type_archive( 'product' ) ) {
+			return;
+		}
+		if ( $this->shop_uses_fc_shop() ) {
+			$query->set( 'post__in', array( 0 ) );
+		}
+	}
+
+	/** Remove the leftover archive chrome (count / sorting / "no products" text). */
+	public function maybe_strip_shop_loop() {
+		if ( is_admin() || ! function_exists( 'is_shop' ) || ! is_shop() || ! $this->shop_uses_fc_shop() ) {
+			return;
+		}
+		remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
+		remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
+		remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
+		remove_action( 'woocommerce_after_shop_loop', 'woocommerce_pagination', 10 );
 	}
 
 	/** Add a simple product to the cart (from a "combine with" card). */
