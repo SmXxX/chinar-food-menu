@@ -65,7 +65,10 @@
    wrapper hoists the cards into the stack's flex flow so `order` can reposition
    just the variation cards; everything else keeps its order. Desktop is untouched. */
 @media (max-width: 1024px) {
-	.fc-pp--stack { display: flex; flex-direction: column; gap: 16px; }
+	/* align-items: stretch overrides the `.fc-pp` rule (the element carries both
+	   `fc-pp` and `fc-pp--stack`) so every item is full-width, as in the old block
+	   layout — otherwise short variation cards shrink to their content width. */
+	.fc-pp--stack { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
 	.fc-pp--stack > .fc-pp-image { order: 1; margin: 0; }
 	.fc-pp--stack > .fc-pp-title { order: 2; margin: 0; }
 	.fc-pp--stack > .fc-pp-weight { order: 3; margin: 0; }
@@ -93,9 +96,9 @@
 .fc-variant input, .fc-remove input { width: 17px; height: 17px; accent-color: var(--fc-ink); }
 .fc-variant:has(input:checked) { border-color: var(--fc-line-strong); }
 
-/* Option pills (тесто/сос) — outlined; active = filled cream */
-.fc-var-pills { display: flex; flex-wrap: wrap; gap: 7px; }
-.fc-var-pill { background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 8px 13px; font-size: var(--fc-fs-pill, .82rem); font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
+/* Option pills (тесто/сос) — full-width stacked buttons filling the box */
+.fc-var-pills { display: flex; flex-direction: column; gap: 8px; }
+.fc-var-pill { width: 100%; box-sizing: border-box; text-align: center; background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 12px 14px; font-size: var(--fc-fs-pill, .82rem); font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
 .fc-var-pill:hover { border-color: var(--fc-line-strong); }
 .fc-var-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
 
