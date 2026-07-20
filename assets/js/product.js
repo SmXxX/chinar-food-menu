@@ -20,7 +20,7 @@
 		/* LEFT column — built separately so we can detect when it's empty. */
 		var left = '';
 		if ( p.ingredients && p.ingredients.length ) {
-			left += card( D.i18n.ingredients || 'СЪСТАВКИ', '<div class="fc-pp-desc">' + p.ingredients.map( esc ).join( ', ' ) + '</div>' );
+			left += card( D.i18n.ingredients || 'СЪСТАВКИ', '<div class="fc-pp-desc">' + p.ingredients.map( esc ).join( ', ' ) + '</div>', 'fc-pp-ingredients-card' );
 		}
 		if ( p.variants && p.variants.length ) {
 			var vh = '';

@@ -73,12 +73,14 @@
 	.fc-pp--stack > .fc-pp-title { order: 2; margin: 0; }
 	.fc-pp--stack > .fc-pp-weight { order: 3; margin: 0; }
 	.fc-pp--stack > .fc-pp-stack-body { display: contents; }
-	.fc-pp--stack .fc-pp-var-card { order: 4; }
-	.fc-pp--stack > .fc-pp-buybar { order: 5; margin: 0; }
-	.fc-pp--stack > .fc-pp-unavailable { order: 6; margin: 0; }
-	.fc-pp--stack .fc-pp-stack-body > .fc-card-box:not(.fc-pp-var-card),
-	.fc-pp--stack .fc-pp-stack-body > .fc-pp-allergens { order: 7; }
-	.fc-pp--stack > .fc-combine { order: 8; margin: 0; }
+	/* Order: Съставки → variation → price → Опции БЕЗ/ОЩЕ → allergens → combine. */
+	.fc-pp--stack .fc-pp-ingredients-card { order: 4; }
+	.fc-pp--stack .fc-pp-var-card { order: 5; }
+	.fc-pp--stack > .fc-pp-buybar { order: 6; margin: 0; }
+	.fc-pp--stack > .fc-pp-unavailable { order: 7; margin: 0; }
+	.fc-pp--stack .fc-pp-stack-body > .fc-card-box:not(.fc-pp-var-card):not(.fc-pp-ingredients-card),
+	.fc-pp--stack .fc-pp-stack-body > .fc-pp-allergens { order: 8; }
+	.fc-pp--stack > .fc-combine { order: 9; margin: 0; }
 }
 
 /* Boxes — dark framed, not white */
