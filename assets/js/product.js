@@ -22,13 +22,13 @@
 		var $price = $( '#fc-product-app .fc-pp-price' );
 		if ( p.available === false ) { return; } // blocked → stays disabled, unavailable msg shown.
 		if ( ! wcComplete() ) {
-			// Not all options chosen yet: list the still-unchosen variation names as
-			// text (they shrink as the customer picks them from the sidebar cards), and
-			// block the button. The price appears once every option is selected.
+			// Not all options chosen yet: guide the customer one step at a time — show
+			// only the NEXT unchosen variation name; as each is picked from the sidebar
+			// cards the prompt advances to the next. The price appears once all are set.
 			var pending = ( ( p.wc && p.wc.attributes ) || [] ).filter( function ( a ) {
 				return ! ( state.w && state.w[ a.key ] );
 			} ).map( function ( a ) { return a.name; } );
-			$price.removeClass( 'fc-pp-price--num' ).text( pending.join( ', ' ) || ( ( D.i18n && D.i18n.select_options ) || 'Избери опции' ) );
+			$price.removeClass( 'fc-pp-price--num' ).text( pending[ 0 ] || ( ( D.i18n && D.i18n.select_options ) || 'Избери опции' ) );
 			$add.prop( 'disabled', true );
 			return;
 		}
