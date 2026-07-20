@@ -199,7 +199,7 @@ body.fc-food-single .fc-product-wrap { padding-top: 118px; }
 
 	/* Footer: price above a full-width add-to-cart button. */
 	.fc-pp-footer { flex-direction: column; align-items: stretch; gap: 14px; }
-	.fc-pp-final { margin-right: 0; align-items: center; text-align: center; }
+	.fc-pp-final { margin-right: auto; align-items: flex-start; text-align: left; }
 	.fc-pp-add.button { width: 100%; text-align: center; }
 	.fc-qty-stepper { justify-content: center; }
 }
