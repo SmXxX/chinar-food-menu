@@ -17,7 +17,7 @@
 .fc-pp--stack { display: block; max-width: 640px; margin: 0 auto; }
 .fc-pp--stack .fc-pp-image { margin: 0 0 16px; }
 .fc-pp--stack .fc-pp-image img { max-width: 100%; width: 100%; height: auto; border-radius: var(--fc-radius-box, 6px); box-shadow: 0 18px 44px rgba(0, 0, 0, .4); }
-.fc-pp--stack .fc-pp-title { text-align: center; font-size: 1.7rem; margin: 0 0 4px; }
+.fc-pp--stack .fc-pp-title { text-align: center; font-size: var(--fc-fs-title, 1.7rem); margin: 0 0 4px; }
 .fc-pp--stack .fc-pp-weight { text-align: center; margin-bottom: 4px; }
 .fc-pp-buybar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 0; margin: 10px 0 4px; border-top: var(--fc-bw, 1px) solid var(--fc-line); border-bottom: var(--fc-bw, 1px) solid var(--fc-line); }
 .fc-pp-buybar .fc-pp-final { margin-right: auto; }
@@ -61,7 +61,7 @@
 
 /* Boxes — dark framed, not white */
 .fc-card-box { background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius-box, 6px); padding: 18px 20px; }
-.fc-card-box h3 { margin: 0 0 12px; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; text-align: center; }
+.fc-card-box h3 { margin: 0 0 12px; font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; text-align: center; }
 .fc-pp-desc { color: var(--fc-muted); font-size: .9rem; line-height: 1.55; }
 
 /* Options */
@@ -82,7 +82,7 @@
 
 /* Collapsible cards (БЕЗ / ОЩЕ) */
 .fc-collapsible { padding: 0; overflow: hidden; }
-.fc-collapse-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 20px; background: none; border: 0; cursor: pointer; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
+.fc-collapse-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 20px; background: none; border: 0; cursor: pointer; font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
 .fc-chev { transition: transform .2s; }
 .fc-collapsible.is-open .fc-chev { transform: rotate(180deg); }
 .fc-collapse-body { padding: 0 16px 16px; display: none; }
@@ -96,19 +96,19 @@
 
 /* Allergens */
 .fc-pp-allergens { text-align: center; }
-.fc-pp-allergens h3 { margin: 6px 0 10px; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
+.fc-pp-allergens h3 { margin: 6px 0 10px; font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
 .fc-allergen-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 .fc-allergen-chip { font-size: .68rem; padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
 
 /* Main image + title */
 .fc-pp-image { display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
 .fc-pp-image img { max-width: 460px; width: 100%; height: auto; border-radius: var(--fc-radius-box, 6px); box-shadow: 0 20px 50px rgba(0, 0, 0, .4); }
-.fc-pp-title { font-size: 2rem; font-weight: 500; text-transform: uppercase; letter-spacing: .03em; color: var(--fc-ink); margin: 0 0 6px; }
+.fc-pp-title { font-size: var(--fc-fs-title, 2rem); font-weight: 500; text-transform: uppercase; letter-spacing: .03em; color: var(--fc-ink); margin: 0 0 6px; }
 .fc-pp-weight { color: var(--fc-muted); font-size: 1.05rem; font-weight: 500; }
 
 /* "Combine with" slider */
 .fc-combine { margin-top: 34px; }
-.fc-combine-title { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--fc-muted); font-weight: 600; margin-bottom: 16px; text-align: center; }
+.fc-combine-title { font-size: var(--fc-fs-heading, .72rem); text-transform: uppercase; letter-spacing: .1em; color: var(--fc-muted); font-weight: 600; margin-bottom: 16px; text-align: center; }
 .fc-combine-slider { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 10px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
 .fc-combine-card { flex: 0 0 162px; scroll-snap-align: start; background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius-box, 6px); overflow: hidden; display: flex; flex-direction: column; transition: border-color .2s, transform .2s; text-align: left; }
 .fc-combine-card:hover { border-color: var(--fc-line-strong); transform: translateY(-2px); }
@@ -128,11 +128,11 @@
 .fc-pp-footer { display: flex; align-items: center; justify-content: flex-end; gap: 26px; flex-wrap: wrap; padding-top: 22px; border-top: 1px solid var(--fc-line); margin-top: 6px; }
 .fc-pp-final { display: flex; flex-direction: column; margin-right: auto; }
 .fc-pp-final small { color: var(--fc-muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
-.fc-pp-price { font-size: 1.7rem; font-weight: 600; color: var(--fc-ink); }
+.fc-pp-price { font-size: var(--fc-fs-pp-price, 1.7rem); font-weight: 600; color: var(--fc-ink); }
 .fc-pp-price .fc-price-bgn { font-size: .85rem; font-weight: 400; color: var(--fc-muted); }
 .fc-pp-add.button {
 	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
-	height: 40px; padding: 0 26px !important; box-sizing: border-box; line-height: 1; display: inline-flex; align-items: center; justify-content: center; font-weight: 600 !important; font-size: .82rem !important; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s;
+	height: 40px; padding: 0 26px !important; box-sizing: border-box; line-height: 1; display: inline-flex; align-items: center; justify-content: center; font-weight: 600 !important; font-size: var(--fc-fs-button, .82rem) !important; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s;
 }
 .fc-pp-add.button:hover { background: rgba(255, 255, 255, .1) !important; border-color: var(--fc-ink) !important; }
 .fc-pp-add.loading { opacity: .6; pointer-events: none; }

@@ -28,6 +28,12 @@ class FC_Settings {
 			'radius'        => 3,
 			'radius_box'    => 6,
 			'border_width'  => 1,
+			'fs_name'       => 17, // product name (menu cards), px
+			'fs_title'      => 27, // product-page title, px
+			'fs_price'      => 17, // listing price, px
+			'fs_pp_price'   => 27, // product-page price, px
+			'fs_heading'    => 12, // section headings, px
+			'fs_button'     => 13, // buttons, px
 		);
 	}
 
@@ -218,6 +224,8 @@ JS;
 			}
 			if ( in_array( $k, array( 'radius', 'radius_box', 'border_width' ), true ) ) {
 				$out[ $k ] = max( 0, min( 60, absint( $in[ $k ] ) ) );
+			} elseif ( 0 === strpos( $k, 'fs_' ) ) {
+				$out[ $k ] = max( 8, min( 80, absint( $in[ $k ] ) ) );
 			} else {
 				$out[ $k ] = sanitize_hex_color( $in[ $k ] );
 			}
@@ -309,7 +317,20 @@ JS;
 						</tr>
 				</table>
 
-				<h2><?php esc_html_e( 'Texts', 'food-customizer' ); ?></h2>
+				<h2><?php esc_html_e( 'Fonts', 'food-customizer' ); ?></h2>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Text sizes in pixels. Defaults match the current design.', 'food-customizer' ); ?></p>
+					<table class="form-table" role="presentation">
+						<?php
+						$this->num_row( 'fs_name', __( 'Product name (menu cards)', 'food-customizer' ) );
+						$this->num_row( 'fs_title', __( 'Product page title', 'food-customizer' ) );
+						$this->num_row( 'fs_price', __( 'Price (menu listings)', 'food-customizer' ) );
+						$this->num_row( 'fs_pp_price', __( 'Price (product page)', 'food-customizer' ) );
+						$this->num_row( 'fs_heading', __( 'Section headings', 'food-customizer' ) );
+						$this->num_row( 'fs_button', __( 'Buttons', 'food-customizer' ) );
+						?>
+					</table>
+
+					<h2><?php esc_html_e( 'Texts', 'food-customizer' ); ?></h2>
 				<p class="description"><?php esc_html_e( 'Leave a field blank to use the default, which follows your WordPress site language (translatable via WPML / Loco Translate).', 'food-customizer' ); ?></p>
 				<table class="form-table" role="presentation">
 					<?php

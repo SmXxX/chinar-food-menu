@@ -30,6 +30,12 @@ class FC_Style {
 			'--fc-radius'       => (int) $d( 'radius' ) . 'px',
 			'--fc-radius-box'   => (int) $d( 'radius_box' ) . 'px',
 			'--fc-bw'           => (int) $d( 'border_width' ) . 'px',
+			'--fc-fs-name'      => (int) $d( 'fs_name' ) . 'px',
+			'--fc-fs-title'     => (int) $d( 'fs_title' ) . 'px',
+			'--fc-fs-price'     => (int) $d( 'fs_price' ) . 'px',
+			'--fc-fs-pp-price'  => (int) $d( 'fs_pp_price' ) . 'px',
+			'--fc-fs-heading'   => (int) $d( 'fs_heading' ) . 'px',
+			'--fc-fs-button'    => (int) $d( 'fs_button' ) . 'px',
 		);
 
 		$decl = '';
