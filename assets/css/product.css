@@ -123,7 +123,8 @@
 .fc-pp-allergens { text-align: center; }
 .fc-pp-allergens h3 { margin: 6px 0 10px; font-family: var(--fc-ff-heading, 'Cormorant Garamond', serif); font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
 .fc-allergen-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.fc-allergen-chip { font-size: var(--fc-fs-small, .68rem); padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
+/* Allergen chips in Jost (Latin-only font; Cyrillic falls back to Roboto/sans). */
+.fc-allergen-chip { font-family: 'Jost', 'Roboto', sans-serif; font-weight: 500; font-size: var(--fc-fs-small, .68rem); padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
 
 /* Main image + title */
 .fc-pp-image { display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
