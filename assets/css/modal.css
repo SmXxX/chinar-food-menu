@@ -25,7 +25,7 @@ body.fc-modal-open { overflow: hidden; }
 .fc-modal-desc { color: var(--fc-muted); font-size: .9rem; line-height: 1.55; margin-bottom: 16px; }
 
 .fc-group { margin: 18px 0; }
-.fc-group h3 { font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); margin: 0 0 10px; font-weight: 600; }
+.fc-group h3 { font-family: 'Cormorant Garamond', serif; font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); margin: 0 0 10px; font-weight: 600; }
 
 .fc-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 4px); margin-bottom: 8px; background: transparent; cursor: pointer; }
 .fc-opt span { color: var(--fc-ink); }
@@ -45,7 +45,7 @@ body.fc-modal-open { overflow: hidden; }
 .fc-qty, .fc-main-qty { min-width: 18px; text-align: center; font-weight: 600; }
 
 .fc-allergen-list { display: flex; flex-wrap: wrap; gap: 6px; }
-.fc-allergen-chip { font-size: var(--fc-fs-heading, .72rem); padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
+.fc-allergen-chip { font-family: 'Cormorant Garamond', serif; font-size: var(--fc-fs-heading, .72rem); padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
 
 /* Variation option pills in the popup */
 .fc-var-group h3 { margin-bottom: 10px; }
