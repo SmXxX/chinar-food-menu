@@ -154,6 +154,8 @@
 .fc-pp-final { display: flex; flex-direction: column; margin-right: auto; }
 .fc-pp-final small { color: var(--fc-muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
 .fc-pp-price { font-size: var(--fc-fs-pp-price, 1.7rem); font-weight: 600; color: var(--fc-ink); }
+/* "Избери опции" prompt shown before every option is chosen (no --num class). */
+.fc-pp-price:not(.fc-pp-price--num) { font-size: 1rem; font-weight: 500; color: var(--fc-muted); }
 .fc-pp-price .fc-price-bgn { font-size: .85rem; font-weight: 400; color: var(--fc-muted); }
 .fc-pp-add.button {
 	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;

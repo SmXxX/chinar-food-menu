@@ -181,6 +181,12 @@ class FC_Shop {
 
 		$selection = FC_Options::build_selection( $product_id, $raw );
 
+		// Variable products: a variation must be fully chosen. Never silently add the
+		// parent (or a default) when options are missing/ambiguous.
+		if ( $product->is_type( 'variable' ) && empty( $selection['variation_id'] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Please choose the options.', 'food-customizer' ) ) );
+		}
+
 		// Attach as cart item data; a unique hash forces distinct cart lines per config.
 		$fc = array(
 			'unit_price' => $selection['unit_price'],

@@ -20,19 +20,24 @@
 				v = product.variants[ 0 ].id;
 				product.variants.forEach( function ( x ) { if ( x.is_default ) { v = x.id; } } );
 			}
-			var w = {};
-			if ( product.wc && product.wc.default ) {
-				for ( var k in product.wc.default ) { if ( product.wc.default.hasOwnProperty( k ) ) { w[ k ] = product.wc.default[ k ]; } }
-			}
-			return { v: v, r: [], a: {}, q: 1, w: w };
+			// No WooCommerce-variation preselection — the customer must actively pick
+			// each option before the item can be added (the server enforces this too).
+			return { v: v, r: [], a: {}, q: 1, w: {} };
 		},
 
-		/** Match a WooCommerce variation to the chosen attributes. */
+		/** Match a WooCommerce variation to the chosen attributes.
+		 * Matched on VALUES, not attribute keys: the stored variation meta keys can
+		 * be transliterated (Latin) while the parent attribute keys stay Cyrillic, so
+		 * key comparison is unreliable. Option values are identical on both sides and
+		 * unique per attribute in our menu, so value matching is correct and robust. */
 		findWc: function ( wc, w ) {
+			var chosen = [];
+			for ( var k in w ) { if ( w.hasOwnProperty( k ) && w[ k ] ) { chosen.push( String( w[ k ] ) ); } }
 			return ( wc.variations || [] ).filter( function ( v ) {
-				return ( wc.attributes || [] ).every( function ( a ) {
-					var sv = v.attrs[ a.key ];
-					return sv === '' || sv === undefined || String( sv ) === String( w[ a.key ] );
+				var attrs = v.attrs || {};
+				return Object.keys( attrs ).every( function ( ak ) {
+					var sv = attrs[ ak ];
+					return sv === '' || sv === undefined || chosen.indexOf( String( sv ) ) !== -1;
 				} );
 			} ).sort( function ( x, y ) { return x.price - y.price; } )[ 0 ];
 		},

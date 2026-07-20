@@ -189,22 +189,35 @@ class FC_Options {
 		$variation_attrs = array();
 
 		// WooCommerce variation: resolve from the chosen attributes; sets base price.
+		// Match on VALUES, not attribute keys — the stored variation meta keys can be
+		// transliterated (Latin) while the parent attribute keys stay Cyrillic, so key
+		// comparison silently matches the wrong variation. Option values are identical
+		// on both sides and unique per attribute in our menu, so value matching is
+		// correct. A variation only resolves when EVERY one of its required options is
+		// among the customer's choices — an incomplete selection leaves variation_id 0.
 		if ( $product && $product->is_type( 'variable' ) ) {
-			$want = ( isset( $selection['wc'] ) && is_array( $selection['wc'] ) ) ? array_map( 'strval', $selection['wc'] ) : array();
+			$want_vals = array();
+			if ( isset( $selection['wc'] ) && is_array( $selection['wc'] ) ) {
+				foreach ( $selection['wc'] as $v ) {
+					$v = (string) $v;
+					if ( '' !== $v ) { $want_vals[] = $v; }
+				}
+			}
 			foreach ( $product->get_available_variations() as $vd ) {
 				if ( empty( $vd['variation_id'] ) || false === $vd['display_price'] ) {
 					continue;
 				}
-				$ok    = true;
 				$attrs = array();
+				$need  = array();
 				foreach ( (array) $vd['attributes'] as $k => $v ) {
 					$attrs[ $k ] = $v; // keep WC's original (encoded) key for add_to_cart.
-					$dk          = urldecode( $k );
-					if ( '' !== $v && isset( $want[ $dk ] ) && $want[ $dk ] !== (string) $v ) {
-						$ok = false;
-					}
+					if ( '' !== $v ) { $need[] = (string) $v; } // '' means "any".
 				}
-				if ( $ok ) {
+				$ok = true;
+				foreach ( $need as $nv ) {
+					if ( ! in_array( $nv, $want_vals, true ) ) { $ok = false; break; }
+				}
+				if ( $ok && count( $want_vals ) >= count( $need ) && ! empty( $need ) ) {
 					$variation_id    = (int) $vd['variation_id'];
 					$variation_attrs = $attrs;
 					$base            = (float) $vd['display_price'];

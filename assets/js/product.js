@@ -11,9 +11,25 @@
 	function esc( s ) { return $( '<div/>' ).text( s == null ? '' : s ).html(); }
 	function persist() { C.save( p.id, state ); }
 
+	/** Has the customer picked every WooCommerce variation option? */
+	function wcComplete() {
+		if ( ! p.wc || ! p.wc.attributes || ! p.wc.attributes.length ) { return true; }
+		return p.wc.attributes.every( function ( a ) { return state.w && state.w[ a.key ]; } );
+	}
+
 	function refreshPrice() {
+		var $add   = $( '#fc-product-app .fc-pp-add' );
+		var $price = $( '#fc-product-app .fc-pp-price' );
+		if ( p.available === false ) { return; } // blocked → stays disabled, unavailable msg shown.
+		if ( ! wcComplete() ) {
+			// Not all options chosen yet: prompt instead of a price, block the button.
+			$price.removeClass( 'fc-pp-price--num' ).text( ( D.i18n && D.i18n.select_options ) || 'Избери опции' );
+			$add.prop( 'disabled', true );
+			return;
+		}
+		$add.prop( 'disabled', false );
 		var total = C.unitPrice( p, state ) * state.q;
-		$( '#fc-product-app .fc-pp-price' ).html( C.money( total, D ) );
+		$price.addClass( 'fc-pp-price--num' ).html( C.money( total, D ) );
 	}
 
 	function build() {
@@ -197,6 +213,7 @@
 	} );
 
 	$( document ).on( 'click', '#fc-product-app .fc-pp-add', function () {
+		if ( p.available === false || ! wcComplete() ) { return; } // options required.
 		var $btn = $( this ).prop( 'disabled', true ).addClass( 'loading' );
 		$.post( D.ajax_url, {
 			action: 'fc_add_to_cart', nonce: D.nonce,
