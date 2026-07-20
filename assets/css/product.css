@@ -132,7 +132,7 @@
 .fc-pp-price .fc-price-bgn { font-size: .85rem; font-weight: 400; color: var(--fc-muted); }
 .fc-pp-add.button {
 	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
-	padding: 14px 40px !important; font-weight: 600 !important; font-size: .85rem !important; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s;
+	padding: 12px 26px !important; font-weight: 600 !important; font-size: .82rem !important; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s;
 }
 .fc-pp-add.button:hover { background: rgba(255, 255, 255, .1) !important; border-color: var(--fc-ink) !important; }
 .fc-pp-add.loading { opacity: .6; pointer-events: none; }
