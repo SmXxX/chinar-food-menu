@@ -59,6 +59,25 @@
 	.fc-pp--stack .fc-combine { grid-area: combine; margin-top: 18px; }
 }
 
+/* Mobile/tablet (≤1024px): for variable products, lift the variation selection
+   (ИЗБОР / attribute pills) ABOVE the price bar, so the customer chooses the
+   variant first and then sees the price. `display: contents` on the options
+   wrapper hoists the cards into the stack's flex flow so `order` can reposition
+   just the variation cards; everything else keeps its order. Desktop is untouched. */
+@media (max-width: 1024px) {
+	.fc-pp--stack { display: flex; flex-direction: column; gap: 16px; }
+	.fc-pp--stack > .fc-pp-image { order: 1; margin: 0; }
+	.fc-pp--stack > .fc-pp-title { order: 2; margin: 0; }
+	.fc-pp--stack > .fc-pp-weight { order: 3; margin: 0; }
+	.fc-pp--stack > .fc-pp-stack-body { display: contents; }
+	.fc-pp--stack .fc-pp-var-card { order: 4; }
+	.fc-pp--stack > .fc-pp-buybar { order: 5; margin: 0; }
+	.fc-pp--stack > .fc-pp-unavailable { order: 6; margin: 0; }
+	.fc-pp--stack .fc-pp-stack-body > .fc-card-box:not(.fc-pp-var-card),
+	.fc-pp--stack .fc-pp-stack-body > .fc-pp-allergens { order: 7; }
+	.fc-pp--stack > .fc-combine { order: 8; margin: 0; }
+}
+
 /* Boxes — dark framed, not white */
 .fc-card-box { background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius-box, 6px); padding: 18px 20px; }
 .fc-card-box h3 { margin: 0 0 12px; font-family: var(--fc-ff-heading, 'Cormorant Garamond', serif); font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; text-align: center; }

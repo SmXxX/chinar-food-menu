@@ -29,7 +29,7 @@
 					+ '<span class="fc-opt-right"><span class="fc-opt-price">' + C.money( parseFloat( v.price ), D ) + '</span>'
 					+ '<input type="radio" name="fc_pp_variant" value="' + esc( v.id ) + '"></span></label>';
 			} );
-			left += card( D.i18n.choose || 'ИЗБОР', vh );
+			left += card( D.i18n.choose || 'ИЗБОР', vh, 'fc-pp-var-card' );
 		}
 		if ( p.wc && p.wc.attributes && p.wc.attributes.length ) {
 			p.wc.attributes.forEach( function ( a ) {
@@ -39,7 +39,7 @@
 					wh += '<button type="button" class="fc-var-pill fc-wc-pill' + act + '" data-key="' + esc( a.key ) + '" data-value="' + esc( o ) + '">' + esc( o ) + '</button>';
 				} );
 				wh += '</div>';
-				left += card( a.name, wh );
+				left += card( a.name, wh, 'fc-pp-var-card' );
 			} );
 		}
 		if ( p.removable && p.removable.length ) {
@@ -109,8 +109,8 @@
 		return h;
 	}
 
-	function card( title, inner ) {
-		return '<div class="fc-card-box"><h3>' + esc( title ) + '</h3>' + inner + '</div>';
+	function card( title, inner, cls ) {
+		return '<div class="fc-card-box' + ( cls ? ' ' + cls : '' ) + '"><h3>' + esc( title ) + '</h3>' + inner + '</div>';
 	}
 	function collapsible( title, inner ) {
 		return '<div class="fc-card-box fc-collapsible">'
