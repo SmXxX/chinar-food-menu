@@ -214,17 +214,22 @@
 
 	$( document ).on( 'click', '#fc-product-app .fc-pp-add', function () {
 		if ( p.available === false || ! wcComplete() ) { return; } // options required.
-		var $btn = $( this ).prop( 'disabled', true ).addClass( 'loading' );
+		var $btn = $( this );
+		var orig = $btn.text();
+		$btn.prop( 'disabled', true ).addClass( 'loading' );
 		$.post( D.ajax_url, {
 			action: 'fc_add_to_cart', nonce: D.nonce,
 			product_id: p.id, qty: state.q, variant_id: state.v || '',
 			removed: state.r, addons: state.a, wc: state.w
 		} ).done( function ( res ) {
 			if ( res && res.success ) {
-				C.clear( p.id );
+				// Stay on the page (no redirect). Refresh the fragments so the floating
+				// mini-cart updates, confirm on the button, then restore it so the
+				// customer can keep adding.
+				if ( res.data && res.data.fragments ) { $.each( res.data.fragments, function ( sel, html ) { $( sel ).replaceWith( html ); } ); }
 				$( document.body ).trigger( 'wc_fragment_refresh' );
 				$btn.removeClass( 'loading' ).addClass( 'fc-added' ).text( ( D.i18n.added || 'Added' ) + ' ✓' );
-				setTimeout( function () { window.location.href = D.cart_url; }, 700 );
+				setTimeout( function () { $btn.removeClass( 'fc-added' ).prop( 'disabled', false ).text( orig ); }, 1600 );
 			} else {
 				alert( ( res && res.data && res.data.message ) || D.i18n.error );
 				$btn.prop( 'disabled', false ).removeClass( 'loading' );

@@ -49,8 +49,9 @@
 .fc-fly-cart .fc-fly-total { font-size: .95rem; white-space: nowrap; }
 .fc-fly-cart .fc-fly-total .fc-price-bgn { display: none; }
 @media (max-width: 600px) {
-	.fc-fly-cart { right: 14px; bottom: 14px; padding: 11px 15px; }
-	.fc-fly-cart .fc-fly-total { display: none; }
+	/* Keep the button clear of the iOS Safari / gesture bar via the safe-area inset,
+	   and keep the running total visible — on mobile this is the main way to the cart. */
+	.fc-fly-cart { right: 14px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); padding: 12px 16px; }
 }
 
 /* Minimum-order message on the checkout page. */
