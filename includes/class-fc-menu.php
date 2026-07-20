@@ -295,6 +295,16 @@ class FC_Menu {
 				return ! in_array( $t->slug, $hidden, true );
 			} ) );
 		}
+		// Custom tab order (admin drag-sort): listed slugs first, any others after.
+		$order = (array) get_option( 'fc_category_order', array() );
+		if ( ! empty( $order ) ) {
+			$pos = array_flip( array_values( array_map( 'strval', $order ) ) );
+			usort( $terms, function ( $a, $b ) use ( $pos ) {
+				$ai = isset( $pos[ $a->slug ] ) ? $pos[ $a->slug ] : PHP_INT_MAX;
+				$bi = isset( $pos[ $b->slug ] ) ? $pos[ $b->slug ] : PHP_INT_MAX;
+				return $ai <=> $bi;
+			} );
+		}
 		return $terms;
 	}
 

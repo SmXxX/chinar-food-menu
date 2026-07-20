@@ -143,6 +143,9 @@ jQuery(function($){
 });
 JS;
 		wp_add_inline_script( 'wp-color-picker', $js );
+		// Drag-to-reorder the category tabs.
+		wp_enqueue_script( 'jquery-ui-sortable' );
+		wp_add_inline_script( 'jquery-ui-sortable', 'jQuery(function($){ if($.fn.sortable){ $("#fc-cat-order").sortable({axis:"y",cursor:"move"}); } });' );
 	}
 
 	public function add_menu() {
@@ -168,6 +171,7 @@ JS;
 		register_setting( self::GROUP, 'fc_default_category', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field', 'default' => 'all' ) );
 		register_setting( self::GROUP, 'fc_hidden_categories', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_slug_list' ), 'default' => array( 'uncategorized' ) ) );
 		register_setting( self::GROUP, 'fc_category_schedules', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_schedules' ), 'default' => array() ) );
+		register_setting( self::GROUP, 'fc_category_order', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_slug_list' ), 'default' => array() ) );
 		register_setting( self::GROUP, 'fc_layout_direction', array( 'type' => 'string', 'sanitize_callback' => array( $this, 'sanitize_direction' ), 'default' => 'ltr' ) );
 	}
 
@@ -403,6 +407,31 @@ JS;
 							endif;
 							?>
 							<p class="description"><?php esc_html_e( 'Ticked categories are removed from the shop — no tab, and their products are excluded from "All". "Uncategorized" is hidden by default.', 'food-customizer' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Order tabs', 'food-customizer' ); ?></th>
+						<td>
+							<ul id="fc-cat-order" class="fc-sortable" style="margin:0;max-width:340px;">
+								<?php
+								$cat_order = (array) get_option( 'fc_category_order', array() );
+								$by_slug   = array();
+								if ( ! is_wp_error( $terms ) ) { foreach ( $terms as $ot ) { $by_slug[ $ot->slug ] = $ot; } }
+								$ordered = array();
+								foreach ( $cat_order as $os ) { if ( isset( $by_slug[ $os ] ) ) { $ordered[] = $by_slug[ $os ]; unset( $by_slug[ $os ] ); } }
+								foreach ( $by_slug as $ot ) { $ordered[] = $ot; }
+								foreach ( $ordered as $ot ) :
+									?>
+									<li style="padding:8px 12px;margin:5px 0;background:#fff;border:1px solid #dcdcde;border-radius:4px;cursor:move;list-style:none;">
+										<span class="dashicons dashicons-menu" style="color:#8c8f94;vertical-align:middle;"></span>
+										<?php echo esc_html( $ot->name ); ?>
+										<input type="hidden" name="fc_category_order[]" value="<?php echo esc_attr( $ot->slug ); ?>" />
+									</li>
+									<?php
+								endforeach;
+								?>
+							</ul>
+							<p class="description"><?php esc_html_e( 'Drag to set the order the category tabs appear in.', 'food-customizer' ); ?></p>
 						</td>
 					</tr>
 					<tr>
