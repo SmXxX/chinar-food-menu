@@ -31,17 +31,25 @@ class FC_Single {
 	}
 
 	/**
-	 * Use the custom layout for any visible single product (not only ones with
-	 * custom food options). Products without options simply render the clean
-	 * image/title/price layout; products with options/variations add the pickers.
+	 * Use the custom customizer layout ONLY for products that actually need it:
+	 * variable products (variation pickers) or products with food options
+	 * (removable ingredients / paid extras / variants). Plain simple products with
+	 * nothing to customize fall through to the standard WooCommerce product page.
 	 */
 	private function is_food_product() {
+		static $cache = null;
+		if ( null !== $cache ) {
+			return $cache;
+		}
 		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
-			return false;
+			return ( $cache = false );
 		}
 		$id      = get_queried_object_id();
 		$product = $id ? wc_get_product( $id ) : null;
-		return $product && $product->is_visible();
+		if ( ! $product || ! $product->is_visible() ) {
+			return ( $cache = false );
+		}
+		return ( $cache = ( $product->is_type( 'variable' ) || FC_Options::has_options( $product->get_id() ) ) );
 	}
 
 	/**

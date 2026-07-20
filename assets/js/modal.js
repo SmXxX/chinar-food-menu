@@ -96,7 +96,7 @@
 
 	/* ---- events --------------------------------------------------------- */
 
-	$( document ).on( 'click', '.fc-customize-btn, .fc-quickview', function ( e ) {
+	$( document ).on( 'click', '.fc-customize-btn', function ( e ) {
 		e.preventDefault();
 		var id = $( this ).data( 'product-id' );
 		var $btn = $( this ).addClass( 'loading' );
