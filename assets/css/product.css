@@ -61,28 +61,28 @@
 
 /* Boxes — dark framed, not white */
 .fc-card-box { background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius-box, 6px); padding: 18px 20px; }
-.fc-card-box h3 { margin: 0 0 12px; font-family: 'Cormorant Garamond', serif; font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; text-align: center; }
-.fc-pp-desc { color: var(--fc-muted); font-size: .9rem; line-height: 1.55; }
+.fc-card-box h3 { margin: 0 0 12px; font-family: var(--fc-ff-heading, 'Cormorant Garamond', serif); font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; text-align: center; }
+.fc-pp-desc { color: var(--fc-muted); font-size: var(--fc-fs-body, .9rem); line-height: 1.55; }
 
 /* Options */
 .fc-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 4px); margin-bottom: 8px; background: transparent; cursor: pointer; }
 .fc-opt:last-child { margin-bottom: 0; }
 .fc-opt span { color: var(--fc-ink); }
 .fc-opt-right { display: flex; align-items: center; gap: 10px; }
-.fc-opt-price { color: var(--fc-muted); font-size: .88rem; white-space: nowrap; }
+.fc-opt-price { color: var(--fc-muted); font-size: var(--fc-fs-body, .88rem); white-space: nowrap; }
 .fc-opt-price .fc-price-bgn { font-size: .82em; }
 .fc-variant input, .fc-remove input { width: 17px; height: 17px; accent-color: var(--fc-ink); }
 .fc-variant:has(input:checked) { border-color: var(--fc-line-strong); }
 
 /* Option pills (тесто/сос) — outlined; active = filled cream */
 .fc-var-pills { display: flex; flex-wrap: wrap; gap: 7px; }
-.fc-var-pill { background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 8px 13px; font-size: .82rem; font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
+.fc-var-pill { background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 8px 13px; font-size: var(--fc-fs-pill, .82rem); font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
 .fc-var-pill:hover { border-color: var(--fc-line-strong); }
 .fc-var-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
 
 /* Collapsible cards (БЕЗ / ОЩЕ) */
 .fc-collapsible { padding: 0; overflow: hidden; }
-.fc-collapse-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 20px; background: none; border: 0; cursor: pointer; font-family: 'Cormorant Garamond', serif; font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
+.fc-collapse-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 20px; background: none; border: 0; cursor: pointer; font-family: var(--fc-ff-heading, 'Cormorant Garamond', serif); font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
 .fc-chev { transition: transform .2s; }
 .fc-collapsible.is-open .fc-chev { transform: rotate(180deg); }
 .fc-collapse-body { padding: 0 16px 16px; display: none; }
@@ -96,26 +96,26 @@
 
 /* Allergens */
 .fc-pp-allergens { text-align: center; }
-.fc-pp-allergens h3 { margin: 6px 0 10px; font-family: 'Cormorant Garamond', serif; font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
+.fc-pp-allergens h3 { margin: 6px 0 10px; font-family: var(--fc-ff-heading, 'Cormorant Garamond', serif); font-size: var(--fc-fs-heading, .72rem); letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
 .fc-allergen-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.fc-allergen-chip { font-size: .68rem; padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
+.fc-allergen-chip { font-size: var(--fc-fs-small, .68rem); padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
 
 /* Main image + title */
 .fc-pp-image { display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
 .fc-pp-image img { max-width: 460px; width: 100%; height: auto; border-radius: var(--fc-radius-box, 6px); box-shadow: 0 20px 50px rgba(0, 0, 0, .4); }
 .fc-pp-title { font-size: var(--fc-fs-title, 2rem); font-weight: 500; text-transform: uppercase; letter-spacing: .03em; color: var(--fc-ink); margin: 0 0 6px; }
-.fc-pp-weight { color: var(--fc-muted); font-size: 1.05rem; font-weight: 500; }
+.fc-pp-weight { color: var(--fc-muted); font-size: var(--fc-fs-small, 1.05rem); font-weight: 500; }
 
 /* "Combine with" slider */
 .fc-combine { margin-top: 34px; }
-.fc-combine-title { font-family: 'Cormorant Garamond', serif; font-size: var(--fc-fs-heading, .72rem); text-transform: uppercase; letter-spacing: .1em; color: var(--fc-muted); font-weight: 600; margin-bottom: 16px; text-align: center; }
+.fc-combine-title { font-family: var(--fc-ff-heading, 'Cormorant Garamond', serif); font-size: var(--fc-fs-heading, .72rem); text-transform: uppercase; letter-spacing: .1em; color: var(--fc-muted); font-weight: 600; margin-bottom: 16px; text-align: center; }
 .fc-combine-slider { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 10px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
 .fc-combine-card { flex: 0 0 162px; scroll-snap-align: start; background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius-box, 6px); overflow: hidden; display: flex; flex-direction: column; transition: border-color .2s, transform .2s; text-align: left; }
 .fc-combine-card:hover { border-color: var(--fc-line-strong); transform: translateY(-2px); }
 .fc-combine-link { display: flex; flex-direction: column; text-decoration: none; }
 .fc-combine-img { display: block; aspect-ratio: 1; background: #0e0c0a; margin: 8px 8px 0; border-radius: var(--fc-radius, 4px); overflow: hidden; }
 .fc-combine-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.fc-combine-name { padding: 9px 11px 4px; font-size: .82rem; font-weight: 500; color: var(--fc-ink); line-height: 1.3; }
+.fc-combine-name { padding: 9px 11px 4px; font-size: var(--fc-fs-body, .82rem); font-weight: 500; color: var(--fc-ink); line-height: 1.3; }
 .fc-combine-foot { display: flex; flex-direction: column; gap: 9px; padding: 0 11px 11px; margin-top: auto; }
 .fc-combine-price { font-size: .82rem; font-weight: 600; color: var(--fc-ink); }
 .fc-combine-price .fc-price-bgn { font-size: .8em; font-weight: 400; color: var(--fc-muted); }
@@ -178,3 +178,4 @@ body.fc-food-single .fc-product-wrap { padding-top: 118px; }
 	.fc-pp-add.button { width: 100%; text-align: center; }
 	.fc-qty-stepper { justify-content: center; }
 }
+.fc-product-wrap { font-family: var(--fc-ff-body, inherit); }

@@ -34,6 +34,11 @@ class FC_Settings {
 			'fs_pp_price'   => 27, // product-page price, px
 			'fs_heading'    => 12, // section headings, px
 			'fs_button'     => 13, // buttons, px
+			'fs_body'       => 14, // option / description text, px
+			'fs_small'      => 12, // small labels, weight, chips, px
+			'fs_pill'       => 13, // category / option pills, px
+			'ff_heading'    => "'Cormorant Garamond', serif", // headings font family
+			'ff_body'       => '',                             // body font family ('' = theme default)
 		);
 	}
 
@@ -226,6 +231,9 @@ JS;
 				$out[ $k ] = max( 0, min( 60, absint( $in[ $k ] ) ) );
 			} elseif ( 0 === strpos( $k, 'fs_' ) ) {
 				$out[ $k ] = max( 8, min( 80, absint( $in[ $k ] ) ) );
+			} elseif ( 0 === strpos( $k, 'ff_' ) ) {
+				// Font stack — allow only safe characters (no CSS break-out).
+				$out[ $k ] = trim( preg_replace( '/[^A-Za-z0-9 ,\'"_-]/', '', (string) $in[ $k ] ) );
 			} else {
 				$out[ $k ] = sanitize_hex_color( $in[ $k ] );
 			}
@@ -256,8 +264,19 @@ JS;
 
 	private function num_row( $key, $label ) {
 		printf(
-			'<tr><th scope="row">%s</th><td><input type="number" min="0" max="60" name="fc_design[%s]" value="%s" class="small-text" /> px</td></tr>',
+			'<tr><th scope="row">%s</th><td><input type="number" min="0" max="80" name="fc_design[%s]" value="%s" class="small-text" /> px</td></tr>',
 			esc_html( $label ), esc_attr( $key ), esc_attr( self::design( $key ) )
+		);
+	}
+
+	private function ff_row( $key, $label, $desc = '' ) {
+		printf(
+			'<tr><th scope="row">%s</th><td><input type="text" class="regular-text" name="fc_design[%s]" value="%s" placeholder="%s" />%s</td></tr>',
+			esc_html( $label ),
+			esc_attr( $key ),
+			esc_attr( self::design( $key ) ),
+			esc_attr( self::design_defaults()[ $key ] ?? '' ),
+			$desc ? '<p class="description">' . esc_html( $desc ) . '</p>' : ''
 		);
 	}
 
@@ -321,11 +340,16 @@ JS;
 					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Text sizes in pixels. Defaults match the current design.', 'food-customizer' ); ?></p>
 					<table class="form-table" role="presentation">
 						<?php
+						$this->ff_row( 'ff_body', __( 'Body font family', 'food-customizer' ), __( 'Leave blank to use the theme font. Example: "Roboto", sans-serif', 'food-customizer' ) );
+						$this->ff_row( 'ff_heading', __( 'Headings font family', 'food-customizer' ) );
 						$this->num_row( 'fs_name', __( 'Product name (menu cards)', 'food-customizer' ) );
 						$this->num_row( 'fs_title', __( 'Product page title', 'food-customizer' ) );
 						$this->num_row( 'fs_price', __( 'Price (menu listings)', 'food-customizer' ) );
 						$this->num_row( 'fs_pp_price', __( 'Price (product page)', 'food-customizer' ) );
 						$this->num_row( 'fs_heading', __( 'Section headings', 'food-customizer' ) );
+						$this->num_row( 'fs_body', __( 'Body / option text', 'food-customizer' ) );
+						$this->num_row( 'fs_small', __( 'Small labels (weight, tags)', 'food-customizer' ) );
+						$this->num_row( 'fs_pill', __( 'Category / option pills', 'food-customizer' ) );
 						$this->num_row( 'fs_button', __( 'Buttons', 'food-customizer' ) );
 						?>
 					</table>

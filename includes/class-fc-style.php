@@ -36,6 +36,11 @@ class FC_Style {
 			'--fc-fs-pp-price'  => (int) $d( 'fs_pp_price' ) . 'px',
 			'--fc-fs-heading'   => (int) $d( 'fs_heading' ) . 'px',
 			'--fc-fs-button'    => (int) $d( 'fs_button' ) . 'px',
+			'--fc-fs-body'      => (int) $d( 'fs_body' ) . 'px',
+			'--fc-fs-small'     => (int) $d( 'fs_small' ) . 'px',
+			'--fc-fs-pill'      => (int) $d( 'fs_pill' ) . 'px',
+			'--fc-ff-heading'   => $d( 'ff_heading' ),
+			'--fc-ff-body'      => $d( 'ff_body' ), // empty → skipped → inherits theme font.
 		);
 
 		$decl = '';

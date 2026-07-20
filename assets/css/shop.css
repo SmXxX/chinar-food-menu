@@ -12,7 +12,7 @@
 .fc-pills { display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 20px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
 .fc-pill {
 	flex: 0 0 auto; background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line);
-	padding: 9px 20px; border-radius: var(--fc-radius, 3px); font-weight: 600; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+	padding: 9px 20px; border-radius: var(--fc-radius, 3px); font-weight: 600; font-size: var(--fc-fs-pill, .8rem); letter-spacing: .08em; text-transform: uppercase;
 	cursor: pointer; white-space: nowrap; transition: all .18s;
 }
 .fc-pill:hover { border-color: var(--fc-line-strong); }
@@ -40,15 +40,15 @@
 .fc-card-desc { color: var(--fc-muted); font-size: .84rem; line-height: 1.5; }
 /* Weight sits just above the price, both pinned to the bottom of the card. */
 .fc-card-priceblock { display: flex; flex-direction: column; gap: 4px; }
-.fc-card-weight { color: var(--fc-muted); font-size: .84rem; line-height: 1.4; }
+.fc-card-weight { color: var(--fc-muted); font-size: var(--fc-fs-small, .84rem); line-height: 1.4; }
 .fc-card-allergens { display: flex; flex-wrap: wrap; gap: 5px; }
-.fc-card-allergen { font-size: .66rem; padding: 2px 9px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
+.fc-card-allergen { font-size: var(--fc-fs-small, .66rem); padding: 2px 9px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
 
 /* Stacked footer: price on top, full-width outlined button below */
 .fc-card-foot { margin-top: auto; display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding-top: 12px; }
 .fc-card-price { font-weight: 600; color: var(--fc-ink); font-size: var(--fc-fs-price, 1.05rem); line-height: 1.3; }
 .fc-card-price .fc-price-bgn { font-size: .76rem; font-weight: 400; color: var(--fc-muted); white-space: nowrap; }
-.fc-from { font-size: .68rem; font-weight: 500; color: var(--fc-muted); text-transform: uppercase; letter-spacing: .08em; }
+.fc-from { font-size: var(--fc-fs-small, .68rem); font-weight: 500; color: var(--fc-muted); text-transform: uppercase; letter-spacing: .08em; }
 .fc-card-foot .button, .fc-card-foot .fc-customize-btn {
 	display: block; width: 100%; box-sizing: border-box; text-align: center;
 	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
@@ -72,7 +72,7 @@
 .fc-var-attr { display: flex; flex-direction: column; gap: 6px; }
 .fc-var-label { font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; color: var(--fc-muted); font-weight: 600; }
 .fc-var-pills { display: flex; flex-wrap: wrap; gap: 7px; }
-.fc-var-pill { background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 6px 13px; font-size: .76rem; font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
+.fc-var-pill { background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 6px 13px; font-size: var(--fc-fs-pill, .76rem); font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
 .fc-var-pill:hover { border-color: var(--fc-line-strong); }
 .fc-var-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
 
@@ -81,3 +81,4 @@
 
 @media (max-width: 900px) { .fc-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .fc-grid { grid-template-columns: 1fr; } }
+.fc-shop { font-family: var(--fc-ff-body, inherit); }
