@@ -1,0 +1,83 @@
+/* Food Customizer — single-page shop (pills + grid). Dark, elegant, outlined. */
+.fc-shop {
+	--fc-ink: #f2ede4;                       /* warm off-white */
+	--fc-muted: rgba(242, 237, 228, .55);
+	--fc-line: rgba(242, 237, 228, .26);     /* thin elegant border */
+	--fc-line-strong: rgba(242, 237, 228, .7);
+	--fc-surface: rgba(255, 255, 255, .028);
+	--fc-radius: 6px;
+}
+
+/* Pills (category nav) — outlined, uppercase */
+.fc-pills { display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 20px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+.fc-pill {
+	flex: 0 0 auto; background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line);
+	padding: 9px 20px; border-radius: var(--fc-radius, 3px); font-weight: 600; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+	cursor: pointer; white-space: nowrap; transition: all .18s;
+}
+.fc-pill:hover { border-color: var(--fc-line-strong); }
+.fc-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
+
+/* Grid */
+.fc-grid { display: grid; grid-template-columns: repeat(var(--fc-cols, 3), 1fr); gap: 20px; position: relative; min-height: 120px; }
+.fc-grid.fc-loading { opacity: .5; pointer-events: none; }
+.fc-grid.fc-loading::after {
+	content: ""; position: absolute; inset: 0; margin: auto; width: 34px; height: 34px; align-self: center; justify-self: center;
+	border: 2px solid var(--fc-line); border-top-color: var(--fc-ink); border-radius: 50%; animation: fc-spin .8s linear infinite;
+}
+@keyframes fc-spin { to { transform: rotate(360deg); } }
+.fc-empty { color: var(--fc-muted); padding: 30px 0; grid-column: 1 / -1; text-align: center; }
+
+/* Card — dark framed, not a white box */
+.fc-card { background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius); overflow: hidden; display: flex; flex-direction: column; transition: border-color .2s, transform .2s; }
+.fc-card:hover { border-color: var(--fc-line-strong); transform: translateY(-2px); }
+.fc-card-imgwrap { display: block; aspect-ratio: 4 / 3; overflow: hidden; background: #0e0c0a; margin: 10px 10px 0; border-radius: var(--fc-radius, 4px); }
+.fc-card-imgwrap img, .fc-card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fc-card-body { padding: 15px 17px 17px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.fc-card-title { font-size: 1.05rem; font-weight: 600; margin: 0 0 3px; line-height: 1.3; letter-spacing: .01em; }
+.fc-shop .fc-card-title a, .fc-shop .fc-card-title a:hover, .fc-shop .fc-card-title a:focus,
+.fc-card-title a { color: #fff !important; text-decoration: none; }
+.fc-card-desc { color: var(--fc-muted); font-size: .84rem; line-height: 1.5; }
+/* Weight sits just above the price, both pinned to the bottom of the card. */
+.fc-card-priceblock { display: flex; flex-direction: column; gap: 4px; }
+.fc-card-weight { color: var(--fc-muted); font-size: .84rem; line-height: 1.4; }
+.fc-card-allergens { display: flex; flex-wrap: wrap; gap: 5px; }
+.fc-card-allergen { font-size: .66rem; padding: 2px 9px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
+
+/* Stacked footer: price on top, full-width outlined button below */
+.fc-card-foot { margin-top: auto; display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding-top: 12px; }
+.fc-card-price { font-weight: 600; color: var(--fc-ink); font-size: 1.05rem; line-height: 1.3; }
+.fc-card-price .fc-price-bgn { font-size: .76rem; font-weight: 400; color: var(--fc-muted); white-space: nowrap; }
+.fc-from { font-size: .68rem; font-weight: 500; color: var(--fc-muted); text-transform: uppercase; letter-spacing: .08em; }
+.fc-card-foot .button, .fc-card-foot .fc-customize-btn {
+	display: block; width: 100%; box-sizing: border-box; text-align: center;
+	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
+	padding: 11px 14px !important; font-weight: 600 !important; font-size: .76rem !important; letter-spacing: .09em; text-transform: uppercase;
+	white-space: nowrap; cursor: pointer; text-decoration: none; line-height: 1.3; transition: background .2s, border-color .2s;
+}
+.fc-card-foot .button:hover, .fc-card-foot .fc-customize-btn:hover { background: rgba(255, 255, 255, .09) !important; border-color: var(--fc-ink) !important; }
+
+/* Quantity stepper + add button row (simple products) */
+.fc-card-buy { display: flex; align-items: stretch; gap: 8px; }
+.fc-card-buy .fc-card-add { flex: 1 1 auto; width: auto; }
+.fc-card-qty { display: inline-flex; align-items: center; gap: 1px; flex: 0 0 auto; border: var(--fc-bw, 1px) solid var(--fc-line-strong); border-radius: var(--fc-radius, 3px); padding: 2px; }
+.fc-card-qty button { width: 30px; height: 32px; background: transparent; border: 0; color: var(--fc-ink); font-size: 15px; line-height: 1; cursor: pointer; border-radius: var(--fc-radius, 3px); }
+.fc-card-qty button:hover { background: transparent; }
+.fc-cq-val { min-width: 22px; text-align: center; font-weight: 600; color: var(--fc-ink); font-size: .85rem; }
+.fc-card-add.fc-added { background: rgba(255, 255, 255, .18) !important; border-color: var(--fc-ink) !important; }
+.fc-card-add.loading { opacity: .6; pointer-events: none; }
+
+/* Option pills (variation selector) — outlined; active = filled cream */
+.fc-var-attrs { display: flex; flex-direction: column; gap: 9px; margin: 4px 0 12px; }
+.fc-var-attr { display: flex; flex-direction: column; gap: 6px; }
+.fc-var-label { font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; color: var(--fc-muted); font-weight: 600; }
+.fc-var-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+.fc-var-pill { background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 6px 13px; font-size: .76rem; font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
+.fc-var-pill:hover { border-color: var(--fc-line-strong); }
+.fc-var-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
+
+/* "Combine with" cards */
+.fc-combine-card { flex: 0 0 160px; scroll-snap-align: start; background: var(--fc-surface, rgba(255,255,255,.028)); border: 1px solid var(--fc-line, rgba(242,237,228,.26)); border-radius: var(--fc-radius-box, 6px); overflow: hidden; display: flex; flex-direction: column; }
+
+@media (max-width: 900px) { .fc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .fc-grid { grid-template-columns: 1fr; } }

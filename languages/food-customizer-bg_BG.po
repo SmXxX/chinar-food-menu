@@ -1,0 +1,570 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Staria Chinar
+# This file is distributed under the same license as the Food Customizer package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Food Customizer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-20 11:59+0300\n"
+"PO-Revision-Date: 2026-07-20 12:00+0300\n"
+"Last-Translator: Staria Chinar\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/class-fc-allergens.php:20
+msgid "Cereals containing gluten"
+msgstr "Зърнени култури, съдържащи глутен"
+
+#: includes/class-fc-allergens.php:21
+msgid "Crustaceans"
+msgstr "Ракообразни"
+
+#: includes/class-fc-allergens.php:22
+msgid "Eggs"
+msgstr "Яйца"
+
+#: includes/class-fc-allergens.php:23
+msgid "Fish"
+msgstr "Риба"
+
+#: includes/class-fc-allergens.php:24
+msgid "Peanuts"
+msgstr "Фъстъци"
+
+#: includes/class-fc-allergens.php:25
+msgid "Soybeans"
+msgstr "Соя"
+
+#: includes/class-fc-allergens.php:26
+msgid "Milk"
+msgstr "Мляко"
+
+#: includes/class-fc-allergens.php:27
+msgid "Nuts"
+msgstr "Ядки"
+
+#: includes/class-fc-allergens.php:28
+msgid "Celery"
+msgstr "Целина"
+
+#: includes/class-fc-allergens.php:29
+msgid "Mustard"
+msgstr "Синап"
+
+#: includes/class-fc-allergens.php:30
+msgid "Sesame seeds"
+msgstr "Сусам"
+
+#: includes/class-fc-allergens.php:31
+msgid "Sulphur dioxide / sulphites"
+msgstr "Серен диоксид / сулфити"
+
+#: includes/class-fc-allergens.php:32
+msgid "Lupin"
+msgstr "Лупина"
+
+#: includes/class-fc-allergens.php:33
+msgid "Molluscs"
+msgstr "Мекотели"
+
+#: includes/class-fc-cart.php:41 includes/class-fc-cart.php:79
+msgid "Option"
+msgstr "Опция"
+
+#: includes/class-fc-cart.php:50 includes/class-fc-cart.php:82
+msgid "Without"
+msgstr "Без"
+
+#: includes/class-fc-cart.php:62 includes/class-fc-cart.php:89
+msgid "Extras"
+msgstr "Добавки"
+
+#: includes/class-fc-currency.php:48 includes/class-fc-currency.php:59
+#: includes/class-fc-price-display.php:58 includes/class-fc-shop.php:78
+msgctxt "BGN currency suffix"
+msgid "лв"
+msgstr "лв"
+
+#: includes/class-fc-cutlery.php:51
+msgid "Cutlery & napkins"
+msgstr "Прибори и салфетки"
+
+#: includes/class-fc-cutlery.php:133 includes/class-fc-shop.php:77
+msgid "Something went wrong. Please try again."
+msgstr "Нещо се обърка. Моля, опитайте отново."
+
+#: includes/class-fc-delivery.php:82 includes/class-fc-delivery.php:83
+#: includes/class-fc-delivery.php:135
+msgid "Delivery zones"
+msgstr "Зони за доставка"
+
+#: includes/class-fc-delivery.php:141
+msgid "Enable delivery zones"
+msgstr "Включи зони за доставка"
+
+#: includes/class-fc-delivery.php:142
+msgid "Show the zone / delivery options on the checkout page"
+msgstr "Показвай зоната / опциите за доставка на страницата за плащане"
+
+#: includes/class-fc-delivery.php:146
+msgid ""
+"Each zone the customer can choose on checkout. \"Covers\" is shown to help "
+"them pick the right zone. Toggle \"Busy\" to stop deliveries to that zone "
+"(the customer sees the message and cannot order for it)."
+msgstr "Всяка зона, която клиентът може да избере при плащане. „Обхваща“ се показва, за да му помогне да избере правилната зона. Включете „Заето“, за да спрете доставките до тази зона (клиентът вижда съобщението и не може да поръча за нея)."
+
+#: includes/class-fc-delivery.php:151
+msgid "Zone name"
+msgstr "Име на зона"
+
+#: includes/class-fc-delivery.php:152
+msgid "Covers (streets / areas)"
+msgstr "Обхваща (улици / райони)"
+
+#: includes/class-fc-delivery.php:153
+msgid "ETA"
+msgstr "Очаквано време"
+
+#: includes/class-fc-delivery.php:154
+msgid "Busy"
+msgstr "Заето"
+
+#: includes/class-fc-delivery.php:155
+msgid "Busy message (optional)"
+msgstr "Съобщение при заетост (по избор)"
+
+#: includes/class-fc-delivery.php:171
+msgid "Add zone"
+msgstr "Добави зона"
+
+#: includes/class-fc-delivery.php:192
+msgid "e.g. Center"
+msgstr "напр. Център"
+
+#: includes/class-fc-delivery.php:193
+msgid "e.g. ul. Vitosha, ul. Graf Ignatiev, bul. Vasil Levski…"
+msgstr "напр. ул. Витоша, ул. Граф Игнатиев, бул. Васил Левски…"
+
+#: includes/class-fc-delivery.php:194
+msgid "e.g. 45 min"
+msgstr "напр. 45 мин"
+
+#: includes/class-fc-delivery.php:197 includes/class-fc-product-meta.php:122
+msgid "Remove"
+msgstr "Премахни"
+
+#: includes/class-fc-delivery.php:230 includes/class-fc-delivery.php:340
+#: includes/class-fc-delivery.php:352 includes/class-fc-delivery.php:364
+msgid "Delivery"
+msgstr "Доставка"
+
+#: includes/class-fc-delivery.php:276
+msgid "Please select your delivery zone."
+msgstr "Моля, изберете вашата зона за доставка."
+
+#: includes/class-fc-delivery.php:285
+msgid "Please choose a delivery time, or select \"as soon as possible\"."
+msgstr "Моля, изберете време за доставка или изберете „възможно най-бързо“."
+
+#: includes/class-fc-menu.php:42 includes/class-fc-menu.php:432
+#: includes/class-fc-shop.php:114 includes/class-fc-shop.php:128
+msgid "Product not available."
+msgstr "Продуктът не е наличен."
+
+#: includes/class-fc-menu.php:45 includes/class-fc-menu.php:73
+#: includes/class-fc-shop.php:169
+msgid "Could not add to cart."
+msgstr "Не може да се добави в количката."
+
+#: includes/class-fc-menu.php:62
+msgid "Please choose the options."
+msgstr "Моля, изберете опциите."
+
+#: includes/class-fc-menu.php:113 includes/class-fc-settings.php:319
+msgid "All"
+msgstr "Всички"
+
+#: includes/class-fc-menu.php:321
+msgid "No items in this category yet."
+msgstr "Все още няма продукти в тази категория."
+
+#: includes/class-fc-product-meta.php:35
+msgid "Food Options (Customizer)"
+msgstr "Опции за храна (Персонализатор)"
+
+#: includes/class-fc-product-meta.php:59
+msgid "Ingredients"
+msgstr "Съставки"
+
+#: includes/class-fc-product-meta.php:60
+msgid ""
+"Default ingredients. Tick \"Removable\" to let customers opt out (free)."
+msgstr "Съставки по подразбиране. Отметнете „Може да се премахне“, за да позволите на клиентите да ги премахнат (безплатно)."
+
+#: includes/class-fc-product-meta.php:71
+msgid "Add ingredient"
+msgstr "Добави съставка"
+
+#: includes/class-fc-product-meta.php:74
+msgid "Paid additions"
+msgstr "Платени добавки"
+
+#: includes/class-fc-product-meta.php:75
+msgid ""
+"Extras the customer can add. Price is per unit (EUR). Max qty optional (0 = "
+"unlimited)."
+msgstr "Добавки, които клиентът може да добави. Цената е за брой (EUR). Максималното количество е по избор (0 = без ограничение)."
+
+#: includes/class-fc-product-meta.php:76 includes/class-fc-product-meta.php:89
+msgid "Name"
+msgstr "Име"
+
+#: includes/class-fc-product-meta.php:76 includes/class-fc-product-meta.php:89
+msgid "Price (EUR)"
+msgstr "Цена (EUR)"
+
+#: includes/class-fc-product-meta.php:76
+msgid "Max qty"
+msgstr "Макс. количество"
+
+#: includes/class-fc-product-meta.php:84
+msgid "Add addition"
+msgstr "Добави добавка"
+
+#: includes/class-fc-product-meta.php:87
+msgid "Size / variant options"
+msgstr "Опции за размер / вариант"
+
+#: includes/class-fc-product-meta.php:88
+msgid ""
+"Optional. Radio choices that set the base price (e.g. Standard, Double "
+"protein). Leave empty to disable for this product. One default."
+msgstr "По избор. Радио опции, които задават базовата цена (напр. Стандартен, Двоен протеин). Оставете празно, за да изключите за този продукт. Един по подразбиране."
+
+#: includes/class-fc-product-meta.php:89
+msgid "Default"
+msgstr "По подразбиране"
+
+#: includes/class-fc-product-meta.php:97
+msgid "Add variant"
+msgstr "Добави вариант"
+
+#: includes/class-fc-product-meta.php:100
+msgid "Allergens (EU 14)"
+msgstr "Алергени (ЕС 14)"
+
+#: includes/class-fc-product-meta.php:120
+msgid "e.g. Tomatoes"
+msgstr "напр. Домати"
+
+#: includes/class-fc-product-meta.php:121
+msgid "Removable"
+msgstr "Може да се премахне"
+
+#: includes/class-fc-product-meta.php:128
+msgid "e.g. Extra cheese"
+msgstr "напр. Допълнително сирене"
+
+#: includes/class-fc-product-meta.php:137
+msgid "e.g. Standard"
+msgstr "напр. Стандартен"
+
+#: includes/class-fc-settings.php:45
+msgid "Add to cart"
+msgstr "Добави в количката"
+
+#: includes/class-fc-settings.php:46
+msgid "Select options"
+msgstr "Избери опции"
+
+#: includes/class-fc-settings.php:47
+msgid "Final price"
+msgstr "Крайна цена"
+
+#: includes/class-fc-settings.php:48
+msgid "Allergens"
+msgstr "Алергени"
+
+#: includes/class-fc-settings.php:49
+msgctxt "ingredients heading"
+msgid "Ingredients"
+msgstr "СЪСТАВКИ"
+
+#: includes/class-fc-settings.php:50
+msgctxt "variant heading"
+msgid "Choose"
+msgstr "ИЗБОР"
+
+#: includes/class-fc-settings.php:51
+msgctxt "removable heading"
+msgid "Remove"
+msgstr "ОПЦИИ \"БЕЗ\""
+
+#: includes/class-fc-settings.php:52
+msgctxt "addons heading"
+msgid "Extras"
+msgstr "ОПЦИИ \"ОЩЕ\""
+
+#: includes/class-fc-settings.php:53
+msgctxt "cross-sell heading"
+msgid "Can be combined with"
+msgstr "Може да се комбинира с"
+
+#: includes/class-fc-settings.php:54
+msgctxt "price prefix"
+msgid "from"
+msgstr "от"
+
+#: includes/class-fc-settings.php:55
+msgid "Added"
+msgstr "Добавено"
+
+#: includes/class-fc-settings.php:56
+msgctxt "checkout cutlery toggle"
+msgid "I want cutlery and napkins"
+msgstr "Искам прибори и салфетки"
+
+#: includes/class-fc-settings.php:57
+msgid "Delivery zone"
+msgstr "Зона за доставка"
+
+#: includes/class-fc-settings.php:58
+msgid "Select your zone"
+msgstr "Изберете вашата зона"
+
+#: includes/class-fc-settings.php:59
+msgid "Covers"
+msgstr "Обхваща"
+
+#: includes/class-fc-settings.php:60
+msgctxt "zone busy message"
+msgid "We are very busy right now and cannot deliver to this area."
+msgstr "В момента сме много заети и не можем да доставим до този район"
+
+#: includes/class-fc-settings.php:61
+msgid "Estimated delivery"
+msgstr "Очаквана доставка"
+
+#: includes/class-fc-settings.php:62
+msgid "Delivery option"
+msgstr "Начин на доставка"
+
+#: includes/class-fc-settings.php:63
+msgctxt "delivery type"
+msgid "Delivery to the door"
+msgstr "Доставка до врата"
+
+#: includes/class-fc-settings.php:64
+msgctxt "delivery type"
+msgid "Delivery to the entrance (courier will call)"
+msgstr "Доставка до входа (куриерът ще се обади)"
+
+#: includes/class-fc-settings.php:65
+msgid "Delivery time"
+msgstr "Време за доставка"
+
+#: includes/class-fc-settings.php:66
+msgctxt "delivery timing"
+msgid "As soon as possible"
+msgstr "Възможно най-бързо"
+
+#: includes/class-fc-settings.php:67
+msgctxt "delivery timing"
+msgid "Choose a time"
+msgstr "Изберете час"
+
+#: includes/class-fc-settings.php:68
+msgctxt ""
+"minimum order message (%min% and %remaining% are replaced with amounts)"
+msgid ""
+"The minimum order is %min%. Please add %remaining% more to place your order."
+msgstr "Минималната поръчка е %min%. Моля, добавете още %remaining%, за да завършите поръчката."
+
+#: includes/class-fc-settings.php:69
+msgctxt "off-hours message (%from% / %to% are times)"
+msgid "This item is available only from %from% to %to%."
+msgstr "Този продукт е наличен само от %from% до %to%."
+
+#: includes/class-fc-settings.php:140 includes/class-fc-settings.php:141
+#: includes/class-fc-settings.php:265
+msgid "Food Customizer"
+msgstr "Food Customizer"
+
+#: includes/class-fc-settings.php:269
+msgid "Colours"
+msgstr "Цветове"
+
+#: includes/class-fc-settings.php:272
+msgid "Text"
+msgstr "Текст"
+
+#: includes/class-fc-settings.php:273
+msgid "Muted text"
+msgstr "Приглушен текст"
+
+#: includes/class-fc-settings.php:274
+msgid "Border"
+msgstr "Рамка"
+
+#: includes/class-fc-settings.php:275
+msgid "Border (hover)"
+msgstr "Рамка (при посочване)"
+
+#: includes/class-fc-settings.php:276
+msgid "Card background"
+msgstr "Фон на картата"
+
+#: includes/class-fc-settings.php:277
+msgid "Popup background"
+msgstr "Фон на изскачащия прозорец"
+
+#: includes/class-fc-settings.php:278
+msgid "Accent (selected)"
+msgstr "Акцент (избрано)"
+
+#: includes/class-fc-settings.php:279
+msgid "Text on accent"
+msgstr "Текст върху акцента"
+
+#: includes/class-fc-settings.php:283
+msgid "Borders & shape"
+msgstr "Рамки и форма"
+
+#: includes/class-fc-settings.php:286
+msgid "Corner radius (buttons/pills)"
+msgstr "Заобляне на ъглите (бутони)"
+
+#: includes/class-fc-settings.php:287
+msgid "Corner radius (cards/boxes)"
+msgstr "Заобляне на ъглите (карти/кутии)"
+
+#: includes/class-fc-settings.php:288
+msgid "Border thickness"
+msgstr "Дебелина на рамката"
+
+#: includes/class-fc-settings.php:292
+msgid "Texts"
+msgstr "Текстове"
+
+#: includes/class-fc-settings.php:293
+msgid ""
+"Leave a field blank to use the default, which follows your WordPress site "
+"language (translatable via WPML / Loco Translate)."
+msgstr "Оставете полето празно, за да се използва стойността по подразбиране, която следва езика на сайта в WordPress (може да се преведе чрез WPML / Loco Translate)."
+
+#: includes/class-fc-settings.php:302
+msgid "Menu"
+msgstr "Меню"
+
+#: includes/class-fc-settings.php:305
+msgid "Category tabs"
+msgstr "Категорийни раздели"
+
+#: includes/class-fc-settings.php:307
+msgid "Show the category tabs on the shop"
+msgstr "Показвай категорийните раздели в магазина"
+
+#: includes/class-fc-settings.php:308
+msgid "Show the \"All\" tab"
+msgstr "Показвай раздела „Всички“"
+
+#: includes/class-fc-settings.php:312
+msgid "Default category"
+msgstr "Категория по подразбиране"
+
+#: includes/class-fc-settings.php:324
+msgid "Which category is shown first when the shop loads."
+msgstr "Коя категория се показва първа при зареждане на магазина."
+
+#: includes/class-fc-settings.php:328
+msgid "Hide categories"
+msgstr "Скрий категории"
+
+#: includes/class-fc-settings.php:340
+msgid ""
+"Ticked categories are removed from the shop — no tab, and their products are "
+"excluded from \"All\". \"Uncategorized\" is hidden by default."
+msgstr "Отметнатите категории се премахват от магазина — без раздел, а продуктите им се изключват от „Всички“. „Некатегоризирани“ е скрита по подразбиране."
+
+#: includes/class-fc-settings.php:344
+msgid "Available by time"
+msgstr "Наличност по време"
+
+#: includes/class-fc-settings.php:346
+msgid ""
+"Optional daily window per category (e.g. lunch 11:30–15:30). Outside the "
+"window the tab and its products are hidden. Leave blank = always available. "
+"Uses your WordPress timezone."
+msgstr "По избор дневен интервал за категория (напр. обяд 11:30–15:30). Извън интервала разделът и продуктите му са скрити. Празно = винаги налична. Използва часовата зона на WordPress."
+
+#: includes/class-fc-settings.php:356
+msgid "From"
+msgstr "От"
+
+#: includes/class-fc-settings.php:358
+msgid "to"
+msgstr "до"
+
+#: includes/class-fc-settings.php:369
+msgid "General"
+msgstr "Общи"
+
+#: includes/class-fc-settings.php:372
+msgid "Dual currency"
+msgstr "Двойна валута"
+
+#: includes/class-fc-settings.php:373
+msgid "Show EUR with BGN in parentheses"
+msgstr "Показвай EUR с BGN в скоби"
+
+#: includes/class-fc-settings.php:376
+msgid "Minimum order total"
+msgstr "Минимална сума за поръчка"
+
+#: includes/class-fc-settings.php:379
+msgid ""
+"Orders below this amount (EUR) show a message and cannot be completed. 0 = "
+"no minimum. Edit the message (\"Min order msg\") in the Texts section — "
+"%min% and %remaining% are replaced with the amounts."
+msgstr "Поръчки под тази сума (EUR) показват съобщение и не могат да бъдат завършени. 0 = без минимум. Редактирайте съобщението („Min order msg“) в секцията „Текстове“ — %min% и %remaining% се заместват със сумите."
+
+#: includes/class-fc-settings.php:380
+msgid "Block access to checkout below the minimum"
+msgstr "Блокирай достъпа до плащане под минимума"
+
+#: includes/class-fc-settings.php:381
+msgid ""
+"hides the \"Proceed to checkout\" button until the minimum is met. When off, "
+"checkout stays open and only the final order is blocked."
+msgstr "скрива бутона „Към плащане“, докато минимумът не бъде достигнат. Когато е изключено, плащането остава отворено и само финалната поръчка се блокира."
+
+#: includes/class-fc-settings.php:385
+msgid "Cutlery on checkout"
+msgstr "Прибори на страницата за плащане"
+
+#: includes/class-fc-settings.php:387
+msgid ""
+"Show a \"cutlery & napkins\" checkbox with a quantity stepper on the "
+"checkout page"
+msgstr "Показвай отметка „прибори и салфетки“ с брояч на количеството на страницата за плащане"
+
+#: includes/class-fc-settings.php:394
+msgid "Edit the cutlery product (name / price):"
+msgstr "Редактирай продукта за прибори (име / цена):"
+
+#: includes/class-fc-settings.php:400
+msgid ""
+"A hidden product is created automatically the first time you enable this; "
+"edit its name/price in Products afterwards. The label text is editable in "
+"the Texts section above."
+msgstr "Скрит продукт се създава автоматично при първото включване; после редактирайте името/цената му в Продукти. Текстът на етикета се редактира в секцията „Текстове“ по-горе."
+
+#: includes/class-fc-shop.php:76
+msgid "Customize"
+msgstr "Персонализирай"

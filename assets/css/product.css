@@ -1,0 +1,171 @@
+/* Food Customizer — product-page layout (product.png-style), dark & elegant. */
+.fc-product-wrap {
+	--fc-ink: #f2ede4;
+	--fc-muted: rgba(242, 237, 228, .55);
+	--fc-line: rgba(242, 237, 228, .22);
+	--fc-line-strong: rgba(242, 237, 228, .7);
+	--fc-surface: rgba(255, 255, 255, .028);
+	max-width: 1200px; margin: 0 auto; padding: 28px 20px 60px;
+}
+
+.fc-pp { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; grid-template-rows: 1fr auto; gap: 26px 44px; align-items: start; }
+.fc-pp-left { grid-row: 1 / 3; display: flex; flex-direction: column; gap: 16px; }
+.fc-pp-main { grid-column: 2; text-align: center; }
+.fc-pp-footer { grid-column: 1 / 3; }
+
+/* Single-column stacked layout (happy.bg style): image → buy bar → cards → combine. */
+.fc-pp--stack { display: block; max-width: 640px; margin: 0 auto; }
+.fc-pp--stack .fc-pp-image { margin: 0 0 16px; }
+.fc-pp--stack .fc-pp-image img { max-width: 100%; width: 100%; aspect-ratio: 16 / 11; border-radius: var(--fc-radius-box, 6px); object-fit: cover; box-shadow: 0 18px 44px rgba(0, 0, 0, .4); }
+.fc-pp--stack .fc-pp-title { text-align: center; font-size: 1.7rem; margin: 0 0 4px; }
+.fc-pp--stack .fc-pp-weight { text-align: center; margin-bottom: 4px; }
+.fc-pp-buybar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 0; margin: 10px 0 4px; border-top: var(--fc-bw, 1px) solid var(--fc-line); border-bottom: var(--fc-bw, 1px) solid var(--fc-line); }
+.fc-pp-buybar .fc-pp-final { margin-right: auto; }
+.fc-pp-stack-body { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
+.fc-pp--stack .fc-combine { margin-top: 28px; }
+
+/* Desktop only (≥1025px): two-column layout. Phones AND tablets (≤1024px) use
+   the single-column mobile stack above. */
+@media (min-width: 1025px) {
+	.fc-pp--stack {
+		display: grid;
+		grid-template-columns: minmax(280px, 360px) 1fr;
+		grid-template-areas:
+			"cards image"
+			"cards title"
+			"cards buybar"
+			"cards combine";
+		/* Keep image→name→buy tight; push any leftover height (from tall option
+		   cards on the left) into the last row so it doesn't gap the top. */
+		grid-template-rows: auto auto auto 1fr;
+		gap: 10px 44px;
+		align-items: start;
+		max-width: 1100px;
+	}
+	.fc-pp--stack .fc-pp-image { grid-area: image; margin: 0; }
+	.fc-pp--stack .fc-pp-image img { width: auto; max-width: 420px; aspect-ratio: 1; border-radius: 50%; display: block; margin: 0 auto; }
+	.fc-pp--stack .fc-pp-title { grid-area: title; }
+	.fc-pp--stack .fc-pp-stack-body { grid-area: cards; margin-top: 0; }
+	.fc-pp--stack .fc-pp-buybar { grid-area: buybar; }
+	.fc-pp--stack .fc-combine { grid-area: combine; margin-top: 18px; }
+}
+
+/* Boxes — dark framed, not white */
+.fc-card-box { background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius-box, 6px); padding: 18px 20px; }
+.fc-card-box h3 { margin: 0 0 12px; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; text-align: center; }
+.fc-pp-desc { color: var(--fc-muted); font-size: .9rem; line-height: 1.55; }
+
+/* Options */
+.fc-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 4px); margin-bottom: 8px; background: transparent; cursor: pointer; }
+.fc-opt:last-child { margin-bottom: 0; }
+.fc-opt span { color: var(--fc-ink); }
+.fc-opt-right { display: flex; align-items: center; gap: 10px; }
+.fc-opt-price { color: var(--fc-muted); font-size: .88rem; white-space: nowrap; }
+.fc-opt-price .fc-price-bgn { font-size: .82em; }
+.fc-variant input, .fc-remove input { width: 17px; height: 17px; accent-color: var(--fc-ink); }
+.fc-variant:has(input:checked) { border-color: var(--fc-line-strong); }
+
+/* Option pills (тесто/сос) — outlined; active = filled cream */
+.fc-var-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+.fc-var-pill { background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 3px); padding: 8px 13px; font-size: .82rem; font-weight: 500; line-height: 1.3; cursor: pointer; transition: all .15s; }
+.fc-var-pill:hover { border-color: var(--fc-line-strong); }
+.fc-var-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
+
+/* Collapsible cards (БЕЗ / ОЩЕ) */
+.fc-collapsible { padding: 0; overflow: hidden; }
+.fc-collapse-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 20px; background: none; border: 0; cursor: pointer; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
+.fc-chev { transition: transform .2s; }
+.fc-collapsible.is-open .fc-chev { transform: rotate(180deg); }
+.fc-collapse-body { padding: 0 16px 16px; display: none; }
+.fc-collapsible.is-open .fc-collapse-body { display: block; }
+
+/* Stepper */
+.fc-stepper, .fc-qty-stepper { display: inline-flex; align-items: center; gap: 10px; }
+.fc-stepper button, .fc-qty-stepper button { width: 34px; height: 34px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); background: transparent; font-size: 17px; line-height: 1; cursor: pointer; color: var(--fc-ink); transition: border-color .15s; }
+.fc-stepper button:hover, .fc-qty-stepper button:hover { border-color: var(--fc-line-strong); }
+.fc-qty, .fc-main-qty { min-width: 20px; text-align: center; font-weight: 600; }
+
+/* Allergens */
+.fc-pp-allergens { text-align: center; }
+.fc-pp-allergens h3 { margin: 6px 0 10px; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); font-weight: 600; }
+.fc-allergen-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.fc-allergen-chip { font-size: .68rem; padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
+
+/* Main image + title */
+.fc-pp-image { display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+.fc-pp-image img { max-width: 460px; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; box-shadow: 0 20px 50px rgba(0, 0, 0, .4); }
+.fc-pp-title { font-size: 2rem; font-weight: 500; text-transform: uppercase; letter-spacing: .03em; color: var(--fc-ink); margin: 0 0 6px; }
+.fc-pp-weight { color: var(--fc-muted); font-size: 1.05rem; font-weight: 500; }
+
+/* "Combine with" slider */
+.fc-combine { margin-top: 34px; }
+.fc-combine-title { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--fc-muted); font-weight: 600; margin-bottom: 16px; text-align: center; }
+.fc-combine-slider { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 10px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+.fc-combine-card { flex: 0 0 162px; scroll-snap-align: start; background: var(--fc-surface); border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius-box, 6px); overflow: hidden; display: flex; flex-direction: column; transition: border-color .2s, transform .2s; text-align: left; }
+.fc-combine-card:hover { border-color: var(--fc-line-strong); transform: translateY(-2px); }
+.fc-combine-link { display: flex; flex-direction: column; text-decoration: none; }
+.fc-combine-img { display: block; aspect-ratio: 1; background: #0e0c0a; margin: 8px 8px 0; border-radius: var(--fc-radius, 4px); overflow: hidden; }
+.fc-combine-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fc-combine-name { padding: 9px 11px 4px; font-size: .82rem; font-weight: 500; color: var(--fc-ink); line-height: 1.3; }
+.fc-combine-foot { display: flex; flex-direction: column; gap: 9px; padding: 0 11px 11px; margin-top: auto; }
+.fc-combine-price { font-size: .82rem; font-weight: 600; color: var(--fc-ink); }
+.fc-combine-price .fc-price-bgn { font-size: .8em; font-weight: 400; color: var(--fc-muted); }
+.fc-combine-btn { display: block; width: 100%; box-sizing: border-box; text-align: center; background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong); border-radius: var(--fc-radius, 3px); padding: 8px 10px; font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; cursor: pointer; transition: background .2s, border-color .2s; }
+.fc-combine-btn:hover { background: rgba(255, 255, 255, .09) !important; }
+.fc-combine-btn.loading { opacity: .6; pointer-events: none; }
+.fc-combine-btn.fc-added { background: rgba(255, 255, 255, .16) !important; }
+
+/* Footer bar */
+.fc-pp-footer { display: flex; align-items: center; justify-content: flex-end; gap: 26px; flex-wrap: wrap; padding-top: 22px; border-top: 1px solid var(--fc-line); margin-top: 6px; }
+.fc-pp-final { display: flex; flex-direction: column; margin-right: auto; }
+.fc-pp-final small { color: var(--fc-muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
+.fc-pp-price { font-size: 1.7rem; font-weight: 600; color: var(--fc-ink); }
+.fc-pp-price .fc-price-bgn { font-size: .85rem; font-weight: 400; color: var(--fc-muted); }
+.fc-pp-add.button {
+	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
+	padding: 14px 40px !important; font-weight: 600 !important; font-size: .85rem !important; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s;
+}
+.fc-pp-add.button:hover { background: rgba(255, 255, 255, .1) !important; border-color: var(--fc-ink) !important; }
+.fc-pp-add.loading { opacity: .6; pointer-events: none; }
+.fc-pp-add[disabled] { opacity: .4; cursor: not-allowed; pointer-events: none; }
+.fc-pp-unavailable {
+	margin: 14px 0 0;
+	padding: 12px 15px;
+	border-radius: var(--fc-radius, 3px);
+	background: rgba(190, 60, 50, .12);
+	border: 1px solid rgba(190, 60, 50, .5);
+	color: #f0b9b2;
+	font-weight: 500;
+	text-align: center;
+}
+.fc-pp-add.fc-added { background: rgba(255, 255, 255, .16) !important; }
+
+/* Loading spinner */
+.fc-pp-loading { display: flex; justify-content: center; padding: 80px 0; }
+.fc-spinner { width: 38px; height: 38px; border: 2px solid var(--fc-line); border-top-color: var(--fc-ink); border-radius: 50%; animation: fc-spin .8s linear infinite; }
+@keyframes fc-spin { to { transform: rotate(360deg); } }
+
+/* Dark page bg + reveal the transparent overlap header (unchanged) */
+body.fc-food-single { background-color: var(--dark-bg-color, #0b0b0b) !important; }
+body.fc-food-single .fc-product-wrap { padding-top: 118px; }
+
+@media (max-width: 1024px) {
+	.fc-pp { grid-template-columns: 1fr; gap: 20px 0; }
+	.fc-pp-left { grid-row: auto; order: 2; }
+	.fc-pp-main { grid-column: 1; order: 1; }
+	.fc-pp-footer { order: 3; }
+	.fc-pp-image { margin-bottom: 12px; }
+	.fc-pp-image img { max-width: 240px; }
+	.fc-pp-title { font-size: 1.5rem; }
+
+	/* Stack the option selectors vertically — full-width rows so long Bulgarian
+	   option names are readable and easy to tap. */
+	.fc-var-pills { flex-direction: column; gap: 8px; }
+	.fc-var-pill { width: 100%; text-align: left; padding: 13px 15px; font-size: .92rem; }
+
+	/* Footer: price above a full-width add-to-cart button. */
+	.fc-pp-footer { flex-direction: column; align-items: stretch; gap: 14px; }
+	.fc-pp-final { margin-right: 0; align-items: center; text-align: center; }
+	.fc-pp-add.button { width: 100%; text-align: center; }
+	.fc-qty-stepper { justify-content: center; }
+}

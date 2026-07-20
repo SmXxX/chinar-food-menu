@@ -1,0 +1,570 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Staria Chinar
+# This file is distributed under the same license as the Food Customizer package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Food Customizer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-20 11:59+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/class-fc-allergens.php:20
+msgid "Cereals containing gluten"
+msgstr ""
+
+#: includes/class-fc-allergens.php:21
+msgid "Crustaceans"
+msgstr ""
+
+#: includes/class-fc-allergens.php:22
+msgid "Eggs"
+msgstr ""
+
+#: includes/class-fc-allergens.php:23
+msgid "Fish"
+msgstr ""
+
+#: includes/class-fc-allergens.php:24
+msgid "Peanuts"
+msgstr ""
+
+#: includes/class-fc-allergens.php:25
+msgid "Soybeans"
+msgstr ""
+
+#: includes/class-fc-allergens.php:26
+msgid "Milk"
+msgstr ""
+
+#: includes/class-fc-allergens.php:27
+msgid "Nuts"
+msgstr ""
+
+#: includes/class-fc-allergens.php:28
+msgid "Celery"
+msgstr ""
+
+#: includes/class-fc-allergens.php:29
+msgid "Mustard"
+msgstr ""
+
+#: includes/class-fc-allergens.php:30
+msgid "Sesame seeds"
+msgstr ""
+
+#: includes/class-fc-allergens.php:31
+msgid "Sulphur dioxide / sulphites"
+msgstr ""
+
+#: includes/class-fc-allergens.php:32
+msgid "Lupin"
+msgstr ""
+
+#: includes/class-fc-allergens.php:33
+msgid "Molluscs"
+msgstr ""
+
+#: includes/class-fc-cart.php:41 includes/class-fc-cart.php:79
+msgid "Option"
+msgstr ""
+
+#: includes/class-fc-cart.php:50 includes/class-fc-cart.php:82
+msgid "Without"
+msgstr ""
+
+#: includes/class-fc-cart.php:62 includes/class-fc-cart.php:89
+msgid "Extras"
+msgstr ""
+
+#: includes/class-fc-currency.php:48 includes/class-fc-currency.php:59
+#: includes/class-fc-price-display.php:58 includes/class-fc-shop.php:78
+msgctxt "BGN currency suffix"
+msgid "лв"
+msgstr ""
+
+#: includes/class-fc-cutlery.php:51
+msgid "Cutlery & napkins"
+msgstr ""
+
+#: includes/class-fc-cutlery.php:133 includes/class-fc-shop.php:77
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: includes/class-fc-delivery.php:82 includes/class-fc-delivery.php:83
+#: includes/class-fc-delivery.php:135
+msgid "Delivery zones"
+msgstr ""
+
+#: includes/class-fc-delivery.php:141
+msgid "Enable delivery zones"
+msgstr ""
+
+#: includes/class-fc-delivery.php:142
+msgid "Show the zone / delivery options on the checkout page"
+msgstr ""
+
+#: includes/class-fc-delivery.php:146
+msgid ""
+"Each zone the customer can choose on checkout. \"Covers\" is shown to help "
+"them pick the right zone. Toggle \"Busy\" to stop deliveries to that zone "
+"(the customer sees the message and cannot order for it)."
+msgstr ""
+
+#: includes/class-fc-delivery.php:151
+msgid "Zone name"
+msgstr ""
+
+#: includes/class-fc-delivery.php:152
+msgid "Covers (streets / areas)"
+msgstr ""
+
+#: includes/class-fc-delivery.php:153
+msgid "ETA"
+msgstr ""
+
+#: includes/class-fc-delivery.php:154
+msgid "Busy"
+msgstr ""
+
+#: includes/class-fc-delivery.php:155
+msgid "Busy message (optional)"
+msgstr ""
+
+#: includes/class-fc-delivery.php:171
+msgid "Add zone"
+msgstr ""
+
+#: includes/class-fc-delivery.php:192
+msgid "e.g. Center"
+msgstr ""
+
+#: includes/class-fc-delivery.php:193
+msgid "e.g. ul. Vitosha, ul. Graf Ignatiev, bul. Vasil Levski…"
+msgstr ""
+
+#: includes/class-fc-delivery.php:194
+msgid "e.g. 45 min"
+msgstr ""
+
+#: includes/class-fc-delivery.php:197 includes/class-fc-product-meta.php:122
+msgid "Remove"
+msgstr ""
+
+#: includes/class-fc-delivery.php:230 includes/class-fc-delivery.php:340
+#: includes/class-fc-delivery.php:352 includes/class-fc-delivery.php:364
+msgid "Delivery"
+msgstr ""
+
+#: includes/class-fc-delivery.php:276
+msgid "Please select your delivery zone."
+msgstr ""
+
+#: includes/class-fc-delivery.php:285
+msgid "Please choose a delivery time, or select \"as soon as possible\"."
+msgstr ""
+
+#: includes/class-fc-menu.php:42 includes/class-fc-menu.php:432
+#: includes/class-fc-shop.php:114 includes/class-fc-shop.php:128
+msgid "Product not available."
+msgstr ""
+
+#: includes/class-fc-menu.php:45 includes/class-fc-menu.php:73
+#: includes/class-fc-shop.php:169
+msgid "Could not add to cart."
+msgstr ""
+
+#: includes/class-fc-menu.php:62
+msgid "Please choose the options."
+msgstr ""
+
+#: includes/class-fc-menu.php:113 includes/class-fc-settings.php:319
+msgid "All"
+msgstr ""
+
+#: includes/class-fc-menu.php:321
+msgid "No items in this category yet."
+msgstr ""
+
+#: includes/class-fc-product-meta.php:35
+msgid "Food Options (Customizer)"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:59
+msgid "Ingredients"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:60
+msgid ""
+"Default ingredients. Tick \"Removable\" to let customers opt out (free)."
+msgstr ""
+
+#: includes/class-fc-product-meta.php:71
+msgid "Add ingredient"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:74
+msgid "Paid additions"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:75
+msgid ""
+"Extras the customer can add. Price is per unit (EUR). Max qty optional (0 = "
+"unlimited)."
+msgstr ""
+
+#: includes/class-fc-product-meta.php:76 includes/class-fc-product-meta.php:89
+msgid "Name"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:76 includes/class-fc-product-meta.php:89
+msgid "Price (EUR)"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:76
+msgid "Max qty"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:84
+msgid "Add addition"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:87
+msgid "Size / variant options"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:88
+msgid ""
+"Optional. Radio choices that set the base price (e.g. Standard, Double "
+"protein). Leave empty to disable for this product. One default."
+msgstr ""
+
+#: includes/class-fc-product-meta.php:89
+msgid "Default"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:97
+msgid "Add variant"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:100
+msgid "Allergens (EU 14)"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:120
+msgid "e.g. Tomatoes"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:121
+msgid "Removable"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:128
+msgid "e.g. Extra cheese"
+msgstr ""
+
+#: includes/class-fc-product-meta.php:137
+msgid "e.g. Standard"
+msgstr ""
+
+#: includes/class-fc-settings.php:45
+msgid "Add to cart"
+msgstr ""
+
+#: includes/class-fc-settings.php:46
+msgid "Select options"
+msgstr ""
+
+#: includes/class-fc-settings.php:47
+msgid "Final price"
+msgstr ""
+
+#: includes/class-fc-settings.php:48
+msgid "Allergens"
+msgstr ""
+
+#: includes/class-fc-settings.php:49
+msgctxt "ingredients heading"
+msgid "Ingredients"
+msgstr ""
+
+#: includes/class-fc-settings.php:50
+msgctxt "variant heading"
+msgid "Choose"
+msgstr ""
+
+#: includes/class-fc-settings.php:51
+msgctxt "removable heading"
+msgid "Remove"
+msgstr ""
+
+#: includes/class-fc-settings.php:52
+msgctxt "addons heading"
+msgid "Extras"
+msgstr ""
+
+#: includes/class-fc-settings.php:53
+msgctxt "cross-sell heading"
+msgid "Can be combined with"
+msgstr ""
+
+#: includes/class-fc-settings.php:54
+msgctxt "price prefix"
+msgid "from"
+msgstr ""
+
+#: includes/class-fc-settings.php:55
+msgid "Added"
+msgstr ""
+
+#: includes/class-fc-settings.php:56
+msgctxt "checkout cutlery toggle"
+msgid "I want cutlery and napkins"
+msgstr ""
+
+#: includes/class-fc-settings.php:57
+msgid "Delivery zone"
+msgstr ""
+
+#: includes/class-fc-settings.php:58
+msgid "Select your zone"
+msgstr ""
+
+#: includes/class-fc-settings.php:59
+msgid "Covers"
+msgstr ""
+
+#: includes/class-fc-settings.php:60
+msgctxt "zone busy message"
+msgid "We are very busy right now and cannot deliver to this area."
+msgstr ""
+
+#: includes/class-fc-settings.php:61
+msgid "Estimated delivery"
+msgstr ""
+
+#: includes/class-fc-settings.php:62
+msgid "Delivery option"
+msgstr ""
+
+#: includes/class-fc-settings.php:63
+msgctxt "delivery type"
+msgid "Delivery to the door"
+msgstr ""
+
+#: includes/class-fc-settings.php:64
+msgctxt "delivery type"
+msgid "Delivery to the entrance (courier will call)"
+msgstr ""
+
+#: includes/class-fc-settings.php:65
+msgid "Delivery time"
+msgstr ""
+
+#: includes/class-fc-settings.php:66
+msgctxt "delivery timing"
+msgid "As soon as possible"
+msgstr ""
+
+#: includes/class-fc-settings.php:67
+msgctxt "delivery timing"
+msgid "Choose a time"
+msgstr ""
+
+#: includes/class-fc-settings.php:68
+msgctxt ""
+"minimum order message (%min% and %remaining% are replaced with amounts)"
+msgid ""
+"The minimum order is %min%. Please add %remaining% more to place your order."
+msgstr ""
+
+#: includes/class-fc-settings.php:69
+msgctxt "off-hours message (%from% / %to% are times)"
+msgid "This item is available only from %from% to %to%."
+msgstr ""
+
+#: includes/class-fc-settings.php:140 includes/class-fc-settings.php:141
+#: includes/class-fc-settings.php:265
+msgid "Food Customizer"
+msgstr ""
+
+#: includes/class-fc-settings.php:269
+msgid "Colours"
+msgstr ""
+
+#: includes/class-fc-settings.php:272
+msgid "Text"
+msgstr ""
+
+#: includes/class-fc-settings.php:273
+msgid "Muted text"
+msgstr ""
+
+#: includes/class-fc-settings.php:274
+msgid "Border"
+msgstr ""
+
+#: includes/class-fc-settings.php:275
+msgid "Border (hover)"
+msgstr ""
+
+#: includes/class-fc-settings.php:276
+msgid "Card background"
+msgstr ""
+
+#: includes/class-fc-settings.php:277
+msgid "Popup background"
+msgstr ""
+
+#: includes/class-fc-settings.php:278
+msgid "Accent (selected)"
+msgstr ""
+
+#: includes/class-fc-settings.php:279
+msgid "Text on accent"
+msgstr ""
+
+#: includes/class-fc-settings.php:283
+msgid "Borders & shape"
+msgstr ""
+
+#: includes/class-fc-settings.php:286
+msgid "Corner radius (buttons/pills)"
+msgstr ""
+
+#: includes/class-fc-settings.php:287
+msgid "Corner radius (cards/boxes)"
+msgstr ""
+
+#: includes/class-fc-settings.php:288
+msgid "Border thickness"
+msgstr ""
+
+#: includes/class-fc-settings.php:292
+msgid "Texts"
+msgstr ""
+
+#: includes/class-fc-settings.php:293
+msgid ""
+"Leave a field blank to use the default, which follows your WordPress site "
+"language (translatable via WPML / Loco Translate)."
+msgstr ""
+
+#: includes/class-fc-settings.php:302
+msgid "Menu"
+msgstr ""
+
+#: includes/class-fc-settings.php:305
+msgid "Category tabs"
+msgstr ""
+
+#: includes/class-fc-settings.php:307
+msgid "Show the category tabs on the shop"
+msgstr ""
+
+#: includes/class-fc-settings.php:308
+msgid "Show the \"All\" tab"
+msgstr ""
+
+#: includes/class-fc-settings.php:312
+msgid "Default category"
+msgstr ""
+
+#: includes/class-fc-settings.php:324
+msgid "Which category is shown first when the shop loads."
+msgstr ""
+
+#: includes/class-fc-settings.php:328
+msgid "Hide categories"
+msgstr ""
+
+#: includes/class-fc-settings.php:340
+msgid ""
+"Ticked categories are removed from the shop — no tab, and their products are "
+"excluded from \"All\". \"Uncategorized\" is hidden by default."
+msgstr ""
+
+#: includes/class-fc-settings.php:344
+msgid "Available by time"
+msgstr ""
+
+#: includes/class-fc-settings.php:346
+msgid ""
+"Optional daily window per category (e.g. lunch 11:30–15:30). Outside the "
+"window the tab and its products are hidden. Leave blank = always available. "
+"Uses your WordPress timezone."
+msgstr ""
+
+#: includes/class-fc-settings.php:356
+msgid "From"
+msgstr ""
+
+#: includes/class-fc-settings.php:358
+msgid "to"
+msgstr ""
+
+#: includes/class-fc-settings.php:369
+msgid "General"
+msgstr ""
+
+#: includes/class-fc-settings.php:372
+msgid "Dual currency"
+msgstr ""
+
+#: includes/class-fc-settings.php:373
+msgid "Show EUR with BGN in parentheses"
+msgstr ""
+
+#: includes/class-fc-settings.php:376
+msgid "Minimum order total"
+msgstr ""
+
+#: includes/class-fc-settings.php:379
+msgid ""
+"Orders below this amount (EUR) show a message and cannot be completed. 0 = "
+"no minimum. Edit the message (\"Min order msg\") in the Texts section — "
+"%min% and %remaining% are replaced with the amounts."
+msgstr ""
+
+#: includes/class-fc-settings.php:380
+msgid "Block access to checkout below the minimum"
+msgstr ""
+
+#: includes/class-fc-settings.php:381
+msgid ""
+"hides the \"Proceed to checkout\" button until the minimum is met. When off, "
+"checkout stays open and only the final order is blocked."
+msgstr ""
+
+#: includes/class-fc-settings.php:385
+msgid "Cutlery on checkout"
+msgstr ""
+
+#: includes/class-fc-settings.php:387
+msgid ""
+"Show a \"cutlery & napkins\" checkbox with a quantity stepper on the "
+"checkout page"
+msgstr ""
+
+#: includes/class-fc-settings.php:394
+msgid "Edit the cutlery product (name / price):"
+msgstr ""
+
+#: includes/class-fc-settings.php:400
+msgid ""
+"A hidden product is created automatically the first time you enable this; "
+"edit its name/price in Products afterwards. The label text is editable in "
+"the Texts section above."
+msgstr ""
+
+#: includes/class-fc-shop.php:76
+msgid "Customize"
+msgstr ""

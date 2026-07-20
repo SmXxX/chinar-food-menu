@@ -1,0 +1,88 @@
+/* Food Customizer — customization / variation popup. Dark, elegant, outlined. */
+:root {
+	--fc-ink: #f2ede4;
+	--fc-muted: rgba(242, 237, 228, .55);
+	--fc-line: rgba(242, 237, 228, .22);
+	--fc-line-strong: rgba(242, 237, 228, .7);
+	--fc-panel: #16130f;              /* warm near-black panel */
+	--fc-panel-2: #1e1a15;
+}
+body.fc-modal-open { overflow: hidden; }
+
+.fc-modal-root { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.fc-modal-overlay { position: absolute; inset: 0; background: rgba(6, 5, 4, .72); backdrop-filter: blur(3px); }
+
+.fc-modal {
+	position: relative; z-index: 1; background: var(--fc-panel); color: var(--fc-ink);
+	width: min(920px, 96vw); max-height: 92vh; border: var(--fc-bw, 1px) solid var(--fc-line);
+	border-radius: var(--fc-radius-box, 6px); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr auto; box-shadow: 0 30px 70px rgba(0, 0, 0, .55);
+}
+.fc-modal-media { grid-row: 1 / 3; background: #0d0b09; display: flex; align-items: center; justify-content: center; padding: 22px; }
+.fc-modal-media img { max-width: 100%; max-height: 100%; border-radius: var(--fc-radius, 4px); object-fit: cover; }
+.fc-modal-body { padding: 24px 26px; overflow-y: auto; }
+.fc-modal-title { font-size: 1.5rem; font-weight: 500; margin: 0 0 6px; color: var(--fc-ink); text-transform: uppercase; letter-spacing: .03em; }
+.fc-modal-desc { color: var(--fc-muted); font-size: .9rem; line-height: 1.55; margin-bottom: 16px; }
+
+.fc-group { margin: 18px 0; }
+.fc-group h3 { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fc-muted); margin: 0 0 10px; font-weight: 600; }
+
+.fc-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; border: var(--fc-bw, 1px) solid var(--fc-line); border-radius: var(--fc-radius, 4px); margin-bottom: 8px; background: transparent; cursor: pointer; }
+.fc-opt span { color: var(--fc-ink); }
+.fc-opt-right { display: flex; align-items: center; gap: 10px; }
+.fc-opt-price { color: var(--fc-muted); font-size: .88rem; white-space: nowrap; }
+.fc-variant input, .fc-remove input { width: 17px; height: 17px; accent-color: var(--fc-ink); }
+.fc-variant:has(input:checked) { border-color: var(--fc-line-strong); }
+.fc-remove input { accent-color: var(--fc-ink); }
+
+.fc-addon { cursor: default; }
+.fc-stepper, .fc-qty-stepper { display: inline-flex; align-items: center; gap: 10px; }
+.fc-stepper button, .fc-qty-stepper button {
+	width: 30px; height: 30px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); background: transparent;
+	font-size: 17px; line-height: 1; cursor: pointer; color: var(--fc-ink); display: inline-flex; align-items: center; justify-content: center; transition: border-color .15s;
+}
+.fc-stepper button:hover, .fc-qty-stepper button:hover { border-color: var(--fc-line-strong); }
+.fc-qty, .fc-main-qty { min-width: 18px; text-align: center; font-weight: 600; }
+
+.fc-allergen-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.fc-allergen-chip { font-size: .72rem; padding: 3px 10px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
+
+/* Variation option pills in the popup */
+.fc-var-group h3 { margin-bottom: 10px; }
+.fc-var-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.fc-modal .fc-var-pill { border: var(--fc-bw, 1px) solid var(--fc-line); background: transparent; color: var(--fc-ink); border-radius: var(--fc-radius, 3px); padding: 9px 15px; font-size: .88rem; font-weight: 500; line-height: 1.25; cursor: pointer; transition: all .15s; }
+.fc-modal .fc-var-pill:hover { border-color: var(--fc-line-strong); }
+.fc-modal .fc-var-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
+
+.fc-modal-footer {
+	grid-column: 1 / 3; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+	padding: 18px 26px; border-top: 1px solid var(--fc-line); background: var(--fc-panel-2); flex-wrap: wrap;
+}
+.fc-final-wrap { display: flex; flex-direction: column; }
+.fc-final-wrap small { color: var(--fc-muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; }
+.fc-final-price { font-size: 1.3rem; font-weight: 600; color: var(--fc-ink); }
+.fc-final-price .fc-price-bgn { font-size: .8rem; font-weight: 400; color: var(--fc-muted); }
+.fc-add-btn.button, .fc-varmodal-add {
+	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
+	padding: 12px 30px !important; font-weight: 600 !important; font-size: .82rem !important; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s;
+}
+.fc-add-btn.button:hover, .fc-varmodal-add:hover { background: rgba(255, 255, 255, .1) !important; border-color: var(--fc-ink) !important; }
+.fc-add-btn.loading, .fc-varmodal-add.loading { opacity: .6; pointer-events: none; }
+.fc-varmodal-add.is-disabled { opacity: .4; pointer-events: none; }
+
+.fc-modal-close {
+	position: absolute; top: 12px; right: 14px; z-index: 3; width: 34px; height: 34px; border-radius: var(--fc-radius, 3px);
+	border: var(--fc-bw, 1px) solid var(--fc-line); background: rgba(0, 0, 0, .3); font-size: 22px; line-height: 1; cursor: pointer; color: var(--fc-ink);
+}
+.fc-modal-close:hover { border-color: var(--fc-line-strong); }
+.fc-customize-btn.loading { opacity: .6; pointer-events: none; }
+
+@media (max-width: 720px) {
+	.fc-modal { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; max-height: 94vh; }
+	.fc-modal-media { grid-row: auto; max-height: 28vh; }
+	.fc-modal-body { padding: 20px 18px; }
+	.fc-modal-footer { grid-column: 1; }
+	/* Stack the option selectors vertically — full-width, readable, easy to tap. */
+	.fc-var-pills { flex-direction: column; gap: 8px; }
+	.fc-modal .fc-var-pill { width: 100%; text-align: left; padding: 12px 15px; }
+}

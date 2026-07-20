@@ -1,0 +1,69 @@
+/* Food Customizer — checkout delivery fields. Uses the shared design tokens. */
+#fc-delivery {
+	margin: 22px 0 10px;
+	padding: 18px 18px 8px;
+	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242,237,228,.22));
+	border-radius: var(--fc-radius-box, 6px);
+	background: var(--fc-surface, rgba(255,255,255,.03));
+}
+#fc-delivery .fc-del-heading {
+	margin: 0 0 16px;
+	font-size: 1.15rem;
+	color: var(--fc-ink, #f2ede4);
+}
+#fc-delivery .form-row { margin-bottom: 14px; }
+#fc-delivery label { font-weight: 500; }
+#fc-delivery select.select {
+	width: 100%;
+	padding: 10px 12px;
+	background: var(--fc-panel, #16130f);
+	color: var(--fc-ink, #f2ede4);
+	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242,237,228,.22));
+	border-radius: var(--fc-radius, 3px);
+}
+.fc-del-info {
+	margin: -4px 0 14px;
+	font-size: .88rem;
+	line-height: 1.5;
+	color: var(--fc-muted, #a49e93);
+}
+.fc-del-info .fc-del-covers-val { color: var(--fc-ink, #f2ede4); }
+.fc-del-info .fc-del-eta-val { color: var(--fc-ink, #f2ede4); font-weight: 600; }
+.fc-del-busy {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 14px;
+	padding: 12px 14px;
+	border-radius: var(--fc-radius, 3px);
+	background: rgba(190, 60, 50, .12);
+	border: 1px solid rgba(190, 60, 50, .5);
+	color: #f0b9b2;
+	font-weight: 500;
+}
+.fc-del-busy[hidden] { display: none; } /* keep hidden working despite display:flex */
+.fc-del-busy::before {
+	content: "\26A0"; /* ⚠ — inline, to the left of the text */
+	flex: 0 0 auto;
+	font-size: 1.15em;
+	line-height: 1;
+}
+.fc-del-radios { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.fc-del-radio {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	font-weight: 400 !important;
+	cursor: pointer;
+}
+.fc-del-radio input[type="radio"] { margin: 0; accent-color: var(--fc-accent, #f2ede4); }
+.fc-del-asap-eta { color: var(--fc-muted, #a49e93); }
+.fc-del-time-input {
+	margin-top: 6px;
+	padding: 8px 10px;
+	background: var(--fc-panel, #16130f);
+	color: var(--fc-ink, #f2ede4);
+	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242,237,228,.22));
+	border-radius: var(--fc-radius, 3px);
+}
+#place_order.fc-del-blocked { opacity: .5; cursor: not-allowed; }

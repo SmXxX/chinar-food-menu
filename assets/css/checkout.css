@@ -1,0 +1,56 @@
+/* Food Customizer — checkout cutlery toggle. Uses the shared design tokens. */
+.fc-cutlery {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	flex-wrap: wrap;
+	margin: 0 0 18px;
+	padding: 14px 16px;
+	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242,237,228,.22));
+	border-radius: var(--fc-radius-box, 6px);
+	background: var(--fc-surface, rgba(255,255,255,.03));
+}
+.fc-cutlery-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	cursor: pointer;
+	font-weight: 500;
+}
+.fc-cutlery-cb {
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	accent-color: var(--fc-accent, #f2ede4);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.fc-cutlery-label { color: var(--fc-ink, #f2ede4); line-height: 1.3; }
+.fc-cutlery-stepper {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242,237,228,.22));
+	border-radius: var(--fc-radius, 3px);
+	padding: 3px;
+	flex: 0 0 auto;
+}
+.fc-cutlery-stepper[hidden] { display: none; }
+.fc-cutlery-minus, .fc-cutlery-plus {
+	width: 30px;
+	height: 30px;
+	line-height: 1;
+	font-size: 1rem;
+	background: transparent;
+	color: var(--fc-ink, #f2ede4);
+	border: 0;
+	border-radius: var(--fc-radius, 3px);
+	cursor: pointer;
+	transition: background .15s;
+}
+.fc-cutlery-minus:hover, .fc-cutlery-plus:hover { background: var(--fc-line, rgba(242,237,228,.15)); }
+.fc-cutlery-qty { min-width: 24px; text-align: center; font-weight: 600; color: var(--fc-ink, #f2ede4); }
+.fc-cutlery--busy { opacity: .55; }
+.fc-cutlery--busy input, .fc-cutlery--busy button { cursor: default; }
