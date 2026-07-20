@@ -52,7 +52,7 @@
 			"combine cards";
 	}
 	.fc-pp--stack .fc-pp-image { grid-area: image; margin: 0; }
-	.fc-pp--stack .fc-pp-image img { width: auto; max-width: 420px; aspect-ratio: 1; border-radius: 50%; display: block; margin: 0 auto; }
+	.fc-pp--stack .fc-pp-image img { width: 100%; max-width: 420px; aspect-ratio: 1; object-fit: cover; border-radius: var(--fc-radius-box, 6px); display: block; margin: 0 auto; }
 	.fc-pp--stack .fc-pp-title { grid-area: title; }
 	.fc-pp--stack .fc-pp-stack-body { grid-area: cards; margin-top: 0; }
 	.fc-pp--stack .fc-pp-buybar { grid-area: buybar; }
