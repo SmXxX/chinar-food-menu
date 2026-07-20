@@ -427,11 +427,22 @@ class FC_Menu {
 
 		wp_reset_postdata();
 
+		// A product with no variations and no customizer options opens a lightweight
+		// quick-view MODAL on click instead of navigating to the (optionless) product
+		// page. Products that are customizable keep linking to the full page. The href
+		// stays as a no-JS fallback; modal.js intercepts .fc-quickview clicks.
+		$quickview = ! $product->is_type( 'variable' )
+			&& ! FC_Options::has_options( $pid )
+			&& $product->is_purchasable()
+			&& $product->is_in_stock();
+		$qv_class = $quickview ? ' fc-quickview' : '';
+		$qv_data  = $quickview ? ' data-product-id="' . esc_attr( $pid ) . '"' : '';
+
 		return sprintf(
 			'<div class="fc-card">'
-			. '<a href="%1$s" class="fc-card-imgwrap" tabindex="-1">%2$s</a>'
+			. '<a href="%1$s" class="fc-card-imgwrap%6$s"%7$s tabindex="-1">%2$s</a>'
 			. '<div class="fc-card-body">'
-			. '<h3 class="fc-card-title"><a href="%1$s">%3$s</a></h3>'
+			. '<h3 class="fc-card-title"><a href="%1$s" class="fc-card-title-link%6$s"%7$s>%3$s</a></h3>'
 			. '%4$s'
 			. '%5$s'
 			. '</div></div>',
@@ -439,7 +450,9 @@ class FC_Menu {
 			$img,
 			esc_html( $title ),
 			$allergen,
-			$foot
+			$foot,
+			$qv_class,
+			$qv_data
 		);
 	}
 
