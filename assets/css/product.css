@@ -16,7 +16,7 @@
 /* Single-column stacked layout (happy.bg style): image → buy bar → cards → combine. */
 .fc-pp--stack { display: block; max-width: 640px; margin: 0 auto; }
 .fc-pp--stack .fc-pp-image { margin: 0 0 16px; }
-.fc-pp--stack .fc-pp-image img { max-width: 100%; width: 100%; aspect-ratio: 16 / 11; border-radius: var(--fc-radius-box, 6px); object-fit: cover; box-shadow: 0 18px 44px rgba(0, 0, 0, .4); }
+.fc-pp--stack .fc-pp-image img { max-width: 100%; width: 100%; height: auto; border-radius: var(--fc-radius-box, 6px); box-shadow: 0 18px 44px rgba(0, 0, 0, .4); }
 .fc-pp--stack .fc-pp-title { text-align: center; font-size: 1.7rem; margin: 0 0 4px; }
 .fc-pp--stack .fc-pp-weight { text-align: center; margin-bottom: 4px; }
 .fc-pp-buybar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 0; margin: 10px 0 4px; border-top: var(--fc-bw, 1px) solid var(--fc-line); border-bottom: var(--fc-bw, 1px) solid var(--fc-line); }
@@ -52,7 +52,7 @@
 			"combine cards";
 	}
 	.fc-pp--stack .fc-pp-image { grid-area: image; margin: 0; }
-	.fc-pp--stack .fc-pp-image img { width: 100%; max-width: 420px; aspect-ratio: 1; object-fit: cover; border-radius: var(--fc-radius-box, 6px); display: block; margin: 0 auto; }
+	.fc-pp--stack .fc-pp-image img { width: 100%; max-width: 420px; height: auto; border-radius: var(--fc-radius-box, 6px); display: block; margin: 0 auto; }
 	.fc-pp--stack .fc-pp-title { grid-area: title; }
 	.fc-pp--stack .fc-pp-stack-body { grid-area: cards; margin-top: 0; }
 	.fc-pp--stack .fc-pp-buybar { grid-area: buybar; }
@@ -102,7 +102,7 @@
 
 /* Main image + title */
 .fc-pp-image { display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
-.fc-pp-image img { max-width: 460px; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; box-shadow: 0 20px 50px rgba(0, 0, 0, .4); }
+.fc-pp-image img { max-width: 460px; width: 100%; height: auto; border-radius: var(--fc-radius-box, 6px); box-shadow: 0 20px 50px rgba(0, 0, 0, .4); }
 .fc-pp-title { font-size: 2rem; font-weight: 500; text-transform: uppercase; letter-spacing: .03em; color: var(--fc-ink); margin: 0 0 6px; }
 .fc-pp-weight { color: var(--fc-muted); font-size: 1.05rem; font-weight: 500; }
 
