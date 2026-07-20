@@ -9,7 +9,20 @@
 }
 
 /* Pills (category nav) — outlined, uppercase */
-.fc-pills { display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 20px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+.fc-pills-wrap { position: relative; }
+.fc-pills { display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 14px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--fc-line-strong, rgba(242,237,228,.5)) transparent; cursor: grab; scroll-behavior: smooth; }
+.fc-pills.fc-dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
+.fc-pills.fc-dragging .fc-pill { pointer-events: none; }
+.fc-pills::-webkit-scrollbar { height: 6px; }
+.fc-pills::-webkit-scrollbar-track { background: transparent; }
+.fc-pills::-webkit-scrollbar-thumb { background: var(--fc-line-strong, rgba(242,237,228,.5)); border-radius: 3px; }
+/* Fade hint on the right edge while there's more to slide to. */
+.fc-pills-wrap::after {
+	content: ""; position: absolute; top: 0; right: 0; bottom: 14px; width: 48px; z-index: 2; pointer-events: none;
+	background: linear-gradient(to left, var(--dark-bg-color, #0b0b0b), transparent);
+	opacity: 0; transition: opacity .2s;
+}
+.fc-pills-wrap.fc-scrollable:not(.fc-at-end)::after { opacity: 1; }
 .fc-pill {
 	flex: 0 0 auto; background: transparent; color: var(--fc-ink); border: var(--fc-bw, 1px) solid var(--fc-line);
 	padding: 9px 20px; border-radius: var(--fc-radius, 3px); font-weight: 600; font-size: var(--fc-fs-pill, .8rem); letter-spacing: .08em; text-transform: uppercase;

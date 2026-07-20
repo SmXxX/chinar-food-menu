@@ -2,9 +2,11 @@
 ( function ( $ ) {
 	'use strict';
 	var D = window.FC_DATA || {};
+	var pillDrag = false; // true right after a drag, to swallow the click.
 
 	$( document ).on( 'click', '.fc-shop .fc-pill', function ( e ) {
 		e.preventDefault();
+		if ( pillDrag ) { return; }
 		var $pill = $( this );
 		var $shop = $pill.closest( '.fc-shop' );
 		var $grid = $shop.find( '.fc-grid' );
@@ -63,4 +65,36 @@
 			} )
 			.fail( function () { alert( D.i18n && D.i18n.error ); $btn.removeClass( 'loading' ); } );
 	} );
+
+	// Category pills: drag-to-scroll (grab cursor) + a fade hint when the row overflows.
+	function initPills() {
+		$( '.fc-pills-wrap' ).each( function () {
+			var $wrap = $( this ), $pills = $wrap.find( '.fc-pills' ), el = $pills[ 0 ];
+			if ( ! el || $wrap.data( 'fcInit' ) ) { return; }
+			$wrap.data( 'fcInit', true );
+			function fade() {
+				var over = el.scrollWidth - el.clientWidth > 4;
+				$wrap.toggleClass( 'fc-scrollable', over )
+					.toggleClass( 'fc-at-end', over && el.scrollLeft >= el.scrollWidth - el.clientWidth - 4 );
+			}
+			fade();
+			$pills.on( 'scroll', fade );
+			$( window ).on( 'resize', fade );
+			var down = false, sx = 0, sl = 0, moved = 0;
+			$pills.on( 'mousedown', function ( e ) { down = true; moved = 0; sx = e.pageX; sl = el.scrollLeft; } );
+			$( document ).on( 'mousemove', function ( e ) {
+				if ( ! down ) { return; }
+				var dx = e.pageX - sx; moved += Math.abs( dx );
+				if ( moved > 6 ) { $pills.addClass( 'fc-dragging' ); pillDrag = true; }
+				el.scrollLeft = sl - dx;
+			} );
+			$( document ).on( 'mouseup', function () {
+				if ( ! down ) { return; }
+				down = false; $pills.removeClass( 'fc-dragging' );
+				setTimeout( function () { pillDrag = false; }, 30 );
+			} );
+		} );
+	}
+	$( initPills );
+	$( document.body ).on( 'fc_products_loaded', initPills );
 } )( jQuery );

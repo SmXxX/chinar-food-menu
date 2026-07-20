@@ -108,6 +108,7 @@ class FC_Menu {
 		?>
 		<div class="fc-shop" data-columns="<?php echo esc_attr( (int) $atts['columns'] ); ?>" data-limit="<?php echo esc_attr( (int) $atts['limit'] ); ?>">
 			<?php if ( $show_tabs && ! empty( $cats ) ) : ?>
+			<div class="fc-pills-wrap">
 			<div class="fc-pills" role="tablist">
 				<?php if ( $show_all ) : ?>
 					<button type="button" class="fc-pill<?php echo 'all' === $current ? ' is-active' : ''; ?>" data-cat="all"><?php esc_html_e( 'All', 'food-customizer' ); ?></button>
@@ -115,6 +116,7 @@ class FC_Menu {
 				<?php foreach ( $cats as $cat ) : ?>
 					<button type="button" class="fc-pill<?php echo $current === $cat->slug ? ' is-active' : ''; ?>" data-cat="<?php echo esc_attr( $cat->slug ); ?>"><?php echo esc_html( $cat->name ); ?></button>
 				<?php endforeach; ?>
+			</div>
 			</div>
 			<?php endif; ?>
 			<div class="fc-grid" style="--fc-cols:<?php echo esc_attr( (int) $atts['columns'] ); ?>">
