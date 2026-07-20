@@ -42,6 +42,15 @@
 		align-items: start;
 		max-width: 1100px;
 	}
+	/* RTL layout: option cards on the right, image on the left. */
+	body.fc-layout-rtl .fc-pp--stack {
+		grid-template-columns: 1fr minmax(280px, 360px);
+		grid-template-areas:
+			"image cards"
+			"title cards"
+			"buybar cards"
+			"combine cards";
+	}
 	.fc-pp--stack .fc-pp-image { grid-area: image; margin: 0; }
 	.fc-pp--stack .fc-pp-image img { width: auto; max-width: 420px; aspect-ratio: 1; border-radius: 50%; display: block; margin: 0 auto; }
 	.fc-pp--stack .fc-pp-title { grid-area: title; }

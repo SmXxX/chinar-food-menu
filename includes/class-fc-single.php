@@ -23,6 +23,9 @@ class FC_Single {
 	public function body_class( $classes ) {
 		if ( $this->is_food_product() ) {
 			$classes[] = 'fc-food-single';
+			if ( 'rtl' === FC_Settings::layout_direction() ) {
+				$classes[] = 'fc-layout-rtl';
+			}
 		}
 		return $classes;
 	}

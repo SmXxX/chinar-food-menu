@@ -157,6 +157,16 @@ JS;
 		register_setting( self::GROUP, 'fc_default_category', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field', 'default' => 'all' ) );
 		register_setting( self::GROUP, 'fc_hidden_categories', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_slug_list' ), 'default' => array( 'uncategorized' ) ) );
 		register_setting( self::GROUP, 'fc_category_schedules', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_schedules' ), 'default' => array() ) );
+		register_setting( self::GROUP, 'fc_layout_direction', array( 'type' => 'string', 'sanitize_callback' => array( $this, 'sanitize_direction' ), 'default' => 'ltr' ) );
+	}
+
+	public function sanitize_direction( $v ) {
+		return ( 'rtl' === $v ) ? 'rtl' : 'ltr';
+	}
+
+	/** Product-page layout direction: 'ltr' (options left) or 'rtl' (options right). */
+	public static function layout_direction() {
+		return ( 'rtl' === get_option( 'fc_layout_direction', 'ltr' ) ) ? 'rtl' : 'ltr';
 	}
 
 	public function sanitize_slug_list( $in ) {
@@ -287,6 +297,16 @@ JS;
 					$this->num_row( 'radius_box', __( 'Corner radius (cards/boxes)', 'food-customizer' ) );
 					$this->num_row( 'border_width', __( 'Border thickness', 'food-customizer' ) );
 					?>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Product page layout', 'food-customizer' ); ?></th>
+							<td>
+								<select name="fc_layout_direction">
+									<option value="ltr" <?php selected( 'ltr', self::layout_direction() ); ?>><?php esc_html_e( 'Options left, image right (default)', 'food-customizer' ); ?></option>
+									<option value="rtl" <?php selected( 'rtl', self::layout_direction() ); ?>><?php esc_html_e( 'Options right, image left', 'food-customizer' ); ?></option>
+								</select>
+								<p class="description"><?php esc_html_e( 'Which side the option cards appear on (desktop only \u2014 on mobile it is always a single column).', 'food-customizer' ); ?></p>
+							</td>
+						</tr>
 				</table>
 
 				<h2><?php esc_html_e( 'Texts', 'food-customizer' ); ?></h2>
