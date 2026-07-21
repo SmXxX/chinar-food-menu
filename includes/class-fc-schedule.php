@@ -222,8 +222,9 @@ class FC_Schedule {
 		<div id="fc-sched" class="fc-sched">
 			<h3 class="fc-sched-title"><?php esc_html_e( 'Delivery date & time', 'food-customizer' ); ?></h3>
 			<p class="form-row form-row-wide">
-				<label for="fc_sched_date"><?php esc_html_e( 'Delivery date', 'food-customizer' ); ?> <abbr class="required">*</abbr></label>
-				<input type="text" id="fc_sched_date" name="fc_sched_date" class="input-text" readonly placeholder="<?php esc_attr_e( 'Choose a date', 'food-customizer' ); ?>" autocomplete="off" value="<?php echo esc_attr( WC()->session ? WC()->session->get( 'fc_sched_date' ) : '' ); ?>">
+				<label for="fc_sched_date_display"><?php esc_html_e( 'Delivery date', 'food-customizer' ); ?> <abbr class="required">*</abbr></label>
+				<input type="text" id="fc_sched_date_display" class="input-text" readonly placeholder="<?php esc_attr_e( 'Choose a date', 'food-customizer' ); ?>" autocomplete="off">
+				<input type="hidden" id="fc_sched_date" name="fc_sched_date" value="">
 			</p>
 			<p class="form-row form-row-wide">
 				<label for="fc_sched_slot"><?php esc_html_e( 'Delivery time', 'food-customizer' ); ?> <abbr class="required">*</abbr></label>
@@ -269,8 +270,8 @@ class FC_Schedule {
 		return <<<'JS'
 jQuery(function($){
 	var cfg = window.FC_SCHED || {}; if(!cfg.slots){ return; }
-	var $date = $('#fc_sched_date'), $slot = $('#fc_sched_slot');
-	if(!$date.length){ return; }
+	var $disp = $('#fc_sched_date_display'), $date = $('#fc_sched_date'), $slot = $('#fc_sched_slot');
+	if(!$disp.length){ return; }
 	function fmt(d){ return $.datepicker.formatDate('yy-mm-dd', d); }
 	function fillSlots(ds){
 		var bl = (cfg.blocked && cfg.blocked[ds]) || [];
@@ -279,15 +280,16 @@ jQuery(function($){
 		(cfg.slots||[]).forEach(function(s){ if(bl.indexOf(s)===-1 && bl.indexOf('*')===-1){ $slot.append($('<option>').val(s).text(s)); } });
 		if(cur){ $slot.val(cur); }
 	}
-	$date.datepicker({
-		dateFormat:'yy-mm-dd', minDate: cfg.lead, maxDate: cfg.horizon, firstDay: (cfg.i18n.first_day||1),
+	$disp.datepicker({
+		dateFormat:'dd/mm/yy', altField:'#fc_sched_date', altFormat:'yy-mm-dd',
+		minDate: cfg.lead, maxDate: cfg.horizon, firstDay: (cfg.i18n.first_day||1),
 		beforeShowDay: function(d){
 			if((cfg.days||[]).indexOf(d.getDay())===-1){ return [false,'']; }
 			var ds = fmt(d), bl = (cfg.blocked && cfg.blocked[ds]) || [];
 			if(bl.indexOf('*')!==-1 || (bl.length && bl.length >= (cfg.slots||[]).length)){ return [false,'']; }
 			return [true,''];
 		},
-		onSelect: function(ds){ fillSlots(ds); }
+		onSelect: function(){ fillSlots($date.val()); }
 	});
 	if($date.val()){ fillSlots($date.val()); }
 });

@@ -7,9 +7,12 @@
 	margin: 0 0 12px; font-weight: 600;
 }
 .fc-sched .fc-sched-slot,
-.fc-sched input#fc_sched_date {
+.fc-sched input#fc_sched_date_display {
 	width: 100%; box-sizing: border-box; cursor: pointer;
+	color: var(--fc-cal-text, var(--fc-ink, #f2ede4)) !important;
 }
+/* Dropdown options render in a native popup — keep them readable there. */
+.fc-sched .fc-sched-slot option { color: #111; background: #fff; }
 
 /* jQuery UI datepicker. Colours come from admin-customizable calendar tokens
    (--fc-cal-*), which default to the shop's design tokens. !important so the
