@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 15:24+0300\n"
+"POT-Creation-Date: 2026-07-21 15:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,6 +47,120 @@ msgstr ""
 #: includes/class-fc-shop.php:208 includes/class-fc-menu.php:84
 #: includes/class-fc-menu.php:112
 msgid "Could not add to cart."
+msgstr ""
+
+#: includes/class-fc-schedule.php:115 includes/class-fc-schedule.php:116
+#: includes/class-fc-schedule.php:144
+msgid "Delivery schedule"
+msgstr ""
+
+#: includes/class-fc-schedule.php:141
+msgid "Sun"
+msgstr ""
+
+#: includes/class-fc-schedule.php:141
+msgid "Mon"
+msgstr ""
+
+#: includes/class-fc-schedule.php:141
+msgid "Tue"
+msgstr ""
+
+#: includes/class-fc-schedule.php:141
+msgid "Wed"
+msgstr ""
+
+#: includes/class-fc-schedule.php:141
+msgid "Thu"
+msgstr ""
+
+#: includes/class-fc-schedule.php:141
+msgid "Fri"
+msgstr ""
+
+#: includes/class-fc-schedule.php:141
+msgid "Sat"
+msgstr ""
+
+#: includes/class-fc-schedule.php:148
+msgid "Enable"
+msgstr ""
+
+#: includes/class-fc-schedule.php:149
+msgid "Ask for a delivery date & time slot at checkout"
+msgstr ""
+
+#: includes/class-fc-schedule.php:150
+msgid "Delivery days"
+msgstr ""
+
+#: includes/class-fc-schedule.php:154
+msgid "Untick a day to stop deliveries on it (e.g. Sunday)."
+msgstr ""
+
+#: includes/class-fc-schedule.php:155
+msgid "Lead time (days)"
+msgstr ""
+
+#: includes/class-fc-schedule.php:157
+msgid ""
+"Earliest bookable day = today + this many days (prep time). e.g. 1 = from "
+"tomorrow."
+msgstr ""
+
+#: includes/class-fc-schedule.php:158
+msgid "Booking horizon (days)"
+msgstr ""
+
+#: includes/class-fc-schedule.php:160
+msgid "How far ahead customers can book."
+msgstr ""
+
+#: includes/class-fc-schedule.php:161
+msgid "Time slots"
+msgstr ""
+
+#: includes/class-fc-schedule.php:163
+msgid "One slot per line."
+msgstr ""
+
+#: includes/class-fc-schedule.php:164
+msgid "Block busy dates / slots"
+msgstr ""
+
+#: includes/class-fc-schedule.php:166
+msgid ""
+"One per line. \"YYYY-MM-DD | 11:00 - 12:00\" blocks that slot; a bare \"YYYY-"
+"MM-DD\" blocks the whole day."
+msgstr ""
+
+#: includes/class-fc-schedule.php:181 includes/class-fc-schedule.php:282
+#: includes/class-fc-schedule.php:291
+msgid "Delivery date & time"
+msgstr ""
+
+#: includes/class-fc-schedule.php:183
+msgid "Delivery date"
+msgstr ""
+
+#: includes/class-fc-schedule.php:184
+msgid "Choose a date"
+msgstr ""
+
+#: includes/class-fc-schedule.php:187 includes/class-fc-settings.php:80
+msgid "Delivery time"
+msgstr ""
+
+#: includes/class-fc-schedule.php:188 includes/class-fc-schedule.php:208
+msgid "Please choose a time"
+msgstr ""
+
+#: includes/class-fc-schedule.php:254
+msgid "Please choose a delivery date and time."
+msgstr ""
+
+#: includes/class-fc-schedule.php:258 includes/class-fc-schedule.php:263
+msgid "That delivery date or time is not available — please pick another."
 msgstr ""
 
 #: includes/class-fc-options.php:196 includes/class-fc-menu.php:415
@@ -299,10 +413,6 @@ msgstr ""
 #: includes/class-fc-settings.php:79
 msgctxt "delivery type"
 msgid "Delivery to the entrance (courier will call)"
-msgstr ""
-
-#: includes/class-fc-settings.php:80
-msgid "Delivery time"
 msgstr ""
 
 #: includes/class-fc-settings.php:81

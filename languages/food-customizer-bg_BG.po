@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Food Customizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 15:24+0300\n"
+"POT-Creation-Date: 2026-07-21 15:43+0300\n"
 "PO-Revision-Date: 2026-07-20 12:00+0300\n"
 "Last-Translator: Staria Chinar\n"
 "Language-Team: Bulgarian\n"
@@ -48,6 +48,129 @@ msgstr "Моля, изберете опциите."
 #: includes/class-fc-menu.php:112
 msgid "Could not add to cart."
 msgstr "Не може да се добави в количката."
+
+#: includes/class-fc-schedule.php:115 includes/class-fc-schedule.php:116
+#: includes/class-fc-schedule.php:144
+#, fuzzy
+msgid "Delivery schedule"
+msgstr "Зона за доставка"
+
+#: includes/class-fc-schedule.php:141
+msgid "Sun"
+msgstr "Нед"
+
+#: includes/class-fc-schedule.php:141
+msgid "Mon"
+msgstr "Пон"
+
+#: includes/class-fc-schedule.php:141
+msgid "Tue"
+msgstr "Вто"
+
+#: includes/class-fc-schedule.php:141
+msgid "Wed"
+msgstr "Сря"
+
+#: includes/class-fc-schedule.php:141
+msgid "Thu"
+msgstr "Чет"
+
+#: includes/class-fc-schedule.php:141
+msgid "Fri"
+msgstr "Пет"
+
+#: includes/class-fc-schedule.php:141
+#, fuzzy
+msgid "Sat"
+msgstr "Статус"
+
+#: includes/class-fc-schedule.php:148
+msgid "Enable"
+msgstr "Активиране"
+
+#: includes/class-fc-schedule.php:149
+#, fuzzy
+msgid "Ask for a delivery date & time slot at checkout"
+msgstr "Показвай зоната / опциите за доставка на страницата за плащане"
+
+#: includes/class-fc-schedule.php:150
+#, fuzzy
+msgid "Delivery days"
+msgstr "Доставка"
+
+#: includes/class-fc-schedule.php:154
+msgid "Untick a day to stop deliveries on it (e.g. Sunday)."
+msgstr "Махнете отметката на ден, за да спрете доставките в него (напр. неделя)."
+
+#: includes/class-fc-schedule.php:155
+msgid "Lead time (days)"
+msgstr "Време за подготовка (дни)"
+
+#: includes/class-fc-schedule.php:157
+msgid ""
+"Earliest bookable day = today + this many days (prep time). e.g. 1 = from "
+"tomorrow."
+msgstr "Най-ранен ден за заявка = днес + този брой дни (за подготовка). Напр. 1 = от утре."
+
+#: includes/class-fc-schedule.php:158
+msgid "Booking horizon (days)"
+msgstr "Хоризонт за заявки (дни)"
+
+#: includes/class-fc-schedule.php:160
+msgid "How far ahead customers can book."
+msgstr "Колко напред могат да заявяват клиентите."
+
+#: includes/class-fc-schedule.php:161
+msgid "Time slots"
+msgstr "Часови интервали"
+
+#: includes/class-fc-schedule.php:163
+msgid "One slot per line."
+msgstr "По един интервал на ред."
+
+#: includes/class-fc-schedule.php:164
+msgid "Block busy dates / slots"
+msgstr "Блокиране на заети дати / интервали"
+
+#: includes/class-fc-schedule.php:166
+msgid ""
+"One per line. \"YYYY-MM-DD | 11:00 - 12:00\" blocks that slot; a bare \"YYYY-"
+"MM-DD\" blocks the whole day."
+msgstr "По един на ред. „ГГГГ-ММ-ДД | 11:00 - 12:00“ блокира този интервал; само „ГГГГ-ММ-ДД“ блокира целия ден."
+
+#: includes/class-fc-schedule.php:181 includes/class-fc-schedule.php:282
+#: includes/class-fc-schedule.php:291
+#, fuzzy
+msgid "Delivery date & time"
+msgstr "Време за доставка"
+
+#: includes/class-fc-schedule.php:183
+#, fuzzy
+msgid "Delivery date"
+msgstr "Време за доставка"
+
+#: includes/class-fc-schedule.php:184
+#, fuzzy
+msgid "Choose a date"
+msgstr "Изберете час"
+
+#: includes/class-fc-schedule.php:187 includes/class-fc-settings.php:80
+msgid "Delivery time"
+msgstr "Време за доставка"
+
+#: includes/class-fc-schedule.php:188 includes/class-fc-schedule.php:208
+#, fuzzy
+msgid "Please choose a time"
+msgstr "Моля, изберете опциите."
+
+#: includes/class-fc-schedule.php:254
+#, fuzzy
+msgid "Please choose a delivery date and time."
+msgstr "Моля, изберете време за доставка или изберете „възможно най-бързо“."
+
+#: includes/class-fc-schedule.php:258 includes/class-fc-schedule.php:263
+msgid "That delivery date or time is not available — please pick another."
+msgstr "Тази дата или час не е налична — моля изберете друга."
 
 #: includes/class-fc-options.php:196 includes/class-fc-menu.php:415
 #, php-format
@@ -307,10 +430,6 @@ msgstr "Доставка до врата"
 msgctxt "delivery type"
 msgid "Delivery to the entrance (courier will call)"
 msgstr "Доставка до входа (куриерът ще се обади)"
-
-#: includes/class-fc-settings.php:80
-msgid "Delivery time"
-msgstr "Време за доставка"
 
 #: includes/class-fc-settings.php:81
 msgctxt "delivery timing"
