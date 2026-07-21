@@ -123,6 +123,9 @@
 		if ( blocked && p.unavailable_msg ) {
 			h += '<div class="fc-pp-unavailable" role="alert">' + esc( p.unavailable_msg ) + '</div>';
 		}
+		if ( p.stock_note ) {
+			h += '<div class="fc-pp-stock">' + esc( p.stock_note ) + '</div>';
+		}
 
 		if ( opts ) { h += '<div class="fc-pp-stack-body">' + opts + '</div>'; }
 		h += combine;
@@ -191,6 +194,7 @@
 	$( document ).on( 'click', '#fc-product-app .fc-qplus, #fc-product-app .fc-qminus', function () {
 		state.q += $( this ).hasClass( 'fc-qplus' ) ? 1 : -1;
 		if ( state.q < 1 ) { state.q = 1; }
+		if ( p.stock && p.stock > 0 && state.q > p.stock ) { state.q = p.stock; } // cap at remaining stock
 		$( '#fc-product-app .fc-main-qty' ).text( state.q );
 		persist(); refreshPrice();
 	} );

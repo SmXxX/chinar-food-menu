@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 14:59+0300\n"
+"POT-Creation-Date: 2026-07-21 15:24+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,7 +36,7 @@ msgid "лв"
 msgstr ""
 
 #: includes/class-fc-shop.php:147 includes/class-fc-shop.php:161
-#: includes/class-fc-menu.php:81 includes/class-fc-menu.php:483
+#: includes/class-fc-menu.php:81 includes/class-fc-menu.php:487
 msgid "Product not available."
 msgstr ""
 
@@ -47,6 +47,11 @@ msgstr ""
 #: includes/class-fc-shop.php:208 includes/class-fc-menu.php:84
 #: includes/class-fc-menu.php:112
 msgid "Could not add to cart."
+msgstr ""
+
+#: includes/class-fc-options.php:196 includes/class-fc-menu.php:415
+#, php-format
+msgid "only %d left"
 msgstr ""
 
 #: includes/class-fc-guide.php:23

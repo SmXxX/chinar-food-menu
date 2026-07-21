@@ -35,10 +35,12 @@
 	// Card quantity stepper.
 	$( document ).on( 'click', '.fc-card-qty .fc-cq-plus, .fc-card-qty .fc-cq-minus', function () {
 		var $val = $( this ).siblings( '.fc-cq-val' );
+		var stock = parseInt( $( this ).closest( '.fc-card-buy' ).data( 'stock' ), 10 ) || 0;
+		var max = stock > 0 ? stock : 99; // cap at remaining stock for rental/limited items
 		var q = parseInt( $val.text(), 10 ) || 1;
 		q += $( this ).hasClass( 'fc-cq-plus' ) ? 1 : -1;
 		if ( q < 1 ) { q = 1; }
-		if ( q > 99 ) { q = 99; }
+		if ( q > max ) { q = max; }
 		$val.text( q );
 	} );
 

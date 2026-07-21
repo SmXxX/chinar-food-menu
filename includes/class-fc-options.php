@@ -12,6 +12,26 @@ defined( 'ABSPATH' ) || exit;
 class FC_Options {
 
 	/**
+	 * The last WooCommerce cart error (e.g. the out-of-stock notice that
+	 * add_to_cart raises), stripped and cleared so it won't leak to the next
+	 * page. Lets our AJAX add-to-cart show the real "only N left" message
+	 * instead of a generic error. Falls back to $fallback.
+	 */
+	public static function cart_error( $fallback ) {
+		$notices = function_exists( 'wc_get_notices' ) ? wc_get_notices( 'error' ) : array();
+		if ( ! empty( $notices ) ) {
+			wc_clear_notices();
+			$last = end( $notices );
+			$msg  = is_array( $last ) ? ( $last['notice'] ?? '' ) : $last;
+			$msg  = trim( wp_strip_all_tags( (string) $msg ) );
+			if ( '' !== $msg ) {
+				return $msg;
+			}
+		}
+		return $fallback;
+	}
+
+	/**
 	 * Read a product's full food-options config as a normalized array.
 	 *
 	 * @param int $product_id
@@ -150,6 +170,9 @@ class FC_Options {
 			);
 		}
 
+		// Remaining stock for rental/limited items (Manage stock ON); 0 = unlimited.
+		$stock = ( $product->managing_stock() && null !== $product->get_stock_quantity() ) ? max( 0, (int) $product->get_stock_quantity() ) : 0;
+
 		return array(
 			'wc'          => $wc,
 			'combine'     => $combine,
@@ -169,6 +192,8 @@ class FC_Options {
 			'allergens'   => $allergens,
 			'available'   => ! $blocked,
 			'unavailable_msg' => $blocked ? FC_Menu::unavailable_message( $product_id ) : '',
+			'stock'       => $stock,
+			'stock_note'  => $stock > 0 ? sprintf( __( 'only %d left', 'food-customizer' ), $stock ) : '',
 		);
 	}
 

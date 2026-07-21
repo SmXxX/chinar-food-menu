@@ -205,7 +205,7 @@ class FC_Shop {
 			$added = WC()->cart->add_to_cart( $product_id, $qty, 0, array(), $cart_item_data );
 		}
 		if ( ! $added ) {
-			wp_send_json_error( array( 'message' => __( 'Could not add to cart.', 'food-customizer' ) ) );
+			wp_send_json_error( array( 'message' => FC_Options::cart_error( __( 'Could not add to cart.', 'food-customizer' ) ) ) );
 		}
 
 		wp_send_json_success( array(

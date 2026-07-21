@@ -54,6 +54,7 @@
 /* Weight sits just above the price, both pinned to the bottom of the card. */
 .fc-card-priceblock { display: flex; flex-direction: column; gap: 4px; }
 .fc-card-weight { color: var(--fc-muted); font-size: var(--fc-fs-small, .84rem); line-height: 1.4; }
+.fc-card-stock { color: var(--fc-accent, #dd5903); font-size: var(--fc-fs-small, .72rem); line-height: 1.4; margin-top: 2px; font-weight: 600; letter-spacing: .02em; }
 .fc-card-allergens { display: flex; flex-wrap: wrap; gap: 5px; }
 .fc-card-allergen { font-size: var(--fc-fs-small, .66rem); padding: 2px 9px; border-radius: var(--fc-radius, 3px); border: var(--fc-bw, 1px) solid var(--fc-line); color: var(--fc-muted); text-transform: uppercase; letter-spacing: .04em; }
 

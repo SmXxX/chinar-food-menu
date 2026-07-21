@@ -81,7 +81,7 @@ class FC_Menu {
 			wp_send_json_error( array( 'message' => __( 'Product not available.', 'food-customizer' ) ) );
 		}
 		if ( ! WC()->cart->add_to_cart( $product_id, $qty ) ) {
-			wp_send_json_error( array( 'message' => __( 'Could not add to cart.', 'food-customizer' ) ) );
+			wp_send_json_error( array( 'message' => FC_Options::cart_error( __( 'Could not add to cart.', 'food-customizer' ) ) ) );
 		}
 		wp_send_json_success( array(
 			'cart_count' => WC()->cart->get_cart_contents_count(),
@@ -109,7 +109,7 @@ class FC_Menu {
 
 		$added = WC()->cart->add_to_cart( $product_id, $qty, $variation_id, $var_attrs );
 		if ( ! $added ) {
-			wp_send_json_error( array( 'message' => __( 'Could not add to cart.', 'food-customizer' ) ) );
+			wp_send_json_error( array( 'message' => FC_Options::cart_error( __( 'Could not add to cart.', 'food-customizer' ) ) ) );
 		}
 		wp_send_json_success( array(
 			'cart_count' => WC()->cart->get_cart_contents_count(),
@@ -409,9 +409,13 @@ class FC_Menu {
 			$foot = $this->render_variable_foot( $product, $weight_html );
 		} elseif ( ! FC_Options::has_options( $pid ) && $product->is_purchasable() && $product->is_in_stock() ) {
 			// Plain simple product → quantity stepper + add button (add several easily).
+			// Rental/limited-stock items (Manage stock ON): cap the stepper at the
+			// remaining quantity and show a "само N left" note.
+			$stock = ( $product->managing_stock() && null !== $product->get_stock_quantity() ) ? max( 0, (int) $product->get_stock_quantity() ) : 0;
+			$stock_note = $stock > 0 ? '<div class="fc-card-stock">' . sprintf( esc_html__( 'only %d left', 'food-customizer' ), $stock ) . '</div>' : '';
 			$foot = '<div class="fc-card-foot">'
-				. '<div class="fc-card-priceblock">' . $weight_html . '<span class="fc-card-price">' . $product->get_price_html() . '</span></div>'
-				. '<div class="fc-card-buy">'
+				. '<div class="fc-card-priceblock">' . $weight_html . '<span class="fc-card-price">' . $product->get_price_html() . '</span>' . $stock_note . '</div>'
+				. '<div class="fc-card-buy" data-stock="' . esc_attr( $stock ) . '">'
 				. '<span class="fc-card-qty"><button type="button" class="fc-cq-minus" aria-label="&minus;">&minus;</button><span class="fc-cq-val">1</span><button type="button" class="fc-cq-plus" aria-label="+">+</button></span>'
 				. '<button type="button" class="fc-card-add button" data-product-id="' . esc_attr( $pid ) . '">' . esc_html( FC_Settings::label( 'add_to_cart' ) ) . '</button>'
 				. '</div></div>';

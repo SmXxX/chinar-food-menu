@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Food Customizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 14:59+0300\n"
+"POT-Creation-Date: 2026-07-21 15:24+0300\n"
 "PO-Revision-Date: 2026-07-20 12:00+0300\n"
 "Last-Translator: Staria Chinar\n"
 "Language-Team: Bulgarian\n"
@@ -36,7 +36,7 @@ msgid "лв"
 msgstr "лв"
 
 #: includes/class-fc-shop.php:147 includes/class-fc-shop.php:161
-#: includes/class-fc-menu.php:81 includes/class-fc-menu.php:483
+#: includes/class-fc-menu.php:81 includes/class-fc-menu.php:487
 msgid "Product not available."
 msgstr "Продуктът не е наличен."
 
@@ -48,6 +48,11 @@ msgstr "Моля, изберете опциите."
 #: includes/class-fc-menu.php:112
 msgid "Could not add to cart."
 msgstr "Не може да се добави в количката."
+
+#: includes/class-fc-options.php:196 includes/class-fc-menu.php:415
+#, php-format
+msgid "only %d left"
+msgstr "остават само %d"
 
 #: includes/class-fc-guide.php:23
 msgid "Guide"
@@ -507,7 +512,8 @@ msgstr "Шрифтове"
 
 #: includes/class-fc-settings.php:403
 msgid "Text sizes in pixels. Defaults match the current design."
-msgstr "Размери на текста в пиксели. По подразбиране съвпадат с текущия дизайн."
+msgstr ""
+"Размери на текста в пиксели. По подразбиране съвпадат с текущия дизайн."
 
 #: includes/class-fc-settings.php:404
 msgid ""
@@ -521,7 +527,9 @@ msgstr "Шрифт за основния текст"
 
 #: includes/class-fc-settings.php:407
 msgid "Leave blank to use the theme font. Example: \"Roboto\", sans-serif"
-msgstr "Оставете празно, за да се използва шрифтът на темата. Пример: \"Roboto\", sans-serif"
+msgstr ""
+"Оставете празно, за да се използва шрифтът на темата. Пример: \"Roboto\", "
+"sans-serif"
 
 #: includes/class-fc-settings.php:408
 msgid "Headings font family"
@@ -854,7 +862,8 @@ msgstr "Внасяне на съставки от описанията"
 #: includes/class-fc-ingredient-importer.php:113
 #, php-format
 msgid "Done. Filled %1$d products; skipped %2$d that already had ingredients."
-msgstr "Готово. Попълнени %1$d продукта; пропуснати %2$d, които вече имаха съставки."
+msgstr ""
+"Готово. Попълнени %1$d продукта; пропуснати %2$d, които вече имаха съставки."
 
 #: includes/class-fc-ingredient-importer.php:118
 #, php-format

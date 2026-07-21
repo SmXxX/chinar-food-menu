@@ -21,6 +21,7 @@
 .fc-pp--stack .fc-pp-weight { text-align: center; margin-bottom: 4px; }
 .fc-pp-buybar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 0; margin: 10px 0 4px; border-top: var(--fc-bw, 1px) solid var(--fc-line); border-bottom: var(--fc-bw, 1px) solid var(--fc-line); }
 .fc-pp-buybar .fc-pp-final { margin-right: auto; }
+.fc-pp-stock { color: var(--fc-accent, #dd5903); font-weight: 600; font-size: var(--fc-fs-small, .8rem); margin: 8px 0 0; }
 .fc-pp-stack-body { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
 .fc-pp--stack .fc-combine { margin-top: 28px; }
 
