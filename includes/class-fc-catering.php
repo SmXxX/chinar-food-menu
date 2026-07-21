@@ -23,7 +23,7 @@ class FC_Catering {
 		}
 
 		// --- #1 Payment sub-choice (cash vs courier POS), shown under COD -------
-		add_action( 'woocommerce_review_order_after_payment', array( $this, 'payment_choice_field' ) );
+		add_filter( 'woocommerce_gateway_description', array( $this, 'cod_description' ), 10, 2 );
 		add_action( 'woocommerce_checkout_process', array( $this, 'validate_payment_choice' ) );
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_payment_choice' ), 10, 2 );
 		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'admin_show_payment_choice' ) );
@@ -53,34 +53,21 @@ class FC_Catering {
 	}
 
 	/**
-	 * Radio shown below the payment methods; JS reveals it only while
-	 * "Cash on delivery" is the selected method.
+	 * Inject the cash/POS choice INTO the "Cash on delivery" description box, so it
+	 * sits under "Наложен платеж" and shows only when that method is selected
+	 * (WooCommerce reveals the payment box automatically — no custom JS needed).
+	 * Built as a single line so wpautop (run on the description) can't mangle it.
 	 */
-	public function payment_choice_field() {
-		if ( ! self::pos_enabled() ) {
-			return;
+	public function cod_description( $description, $gateway_id ) {
+		if ( 'cod' !== $gateway_id || ! self::pos_enabled() ) {
+			return $description;
 		}
-		$chosen = WC()->session ? WC()->session->get( 'chosen_payment_method' ) : '';
-		$hide   = ( 'cod' === $chosen ) ? '' : ' style="display:none"';
-		echo '<div id="fc-pay-choice" class="fc-pay-choice"' . $hide . '>'; // phpcs:ignore
-		echo '<p class="fc-pay-choice-label"><strong>' . esc_html( FC_Settings::label( 'pay_choose' ) ) . '</strong></p>';
+		$html = '<span class="fc-pay-choice"><span class="fc-pay-choice-label">' . esc_html( FC_Settings::label( 'pay_choose' ) ) . '</span>';
 		foreach ( self::pay_options() as $val => $label ) {
-			printf(
-				'<label class="fc-pay-opt"><input type="radio" name="fc_pay_type" value="%s" %s> %s</label>',
-				esc_attr( $val ),
-				checked( 'cash', $val, false ), // cash preselected
-				esc_html( $label )
-			);
+			$html .= '<label class="fc-pay-opt"><input type="radio" name="fc_pay_type" value="' . esc_attr( $val ) . '"' . checked( 'cash', $val, false ) . '><span class="fc-pay-opt-text">' . esc_html( $label ) . '</span></label>';
 		}
-		echo '</div>';
-		// Reveal only for COD.
-		wc_enqueue_js( "
-			jQuery(function($){
-				function fcToggle(){ $('#fc-pay-choice').toggle( $('input[name=payment_method]:checked').val()==='cod' ); }
-				$(document.body).on('change','input[name=payment_method]',fcToggle);
-				$(document.body).on('updated_checkout',fcToggle); fcToggle();
-			});
-		" );
+		$html .= '</span>';
+		return $description . $html;
 	}
 
 	public function validate_payment_choice() {

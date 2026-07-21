@@ -1,4 +1,27 @@
 /* Food Customizer — front-end styles. */
+
+/* Catering: courier cash/POS choice inside the "Cash on delivery" box. */
+.fc-pay-choice { display: block; margin-top: 12px; }
+.fc-pay-choice-label { display: block; font-weight: 600; margin-bottom: 10px; }
+.fc-pay-opt {
+	display: flex; align-items: center; gap: 11px; width: 100%; box-sizing: border-box;
+	padding: 12px 14px; margin: 8px 0; cursor: pointer;
+	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242, 237, 228, .26));
+	border-radius: var(--fc-radius, 6px); transition: border-color .15s, background .15s;
+}
+.fc-pay-opt:hover { border-color: var(--fc-line-strong, rgba(242, 237, 228, .7)); }
+.fc-pay-opt input[type="radio"] {
+	appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 19px; height: 19px; margin: 0;
+	border: 2px solid var(--fc-line-strong, rgba(242, 237, 228, .7)); border-radius: 50%;
+	position: relative; cursor: pointer; background: transparent;
+}
+.fc-pay-opt input[type="radio"]:checked { border-color: var(--fc-accent, #dd5903); }
+.fc-pay-opt input[type="radio"]:checked::after {
+	content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--fc-accent, #dd5903);
+}
+.fc-pay-opt:has(input:checked) { border-color: var(--fc-accent, #dd5903); background: rgba(127, 127, 127, .08); }
+.fc-pay-opt .fc-pay-opt-text { color: inherit; line-height: 1.3; }
+
 .fc-price-bgn {
 	color: #6b7280;
 	font-size: .85em;
