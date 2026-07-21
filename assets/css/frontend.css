@@ -15,7 +15,8 @@
 .fc-fly-cart {
 	position: fixed;
 	right: 22px;
-	bottom: 22px;
+	/* Sit above the theme's 56px "back to top" button (right:20px, bottom:30px). */
+	bottom: 96px;
 	z-index: 99990;
 	display: flex;
 	align-items: center;
@@ -51,7 +52,7 @@
 @media (max-width: 600px) {
 	/* Keep the button clear of the iOS Safari / gesture bar via the safe-area inset,
 	   and keep the running total visible — on mobile this is the main way to the cart. */
-	.fc-fly-cart { right: 14px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); padding: 12px 16px; }
+	.fc-fly-cart { right: 14px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); padding: 12px 16px; }
 }
 
 /* Minimum-order message on the checkout page. */
