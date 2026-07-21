@@ -31,6 +31,13 @@ class FC_Style {
 	public function output() {
 		$d = function ( $k ) { return FC_Settings::design( $k ); };
 
+		// Spacing tokens with hard fallbacks: if an older settings.php is briefly in
+		// opcache (no space_* defaults yet), never emit 0px — keep the theme's values.
+		$hp = (int) $d( 'space_header' );
+		$fb = (int) $d( 'space_flycart' );
+		if ( $hp < 1 ) { $hp = 118; }
+		if ( $fb < 1 ) { $fb = 96; }
+
 		$vars = array(
 			'--fc-ink'          => $d( 'c_text' ),
 			'--fc-muted'        => $d( 'c_muted' ),
@@ -57,8 +64,8 @@ class FC_Style {
 			'--fc-ff-body'      => $d( 'ff_body' ), // empty → skipped → inherits theme font.
 			// Layout / theme-fit tokens (consumed by product.css / frontend.css / shop.css).
 			'--fc-page-bg'         => $d( 'page_bg' ), // empty → skipped → CSS falls back to the theme bg.
-			'--fc-header-pad'      => (int) $d( 'space_header' ) . 'px',
-			'--fc-flycart-bottom'  => (int) $d( 'space_flycart' ) . 'px',
+			'--fc-header-pad'      => $hp . 'px',
+			'--fc-flycart-bottom'  => $fb . 'px',
 		);
 
 		$decl = '';
