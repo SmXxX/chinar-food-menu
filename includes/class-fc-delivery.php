@@ -22,8 +22,9 @@ class FC_Delivery {
 	const PAGE        = 'fc-delivery-zones';
 
 	public function init() {
-		// Admin: zones management page.
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		// Admin: zones management page. Priority 20 so the Food Customizer top-level
+		// menu (registered by FC_Settings at 10) exists before this sub-item attaches.
+		add_action( 'admin_menu', array( $this, 'add_menu' ), 20 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ) );
 
