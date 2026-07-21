@@ -3,7 +3,7 @@
  * Plugin Name:       Food Customizer
  * Plugin URI:        https://delta.unbelievable.digital/delivery-stariachinar/
  * Description:        Custom food-ordering logic for Staria Chinar: per-product ingredients, removables, paid additions, size/variant radios, EU-14 allergens, and dual-currency (EUR + BGN) display. Extends WooCommerce.
- * Version:           0.9.30
+ * Version:           0.9.31
  * Author:            Staria Chinar
  * Text Domain:       food-customizer
  * Requires PHP:      7.4
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-define( 'FC_VERSION', '0.9.30' );
+define( 'FC_VERSION', '0.9.31' );
 define( 'FC_FILE', __FILE__ );
 define( 'FC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FC_URL', plugin_dir_url( __FILE__ ) );
@@ -53,6 +53,7 @@ require_once FC_DIR . 'includes/class-fc-style.php';
 require_once FC_DIR . 'includes/class-fc-cutlery.php';
 require_once FC_DIR . 'includes/class-fc-delivery.php';
 require_once FC_DIR . 'includes/class-fc-min-order.php';
+require_once FC_DIR . 'includes/class-fc-ingredient-importer.php';
 
 // Load translations so labels follow the WordPress site language.
 add_action( 'init', function () {
@@ -95,6 +96,7 @@ function fc_bootstrap() {
 		if ( is_admin() ) {
 			( new FC_Settings() )->init();
 			( new FC_Product_Meta() )->init();
+			( new FC_Ingredient_Importer() )->init(); // WooCommerce → Import ingredients tool.
 		}
 	} catch ( \Throwable $e ) {
 		error_log( 'Food Customizer bootstrap error: ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine() );
