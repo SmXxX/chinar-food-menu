@@ -14,7 +14,23 @@
 		$( '#place_order' ).prop( 'disabled', ! enabled ).toggleClass( 'fc-del-blocked', ! enabled );
 	}
 
+	// Load only the chosen zone's streets (from its neighbourhoods) into the
+	// street dropdown; hide it if the zone has no neighbourhoods configured.
+	function fillStreets() {
+		var v = $( '#fc_delivery_zone' ).val();
+		var streets = ( D.streets && D.streets[ v ] ) ? D.streets[ v ] : [];
+		var $field = $( '#fc_delivery_street_field' ), $sel = $( '#fc_delivery_street' );
+		if ( ! $field.length ) { return; }
+		if ( ! streets.length ) { $field.prop( 'hidden', true ); $sel.empty(); return; }
+		var cur = $sel.val();
+		$sel.empty().append( $( '<option>' ).val( '' ).text( D.streetLabel || '' ) );
+		streets.forEach( function ( s ) { $sel.append( $( '<option>' ).val( s ).text( s ) ); } );
+		if ( cur ) { $sel.val( cur ); }
+		$field.prop( 'hidden', false );
+	}
+
 	function refresh() {
+		fillStreets();
 		var z = selectedZone();
 		var $info = $( '.fc-del-info' );
 		var $busy = $( '.fc-del-busy' );

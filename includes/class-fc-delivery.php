@@ -68,7 +68,37 @@ class FC_Delivery {
 				'eta'      => isset( $z['eta'] ) ? (string) $z['eta'] : '',
 				'busy'     => ! empty( $z['busy'] ),
 				'busy_msg' => isset( $z['busy_msg'] ) ? (string) $z['busy_msg'] : '',
+				'hoods'    => ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? array_values( array_map( 'strval', $z['hoods'] ) ) : array(),
 			);
+		}
+		return $out;
+	}
+
+	/** Bundled Varna dataset: [ neighbourhood => [streets…] ] (from OpenStreetMap). */
+	public static function neighbourhoods() {
+		static $data = null;
+		if ( null !== $data ) {
+			return $data;
+		}
+		$file = FC_DIR . 'assets/data/varna-neighbourhoods.json';
+		$data = file_exists( $file ) ? (array) json_decode( (string) file_get_contents( $file ), true ) : array();
+		return $data;
+	}
+
+	/** Per-zone street lists (union of the zone's neighbourhoods) for the checkout. */
+	public static function zone_streets() {
+		$hoods = self::neighbourhoods();
+		$out   = array();
+		foreach ( self::zones() as $i => $z ) {
+			$streets = array();
+			foreach ( (array) $z['hoods'] as $h ) {
+				if ( isset( $hoods[ $h ] ) ) {
+					$streets = array_merge( $streets, (array) $hoods[ $h ] );
+				}
+			}
+			$streets = array_values( array_unique( $streets ) );
+			sort( $streets, SORT_LOCALE_STRING );
+			$out[ $i ] = $streets;
 		}
 		return $out;
 	}
@@ -107,12 +137,17 @@ class FC_Delivery {
 			if ( '' === $name ) {
 				continue; // skip empty rows.
 			}
+			$valid_hoods = array_keys( self::neighbourhoods() );
+			$hoods       = ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) )
+				? array_values( array_intersect( array_map( 'sanitize_text_field', $z['hoods'] ), $valid_hoods ) )
+				: array();
 			$out[] = array(
 				'name'     => $name,
 				'areas'    => isset( $z['areas'] ) ? sanitize_textarea_field( $z['areas'] ) : '',
 				'eta'      => isset( $z['eta'] ) ? sanitize_text_field( $z['eta'] ) : '',
 				'busy'     => empty( $z['busy'] ) ? 0 : 1,
 				'busy_msg' => isset( $z['busy_msg'] ) ? sanitize_text_field( $z['busy_msg'] ) : '',
+				'hoods'    => $hoods,
 			);
 		}
 		return $out;
@@ -149,12 +184,13 @@ class FC_Delivery {
 				<table class="widefat striped" id="fc-zones-table" style="max-width:1100px;margin-top:10px;">
 					<thead>
 						<tr>
-							<th style="width:16%"><?php esc_html_e( 'Zone name', 'food-customizer' ); ?></th>
+							<th style="width:13%"><?php esc_html_e( 'Zone name', 'food-customizer' ); ?></th>
 							<th><?php esc_html_e( 'Covers (streets / areas)', 'food-customizer' ); ?></th>
-							<th style="width:12%"><?php esc_html_e( 'ETA', 'food-customizer' ); ?></th>
-							<th style="width:8%"><?php esc_html_e( 'Busy', 'food-customizer' ); ?></th>
-							<th style="width:20%"><?php esc_html_e( 'Busy message (optional)', 'food-customizer' ); ?></th>
-							<th style="width:5%"></th>
+							<th style="width:22%"><?php esc_html_e( 'Neighbourhoods (streets auto-load at checkout)', 'food-customizer' ); ?></th>
+							<th style="width:9%"><?php esc_html_e( 'ETA', 'food-customizer' ); ?></th>
+							<th style="width:6%"><?php esc_html_e( 'Busy', 'food-customizer' ); ?></th>
+							<th style="width:15%"><?php esc_html_e( 'Busy message (optional)', 'food-customizer' ); ?></th>
+							<th style="width:4%"></th>
 						</tr>
 					</thead>
 					<tbody id="fc-zones-body">
@@ -181,17 +217,19 @@ class FC_Delivery {
 
 	/** One editable zone row. $i may be an int index or the "__i__" JS placeholder. */
 	private function zone_row( $i, $z ) {
-		$name = isset( $z['name'] ) ? $z['name'] : '';
-		$area = isset( $z['areas'] ) ? $z['areas'] : '';
-		$eta  = isset( $z['eta'] ) ? $z['eta'] : '';
-		$busy = ! empty( $z['busy'] );
-		$msg  = isset( $z['busy_msg'] ) ? $z['busy_msg'] : '';
-		$b    = self::OPT_ZONES . '[' . $i . ']';
+		$name      = isset( $z['name'] ) ? $z['name'] : '';
+		$area      = isset( $z['areas'] ) ? $z['areas'] : '';
+		$eta       = isset( $z['eta'] ) ? $z['eta'] : '';
+		$busy      = ! empty( $z['busy'] );
+		$msg       = isset( $z['busy_msg'] ) ? $z['busy_msg'] : '';
+		$hoods_sel = ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? $z['hoods'] : array();
+		$b         = self::OPT_ZONES . '[' . $i . ']';
 		ob_start();
 		?>
 		<tr class="fc-zone-row">
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e( 'e.g. Center', 'food-customizer' ); ?>" /></td>
 			<td><textarea class="widefat" rows="2" name="<?php echo esc_attr( $b ); ?>[areas]" placeholder="<?php esc_attr_e( 'e.g. ul. Vitosha, ul. Graf Ignatiev, bul. Vasil Levski…', 'food-customizer' ); ?>"><?php echo esc_textarea( $area ); ?></textarea></td>
+			<td><select multiple size="5" class="widefat" name="<?php echo esc_attr( $b ); ?>[hoods][]"><?php foreach ( self::neighbourhoods() as $hn => $streets ) : ?><option value="<?php echo esc_attr( $hn ); ?>"<?php selected( in_array( (string) $hn, array_map( 'strval', $hoods_sel ), true ) ); ?>><?php echo esc_html( $hn ); ?> (<?php echo count( (array) $streets ); ?>)</option><?php endforeach; ?></select></td>
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[eta]" value="<?php echo esc_attr( $eta ); ?>" placeholder="<?php esc_attr_e( 'e.g. 45 min', 'food-customizer' ); ?>" /></td>
 			<td style="text-align:center"><input type="checkbox" name="<?php echo esc_attr( $b ); ?>[busy]" value="1" <?php checked( $busy, true ); ?> /></td>
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[busy_msg]" value="<?php echo esc_attr( $msg ); ?>" placeholder="<?php echo esc_attr( FC_Settings::label( 'del_busy' ) ); ?>" /></td>
@@ -218,6 +256,8 @@ class FC_Delivery {
 			'zones'       => self::zones(),
 			'busyDefault' => FC_Settings::label( 'del_busy' ),
 			'etaLabel'    => FC_Settings::label( 'del_eta' ),
+			'streets'     => self::zone_streets(),
+			'streetLabel' => __( 'Choose your street', 'food-customizer' ),
 		) );
 	}
 
@@ -238,6 +278,14 @@ class FC_Delivery {
 		foreach ( $zones as $i => $z ) {
 			echo '<option value="' . esc_attr( $i ) . '">' . esc_html( $z['name'] ) . '</option>';
 		}
+		echo '</select></span></p>';
+
+		// Street selector — populated by JS from the chosen zone's neighbourhoods
+		// (OpenStreetMap data). Hidden until a zone with streets is picked.
+		echo '<p class="form-row form-row-wide fc-del-street-field" id="fc_delivery_street_field" hidden>';
+		echo '<label for="fc_delivery_street">' . esc_html__( 'Street', 'food-customizer' ) . '</label>';
+		echo '<span class="woocommerce-input-wrapper"><select name="fc_delivery_street" id="fc_delivery_street" class="select">';
+		echo '<option value="">' . esc_html__( 'Choose your street', 'food-customizer' ) . '</option>';
 		echo '</select></span></p>';
 
 		// Info panel (filled by JS from the selected zone).
@@ -300,6 +348,11 @@ class FC_Delivery {
 			}
 		}
 
+		$street = isset( $_POST['fc_delivery_street'] ) ? sanitize_text_field( wp_unslash( $_POST['fc_delivery_street'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		if ( '' !== $street ) {
+			$order->update_meta_data( '_fc_delivery_street', $street );
+		}
+
 		$type = isset( $_POST['fc_delivery_type'] ) ? sanitize_text_field( wp_unslash( $_POST['fc_delivery_type'] ) ) : 'door'; // phpcs:ignore WordPress.Security.NonceVerification
 		$order->update_meta_data( '_fc_delivery_type', 'entrance' === $type ? FC_Settings::label( 'del_entrance' ) : FC_Settings::label( 'del_door' ) );
 
@@ -319,9 +372,10 @@ class FC_Delivery {
 	/** key => translated label, for whichever meta are present on the order. */
 	private function order_lines( $order ) {
 		$map = array(
-			'_fc_delivery_zone' => FC_Settings::label( 'del_zone' ),
-			'_fc_delivery_type' => FC_Settings::label( 'del_type' ),
-			'_fc_delivery_time' => FC_Settings::label( 'del_time' ),
+			'_fc_delivery_zone'   => FC_Settings::label( 'del_zone' ),
+			'_fc_delivery_street' => __( 'Street', 'food-customizer' ),
+			'_fc_delivery_type'   => FC_Settings::label( 'del_type' ),
+			'_fc_delivery_time'   => FC_Settings::label( 'del_time' ),
 		);
 		$out = array();
 		foreach ( $map as $key => $label ) {

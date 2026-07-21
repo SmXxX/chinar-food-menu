@@ -3,7 +3,7 @@
  * Plugin Name:       Food Customizer
  * Plugin URI:        https://delta.unbelievable.digital/delivery-stariachinar/
  * Description:        Custom food-ordering logic for Staria Chinar: per-product ingredients, removables, paid additions, size/variant radios, EU-14 allergens, and dual-currency (EUR + BGN) display. Extends WooCommerce.
- * Version:           0.9.40
+ * Version:           0.9.41
  * Author:            Staria Chinar
  * Text Domain:       food-customizer
  * Requires PHP:      7.4
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-define( 'FC_VERSION', '0.9.40' );
+define( 'FC_VERSION', '0.9.41' );
 define( 'FC_FILE', __FILE__ );
 define( 'FC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FC_URL', plugin_dir_url( __FILE__ ) );
