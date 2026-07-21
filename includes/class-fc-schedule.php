@@ -19,9 +19,19 @@ class FC_Schedule {
 	const GROUP = 'fc_schedule_group';
 	const PAGE  = 'fc-delivery-schedule';
 
+	/** Calendar colour settings (empty = inherit the shop's design tokens). */
+	const CAL_COLORS = array(
+		'fc_cal_bg'          => '--fc-cal-bg',
+		'fc_cal_text'        => '--fc-cal-text',
+		'fc_cal_accent'      => '--fc-cal-accent',
+		'fc_cal_accent_text' => '--fc-cal-accent-text',
+		'fc_cal_border'      => '--fc-cal-border',
+	);
+
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'menu' ), 58 );
 		add_action( 'admin_init', array( $this, 'register' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ) );
 
 		if ( ! self::enabled() ) {
 			return;
@@ -127,6 +137,19 @@ class FC_Schedule {
 		register_setting( self::GROUP, 'fc_sched_horizon', array( 'type' => 'integer', 'sanitize_callback' => 'absint', 'default' => 30 ) );
 		register_setting( self::GROUP, 'fc_sched_slots', array( 'type' => 'string', 'sanitize_callback' => array( $this, 's_text' ), 'default' => '' ) );
 		register_setting( self::GROUP, 'fc_sched_blocked', array( 'type' => 'string', 'sanitize_callback' => array( $this, 's_text' ), 'default' => '' ) );
+		foreach ( array_keys( self::CAL_COLORS ) as $k ) {
+			register_setting( self::GROUP, $k, array( 'type' => 'string', 'sanitize_callback' => 'sanitize_hex_color', 'default' => '' ) );
+		}
+	}
+
+	/** Colour-picker assets on the schedule settings page. */
+	public function admin_enqueue( $hook ) {
+		if ( false === strpos( (string) $hook, self::PAGE ) ) {
+			return;
+		}
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_script( 'wp-color-picker' );
+		wp_add_inline_script( 'wp-color-picker', 'jQuery(function($){$(".fc-color").wpColorPicker();});' );
 	}
 
 	public function s_bool( $v ) { return $v ? 1 : 0; }
@@ -165,6 +188,25 @@ class FC_Schedule {
 						<td><textarea name="fc_sched_blocked" rows="5" class="large-text code" placeholder="2026-07-27 | 11:00 - 12:00"><?php echo esc_textarea( (string) get_option( 'fc_sched_blocked', '' ) ); ?></textarea>
 						<p class="description"><?php esc_html_e( 'One per line. "YYYY-MM-DD | 11:00 - 12:00" blocks that slot; a bare "YYYY-MM-DD" blocks the whole day.', 'food-customizer' ); ?></p></td></tr>
 				</table>
+				<h2><?php esc_html_e( 'Calendar style', 'food-customizer' ); ?></h2>
+				<p class="description" style="margin-top:0;"><?php esc_html_e( 'Colours for the checkout calendar. Leave a field empty to inherit the shop colours.', 'food-customizer' ); ?></p>
+				<table class="form-table" role="presentation">
+					<?php
+					$cal_labels = array(
+						'fc_cal_bg'          => __( 'Calendar background', 'food-customizer' ),
+						'fc_cal_text'        => __( 'Text', 'food-customizer' ),
+						'fc_cal_accent'      => __( 'Selected day', 'food-customizer' ),
+						'fc_cal_accent_text' => __( 'Text on selected day', 'food-customizer' ),
+						'fc_cal_border'      => __( 'Border', 'food-customizer' ),
+					);
+					foreach ( $cal_labels as $opt => $lbl ) {
+						printf(
+							'<tr><th scope="row">%s</th><td><input type="text" class="fc-color" name="%s" value="%s" data-default-color="" /></td></tr>',
+							esc_html( $lbl ), esc_attr( $opt ), esc_attr( get_option( $opt, '' ) )
+						);
+					}
+					?>
+				</table>
 				<?php submit_button(); ?>
 			</form>
 		</div>
@@ -197,6 +239,17 @@ class FC_Schedule {
 		}
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'fc-schedule', FC_URL . 'assets/css/schedule.css', array(), FC_VERSION );
+		// Admin-set calendar colours → CSS variables (empty ones inherit shop tokens).
+		$decl = '';
+		foreach ( self::CAL_COLORS as $opt => $var ) {
+			$v = get_option( $opt, '' );
+			if ( $v ) {
+				$decl .= $var . ':' . $v . ';';
+			}
+		}
+		if ( '' !== $decl ) {
+			wp_add_inline_style( 'fc-schedule', ':root{' . $decl . '}' );
+		}
 
 		$data = array(
 			'days'     => array_values( self::days() ),

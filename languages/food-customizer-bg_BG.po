@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Food Customizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 15:43+0300\n"
+"POT-Creation-Date: 2026-07-21 16:13+0300\n"
 "PO-Revision-Date: 2026-07-20 12:00+0300\n"
 "Last-Translator: Staria Chinar\n"
 "Language-Team: Bulgarian\n"
@@ -49,117 +49,152 @@ msgstr "Моля, изберете опциите."
 msgid "Could not add to cart."
 msgstr "Не може да се добави в количката."
 
-#: includes/class-fc-schedule.php:115 includes/class-fc-schedule.php:116
-#: includes/class-fc-schedule.php:144
+#: includes/class-fc-schedule.php:125 includes/class-fc-schedule.php:126
+#: includes/class-fc-schedule.php:167
 msgid "Delivery schedule"
 msgstr "График за доставка"
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Sun"
 msgstr "Нед"
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Mon"
 msgstr "Пон"
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Tue"
 msgstr "Вто"
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Wed"
 msgstr "Сря"
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Thu"
 msgstr "Чет"
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Fri"
 msgstr "Пет"
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Sat"
 msgstr "Съб"
 
-#: includes/class-fc-schedule.php:148
+#: includes/class-fc-schedule.php:171
 msgid "Enable"
 msgstr "Активиране"
 
-#: includes/class-fc-schedule.php:149
+#: includes/class-fc-schedule.php:172
 msgid "Ask for a delivery date & time slot at checkout"
 msgstr "Питане за дата и час на доставка при плащане"
 
-#: includes/class-fc-schedule.php:150
+#: includes/class-fc-schedule.php:173
 msgid "Delivery days"
 msgstr "Дни за доставка"
 
-#: includes/class-fc-schedule.php:154
+#: includes/class-fc-schedule.php:177
 msgid "Untick a day to stop deliveries on it (e.g. Sunday)."
-msgstr "Махнете отметката на ден, за да спрете доставките в него (напр. неделя)."
+msgstr ""
+"Махнете отметката на ден, за да спрете доставките в него (напр. неделя)."
 
-#: includes/class-fc-schedule.php:155
+#: includes/class-fc-schedule.php:178
 msgid "Lead time (days)"
 msgstr "Време за подготовка (дни)"
 
-#: includes/class-fc-schedule.php:157
+#: includes/class-fc-schedule.php:180
 msgid ""
 "Earliest bookable day = today + this many days (prep time). e.g. 1 = from "
 "tomorrow."
-msgstr "Най-ранен ден за заявка = днес + този брой дни (за подготовка). Напр. 1 = от утре."
+msgstr ""
+"Най-ранен ден за заявка = днес + този брой дни (за подготовка). Напр. 1 = от "
+"утре."
 
-#: includes/class-fc-schedule.php:158
+#: includes/class-fc-schedule.php:181
 msgid "Booking horizon (days)"
 msgstr "Хоризонт за заявки (дни)"
 
-#: includes/class-fc-schedule.php:160
+#: includes/class-fc-schedule.php:183
 msgid "How far ahead customers can book."
 msgstr "Колко напред могат да заявяват клиентите."
 
-#: includes/class-fc-schedule.php:161
+#: includes/class-fc-schedule.php:184
 msgid "Time slots"
 msgstr "Часови интервали"
 
-#: includes/class-fc-schedule.php:163
+#: includes/class-fc-schedule.php:186
 msgid "One slot per line."
 msgstr "По един интервал на ред."
 
-#: includes/class-fc-schedule.php:164
+#: includes/class-fc-schedule.php:187
 msgid "Block busy dates / slots"
 msgstr "Блокиране на заети дати / интервали"
 
-#: includes/class-fc-schedule.php:166
+#: includes/class-fc-schedule.php:189
 msgid ""
 "One per line. \"YYYY-MM-DD | 11:00 - 12:00\" blocks that slot; a bare \"YYYY-"
 "MM-DD\" blocks the whole day."
-msgstr "По един на ред. „ГГГГ-ММ-ДД | 11:00 - 12:00“ блокира този интервал; само „ГГГГ-ММ-ДД“ блокира целия ден."
+msgstr ""
+"По един на ред. „ГГГГ-ММ-ДД | 11:00 - 12:00“ блокира този интервал; само "
+"„ГГГГ-ММ-ДД“ блокира целия ден."
 
-#: includes/class-fc-schedule.php:181 includes/class-fc-schedule.php:282
-#: includes/class-fc-schedule.php:291
+#: includes/class-fc-schedule.php:191
+msgid "Calendar style"
+msgstr "Стил на календара"
+
+#: includes/class-fc-schedule.php:192
+msgid ""
+"Colours for the checkout calendar. Leave a field empty to inherit the shop "
+"colours."
+msgstr "Цветове за календара при плащане. Оставете празно, за да се използват цветовете на магазина."
+
+#: includes/class-fc-schedule.php:196
+msgid "Calendar background"
+msgstr "Фон на календара"
+
+#: includes/class-fc-schedule.php:197 includes/class-fc-settings.php:360
+msgid "Text"
+msgstr "Текст"
+
+#: includes/class-fc-schedule.php:198
+msgid "Selected day"
+msgstr "Избран ден"
+
+#: includes/class-fc-schedule.php:199
+msgid "Text on selected day"
+msgstr "Текст на избрания ден"
+
+#: includes/class-fc-schedule.php:200 includes/class-fc-settings.php:362
+msgid "Border"
+msgstr "Рамка"
+
+#: includes/class-fc-schedule.php:223 includes/class-fc-schedule.php:335
+#: includes/class-fc-schedule.php:344
 msgid "Delivery date & time"
 msgstr "Дата и час на доставка"
 
-#: includes/class-fc-schedule.php:183
+#: includes/class-fc-schedule.php:225
 msgid "Delivery date"
 msgstr "Дата на доставка"
 
-#: includes/class-fc-schedule.php:184
+#: includes/class-fc-schedule.php:226
 msgid "Choose a date"
 msgstr "Изберете дата"
 
-#: includes/class-fc-schedule.php:187 includes/class-fc-settings.php:80
+#: includes/class-fc-schedule.php:229 includes/class-fc-settings.php:80
 msgid "Delivery time"
 msgstr "Час на доставка"
 
-#: includes/class-fc-schedule.php:188 includes/class-fc-schedule.php:208
+#: includes/class-fc-schedule.php:230 includes/class-fc-schedule.php:261
 msgid "Please choose a time"
 msgstr "Моля изберете час"
 
-#: includes/class-fc-schedule.php:254
+#: includes/class-fc-schedule.php:307
 msgid "Please choose a delivery date and time."
 msgstr "Моля изберете дата и час на доставка."
 
-#: includes/class-fc-schedule.php:258 includes/class-fc-schedule.php:263
+#: includes/class-fc-schedule.php:311 includes/class-fc-schedule.php:316
 msgid "That delivery date or time is not available — please pick another."
 msgstr "Тази дата или час не е налична — моля изберете друга."
 
@@ -252,7 +287,7 @@ msgstr "напр. Домати"
 msgid "Removable"
 msgstr "Може да се премахне"
 
-#: includes/class-fc-product-meta.php:122 includes/class-fc-delivery.php:197
+#: includes/class-fc-product-meta.php:122 includes/class-fc-delivery.php:198
 msgid "Remove"
 msgstr "Премахни"
 
@@ -490,9 +525,9 @@ msgid ""
 "either, or both together."
 msgstr ""
 
-#: includes/class-fc-settings.php:351 includes/class-fc-delivery.php:230
-#: includes/class-fc-delivery.php:340 includes/class-fc-delivery.php:352
-#: includes/class-fc-delivery.php:364
+#: includes/class-fc-settings.php:351 includes/class-fc-delivery.php:231
+#: includes/class-fc-delivery.php:341 includes/class-fc-delivery.php:353
+#: includes/class-fc-delivery.php:365
 msgid "Delivery"
 msgstr "Доставка"
 
@@ -514,17 +549,9 @@ msgstr ""
 msgid "Colours"
 msgstr "Цветове"
 
-#: includes/class-fc-settings.php:360
-msgid "Text"
-msgstr "Текст"
-
 #: includes/class-fc-settings.php:361
 msgid "Muted text"
 msgstr "Приглушен текст"
-
-#: includes/class-fc-settings.php:362
-msgid "Border"
-msgstr "Рамка"
 
 #: includes/class-fc-settings.php:363
 msgid "Border (hover)"
@@ -885,20 +912,20 @@ msgstr "Прибори и салфетки"
 msgid "No items in this category yet."
 msgstr "Все още няма продукти в тази категория."
 
-#: includes/class-fc-delivery.php:82 includes/class-fc-delivery.php:83
-#: includes/class-fc-delivery.php:135
+#: includes/class-fc-delivery.php:83 includes/class-fc-delivery.php:84
+#: includes/class-fc-delivery.php:136
 msgid "Delivery zones"
 msgstr "Зони за доставка"
 
-#: includes/class-fc-delivery.php:141
+#: includes/class-fc-delivery.php:142
 msgid "Enable delivery zones"
 msgstr "Включи зони за доставка"
 
-#: includes/class-fc-delivery.php:142
+#: includes/class-fc-delivery.php:143
 msgid "Show the zone / delivery options on the checkout page"
 msgstr "Показвай зоната / опциите за доставка на страницата за плащане"
 
-#: includes/class-fc-delivery.php:146
+#: includes/class-fc-delivery.php:147
 msgid ""
 "Each zone the customer can choose on checkout. \"Covers\" is shown to help "
 "them pick the right zone. Toggle \"Busy\" to stop deliveries to that zone "
@@ -909,47 +936,47 @@ msgstr ""
 "доставките до тази зона (клиентът вижда съобщението и не може да поръча за "
 "нея)."
 
-#: includes/class-fc-delivery.php:151
+#: includes/class-fc-delivery.php:152
 msgid "Zone name"
 msgstr "Име на зона"
 
-#: includes/class-fc-delivery.php:152
+#: includes/class-fc-delivery.php:153
 msgid "Covers (streets / areas)"
 msgstr "Обхваща (улици / райони)"
 
-#: includes/class-fc-delivery.php:153
+#: includes/class-fc-delivery.php:154
 msgid "ETA"
 msgstr "Очаквано време"
 
-#: includes/class-fc-delivery.php:154
+#: includes/class-fc-delivery.php:155
 msgid "Busy"
 msgstr "Заето"
 
-#: includes/class-fc-delivery.php:155
+#: includes/class-fc-delivery.php:156
 msgid "Busy message (optional)"
 msgstr "Съобщение при заетост (по избор)"
 
-#: includes/class-fc-delivery.php:171
+#: includes/class-fc-delivery.php:172
 msgid "Add zone"
 msgstr "Добави зона"
 
-#: includes/class-fc-delivery.php:192
+#: includes/class-fc-delivery.php:193
 msgid "e.g. Center"
 msgstr "напр. Център"
 
-#: includes/class-fc-delivery.php:193
+#: includes/class-fc-delivery.php:194
 msgid "e.g. ul. Vitosha, ul. Graf Ignatiev, bul. Vasil Levski…"
 msgstr "напр. ул. Витоша, ул. Граф Игнатиев, бул. Васил Левски…"
 
-#: includes/class-fc-delivery.php:194
+#: includes/class-fc-delivery.php:195
 msgid "e.g. 45 min"
 msgstr "напр. 45 мин"
 
-#: includes/class-fc-delivery.php:276
+#: includes/class-fc-delivery.php:277
 msgid "Please select your delivery zone."
 msgstr "Моля, изберете вашата зона за доставка."
 
-#: includes/class-fc-delivery.php:285
+#: includes/class-fc-delivery.php:286
 msgid "Please choose a delivery time, or select \"as soon as possible\"."
 msgstr "Моля, изберете време за доставка или изберете „възможно най-бързо“."
 

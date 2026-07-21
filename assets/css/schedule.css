@@ -11,46 +11,51 @@
 	width: 100%; box-sizing: border-box; cursor: pointer;
 }
 
-/* jQuery UI datepicker — dark theme to match the shop. */
-.ui-datepicker {
+/* jQuery UI datepicker. Colours come from admin-customizable calendar tokens
+   (--fc-cal-*), which default to the shop's design tokens. !important so the
+   theme's own jQuery UI CSS can't override them. */
+.ui-datepicker.ui-datepicker {
 	width: 300px; padding: 10px; z-index: 100000 !important;
-	background: var(--fc-panel, #16130f); color: var(--fc-ink, #f2ede4);
-	border: var(--fc-bw, 1px) solid var(--fc-line-strong, rgba(242, 237, 228, .5));
+	background: var(--fc-cal-bg, var(--fc-panel, #16130f)) !important;
+	color: var(--fc-cal-text, var(--fc-ink, #f2ede4)) !important;
+	border: var(--fc-bw, 1px) solid var(--fc-cal-border, var(--fc-line-strong, rgba(242, 237, 228, .5))) !important;
 	border-radius: var(--fc-radius-box, 8px); box-shadow: 0 18px 46px rgba(0, 0, 0, .5);
 	font-size: 14px;
 }
-.ui-datepicker .ui-datepicker-header { position: relative; padding: 4px 0 10px; text-align: center; }
-.ui-datepicker .ui-datepicker-title { font-weight: 600; letter-spacing: .02em; }
+.ui-datepicker .ui-datepicker-header { position: relative; padding: 4px 0 10px; text-align: center; background: transparent !important; border: 0 !important; }
+.ui-datepicker .ui-datepicker-title { font-weight: 600; letter-spacing: .02em; color: var(--fc-cal-text, var(--fc-ink, #f2ede4)) !important; }
 .ui-datepicker .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-next {
 	position: absolute; top: 2px; width: 28px; height: 28px; cursor: pointer; border-radius: var(--fc-radius, 4px);
-	overflow: hidden; text-indent: -9999px;
+	overflow: hidden; text-indent: -9999px; background: transparent !important; border: 0 !important;
 }
 .ui-datepicker .ui-datepicker-prev { left: 0; }
 .ui-datepicker .ui-datepicker-next { right: 0; }
 .ui-datepicker .ui-datepicker-prev:hover,
-.ui-datepicker .ui-datepicker-next:hover { background: rgba(255, 255, 255, .08); }
+.ui-datepicker .ui-datepicker-next:hover { background: rgba(127, 127, 127, .15) !important; }
+.ui-datepicker .ui-datepicker-prev span,
+.ui-datepicker .ui-datepicker-next span { display: none; }
 .ui-datepicker .ui-datepicker-prev::before,
 .ui-datepicker .ui-datepicker-next::before {
 	content: ""; position: absolute; top: 9px; left: 10px; width: 8px; height: 8px; text-indent: 0;
-	border-top: 2px solid var(--fc-ink, #f2ede4); border-left: 2px solid var(--fc-ink, #f2ede4);
+	border-top: 2px solid var(--fc-cal-text, var(--fc-ink, #f2ede4)); border-left: 2px solid var(--fc-cal-text, var(--fc-ink, #f2ede4));
 }
 .ui-datepicker .ui-datepicker-prev::before { transform: rotate(-45deg); }
 .ui-datepicker .ui-datepicker-next::before { left: 8px; transform: rotate(135deg); }
-.ui-datepicker table { width: 100%; border-collapse: collapse; margin: 2px 0 0; }
-.ui-datepicker th { padding: 6px 0; color: var(--fc-muted, #a49e93); font-weight: 600; font-size: 11px; text-transform: uppercase; }
-.ui-datepicker td { padding: 2px; text-align: center; }
+.ui-datepicker table { width: 100%; border-collapse: collapse; margin: 2px 0 0; background: transparent !important; }
+.ui-datepicker th { padding: 6px 0; color: var(--fc-cal-muted, var(--fc-muted, #a49e93)) !important; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+.ui-datepicker td { padding: 2px; text-align: center; border: 0 !important; }
 .ui-datepicker td a,
 .ui-datepicker td span {
 	display: block; padding: 7px 0; border-radius: var(--fc-radius, 4px); text-decoration: none;
-	color: var(--fc-ink, #f2ede4); text-align: center;
+	color: var(--fc-cal-text, var(--fc-ink, #f2ede4)) !important; text-align: center; background: transparent !important; border: 0 !important;
 }
-.ui-datepicker td a:hover { background: rgba(255, 255, 255, .1); }
+.ui-datepicker td a:hover { background: rgba(127, 127, 127, .18) !important; }
 .ui-datepicker td .ui-state-active,
-.ui-datepicker td a.ui-state-active { background: var(--fc-accent, #dd5903); color: var(--fc-accent-text, #fff); }
-.ui-datepicker td.ui-datepicker-today a { outline: 1px solid var(--fc-line-strong, rgba(242, 237, 228, .5)); }
+.ui-datepicker td a.ui-state-active { background: var(--fc-cal-accent, var(--fc-accent, #dd5903)) !important; color: var(--fc-cal-accent-text, var(--fc-accent-text, #fff)) !important; }
+.ui-datepicker td.ui-datepicker-today a { outline: 1px solid var(--fc-cal-accent, var(--fc-accent, #dd5903)); }
 /* Disabled weekdays / blocked dates — clearly greyed and not clickable. */
 .ui-datepicker td.ui-state-disabled,
 .ui-datepicker td.ui-datepicker-unselectable span {
-	opacity: .28; cursor: not-allowed; color: var(--fc-muted, #a49e93);
+	opacity: .28; cursor: not-allowed; color: var(--fc-cal-muted, var(--fc-muted, #a49e93)) !important;
 }

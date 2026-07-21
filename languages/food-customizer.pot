@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 15:43+0300\n"
+"POT-Creation-Date: 2026-07-21 16:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,117 +49,147 @@ msgstr ""
 msgid "Could not add to cart."
 msgstr ""
 
-#: includes/class-fc-schedule.php:115 includes/class-fc-schedule.php:116
-#: includes/class-fc-schedule.php:144
+#: includes/class-fc-schedule.php:125 includes/class-fc-schedule.php:126
+#: includes/class-fc-schedule.php:167
 msgid "Delivery schedule"
 msgstr ""
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Sun"
 msgstr ""
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Mon"
 msgstr ""
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Tue"
 msgstr ""
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Wed"
 msgstr ""
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Thu"
 msgstr ""
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Fri"
 msgstr ""
 
-#: includes/class-fc-schedule.php:141
+#: includes/class-fc-schedule.php:164
 msgid "Sat"
 msgstr ""
 
-#: includes/class-fc-schedule.php:148
+#: includes/class-fc-schedule.php:171
 msgid "Enable"
 msgstr ""
 
-#: includes/class-fc-schedule.php:149
+#: includes/class-fc-schedule.php:172
 msgid "Ask for a delivery date & time slot at checkout"
 msgstr ""
 
-#: includes/class-fc-schedule.php:150
+#: includes/class-fc-schedule.php:173
 msgid "Delivery days"
 msgstr ""
 
-#: includes/class-fc-schedule.php:154
+#: includes/class-fc-schedule.php:177
 msgid "Untick a day to stop deliveries on it (e.g. Sunday)."
 msgstr ""
 
-#: includes/class-fc-schedule.php:155
+#: includes/class-fc-schedule.php:178
 msgid "Lead time (days)"
 msgstr ""
 
-#: includes/class-fc-schedule.php:157
+#: includes/class-fc-schedule.php:180
 msgid ""
 "Earliest bookable day = today + this many days (prep time). e.g. 1 = from "
 "tomorrow."
 msgstr ""
 
-#: includes/class-fc-schedule.php:158
+#: includes/class-fc-schedule.php:181
 msgid "Booking horizon (days)"
 msgstr ""
 
-#: includes/class-fc-schedule.php:160
+#: includes/class-fc-schedule.php:183
 msgid "How far ahead customers can book."
 msgstr ""
 
-#: includes/class-fc-schedule.php:161
+#: includes/class-fc-schedule.php:184
 msgid "Time slots"
 msgstr ""
 
-#: includes/class-fc-schedule.php:163
+#: includes/class-fc-schedule.php:186
 msgid "One slot per line."
 msgstr ""
 
-#: includes/class-fc-schedule.php:164
+#: includes/class-fc-schedule.php:187
 msgid "Block busy dates / slots"
 msgstr ""
 
-#: includes/class-fc-schedule.php:166
+#: includes/class-fc-schedule.php:189
 msgid ""
 "One per line. \"YYYY-MM-DD | 11:00 - 12:00\" blocks that slot; a bare \"YYYY-"
 "MM-DD\" blocks the whole day."
 msgstr ""
 
-#: includes/class-fc-schedule.php:181 includes/class-fc-schedule.php:282
-#: includes/class-fc-schedule.php:291
+#: includes/class-fc-schedule.php:191
+msgid "Calendar style"
+msgstr ""
+
+#: includes/class-fc-schedule.php:192
+msgid ""
+"Colours for the checkout calendar. Leave a field empty to inherit the shop "
+"colours."
+msgstr ""
+
+#: includes/class-fc-schedule.php:196
+msgid "Calendar background"
+msgstr ""
+
+#: includes/class-fc-schedule.php:197 includes/class-fc-settings.php:360
+msgid "Text"
+msgstr ""
+
+#: includes/class-fc-schedule.php:198
+msgid "Selected day"
+msgstr ""
+
+#: includes/class-fc-schedule.php:199
+msgid "Text on selected day"
+msgstr ""
+
+#: includes/class-fc-schedule.php:200 includes/class-fc-settings.php:362
+msgid "Border"
+msgstr ""
+
+#: includes/class-fc-schedule.php:223 includes/class-fc-schedule.php:335
+#: includes/class-fc-schedule.php:344
 msgid "Delivery date & time"
 msgstr ""
 
-#: includes/class-fc-schedule.php:183
+#: includes/class-fc-schedule.php:225
 msgid "Delivery date"
 msgstr ""
 
-#: includes/class-fc-schedule.php:184
+#: includes/class-fc-schedule.php:226
 msgid "Choose a date"
 msgstr ""
 
-#: includes/class-fc-schedule.php:187 includes/class-fc-settings.php:80
+#: includes/class-fc-schedule.php:229 includes/class-fc-settings.php:80
 msgid "Delivery time"
 msgstr ""
 
-#: includes/class-fc-schedule.php:188 includes/class-fc-schedule.php:208
+#: includes/class-fc-schedule.php:230 includes/class-fc-schedule.php:261
 msgid "Please choose a time"
 msgstr ""
 
-#: includes/class-fc-schedule.php:254
+#: includes/class-fc-schedule.php:307
 msgid "Please choose a delivery date and time."
 msgstr ""
 
-#: includes/class-fc-schedule.php:258 includes/class-fc-schedule.php:263
+#: includes/class-fc-schedule.php:311 includes/class-fc-schedule.php:316
 msgid "That delivery date or time is not available — please pick another."
 msgstr ""
 
@@ -245,7 +275,7 @@ msgstr ""
 msgid "Removable"
 msgstr ""
 
-#: includes/class-fc-product-meta.php:122 includes/class-fc-delivery.php:197
+#: includes/class-fc-product-meta.php:122 includes/class-fc-delivery.php:198
 msgid "Remove"
 msgstr ""
 
@@ -481,9 +511,9 @@ msgid ""
 "either, or both together."
 msgstr ""
 
-#: includes/class-fc-settings.php:351 includes/class-fc-delivery.php:230
-#: includes/class-fc-delivery.php:340 includes/class-fc-delivery.php:352
-#: includes/class-fc-delivery.php:364
+#: includes/class-fc-settings.php:351 includes/class-fc-delivery.php:231
+#: includes/class-fc-delivery.php:341 includes/class-fc-delivery.php:353
+#: includes/class-fc-delivery.php:365
 msgid "Delivery"
 msgstr ""
 
@@ -505,16 +535,8 @@ msgstr ""
 msgid "Colours"
 msgstr ""
 
-#: includes/class-fc-settings.php:360
-msgid "Text"
-msgstr ""
-
 #: includes/class-fc-settings.php:361
 msgid "Muted text"
-msgstr ""
-
-#: includes/class-fc-settings.php:362
-msgid "Border"
 msgstr ""
 
 #: includes/class-fc-settings.php:363
@@ -855,67 +877,67 @@ msgstr ""
 msgid "No items in this category yet."
 msgstr ""
 
-#: includes/class-fc-delivery.php:82 includes/class-fc-delivery.php:83
-#: includes/class-fc-delivery.php:135
+#: includes/class-fc-delivery.php:83 includes/class-fc-delivery.php:84
+#: includes/class-fc-delivery.php:136
 msgid "Delivery zones"
 msgstr ""
 
-#: includes/class-fc-delivery.php:141
+#: includes/class-fc-delivery.php:142
 msgid "Enable delivery zones"
 msgstr ""
 
-#: includes/class-fc-delivery.php:142
+#: includes/class-fc-delivery.php:143
 msgid "Show the zone / delivery options on the checkout page"
 msgstr ""
 
-#: includes/class-fc-delivery.php:146
+#: includes/class-fc-delivery.php:147
 msgid ""
 "Each zone the customer can choose on checkout. \"Covers\" is shown to help "
 "them pick the right zone. Toggle \"Busy\" to stop deliveries to that zone "
 "(the customer sees the message and cannot order for it)."
 msgstr ""
 
-#: includes/class-fc-delivery.php:151
+#: includes/class-fc-delivery.php:152
 msgid "Zone name"
 msgstr ""
 
-#: includes/class-fc-delivery.php:152
+#: includes/class-fc-delivery.php:153
 msgid "Covers (streets / areas)"
 msgstr ""
 
-#: includes/class-fc-delivery.php:153
+#: includes/class-fc-delivery.php:154
 msgid "ETA"
 msgstr ""
 
-#: includes/class-fc-delivery.php:154
+#: includes/class-fc-delivery.php:155
 msgid "Busy"
 msgstr ""
 
-#: includes/class-fc-delivery.php:155
+#: includes/class-fc-delivery.php:156
 msgid "Busy message (optional)"
 msgstr ""
 
-#: includes/class-fc-delivery.php:171
+#: includes/class-fc-delivery.php:172
 msgid "Add zone"
 msgstr ""
 
-#: includes/class-fc-delivery.php:192
+#: includes/class-fc-delivery.php:193
 msgid "e.g. Center"
 msgstr ""
 
-#: includes/class-fc-delivery.php:193
+#: includes/class-fc-delivery.php:194
 msgid "e.g. ul. Vitosha, ul. Graf Ignatiev, bul. Vasil Levski…"
 msgstr ""
 
-#: includes/class-fc-delivery.php:194
+#: includes/class-fc-delivery.php:195
 msgid "e.g. 45 min"
 msgstr ""
 
-#: includes/class-fc-delivery.php:276
+#: includes/class-fc-delivery.php:277
 msgid "Please select your delivery zone."
 msgstr ""
 
-#: includes/class-fc-delivery.php:285
+#: includes/class-fc-delivery.php:286
 msgid "Please choose a delivery time, or select \"as soon as possible\"."
 msgstr ""
 
