@@ -3,7 +3,7 @@
  * Plugin Name:       Food Customizer
  * Plugin URI:        https://delta.unbelievable.digital/delivery-stariachinar/
  * Description:        Custom food-ordering logic for Staria Chinar: per-product ingredients, removables, paid additions, size/variant radios, EU-14 allergens, and dual-currency (EUR + BGN) display. Extends WooCommerce.
- * Version:           0.9.32
+ * Version:           0.9.33
  * Author:            Staria Chinar
  * Text Domain:       food-customizer
  * Requires PHP:      7.4
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-define( 'FC_VERSION', '0.9.32' );
+define( 'FC_VERSION', '0.9.33' );
 define( 'FC_FILE', __FILE__ );
 define( 'FC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FC_URL', plugin_dir_url( __FILE__ ) );
@@ -55,6 +55,7 @@ require_once FC_DIR . 'includes/class-fc-delivery.php';
 require_once FC_DIR . 'includes/class-fc-min-order.php';
 require_once FC_DIR . 'includes/class-fc-ingredient-importer.php';
 require_once FC_DIR . 'includes/class-fc-guide.php';
+require_once FC_DIR . 'includes/class-fc-catering.php';
 
 // Load translations so labels follow the WordPress site language.
 add_action( 'init', function () {
@@ -92,6 +93,7 @@ function fc_bootstrap() {
 		( new FC_Cutlery() )->init(); // checkout cutlery toggle (also registers its AJAX).
 		( new FC_Delivery() )->init(); // delivery zones + checkout options (admin menu registers itself).
 		( new FC_Min_Order() )->init(); // minimum order total enforcement.
+			( new FC_Catering() )->init(); // catering module: courier payment + quantity minimums.
 
 		// Admin: settings page + product meta boxes.
 		if ( is_admin() ) {

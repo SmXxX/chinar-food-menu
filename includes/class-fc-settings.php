@@ -82,6 +82,12 @@ class FC_Settings {
 			'del_scheduled'  => _x( 'Choose a time', 'delivery timing', 'food-customizer' ),
 			'min_order_msg'  => _x( 'The minimum order is %min%. Please add %remaining% more to place your order.', 'minimum order message (%min% and %remaining% are replaced with amounts)', 'food-customizer' ),
 			'unavailable_time' => _x( 'This item is available only from %from% to %to%.', 'off-hours message (%from% / %to% are times)', 'food-customizer' ),
+			// Catering module
+			'pay_choose'     => _x( 'How would you like to pay the courier?', 'catering payment choice heading', 'food-customizer' ),
+			'pay_cash'       => _x( 'Pay cash on delivery', 'catering payment option', 'food-customizer' ),
+			'pay_pos'        => _x( "Pay by card on the courier's POS terminal", 'catering payment option', 'food-customizer' ),
+			'min_qty_msg'    => _x( 'The minimum order is %min% items — you currently have %count%.', 'minimum quantity message', 'food-customizer' ),
+			'cat_min_msg'    => _x( '"%product%" must be ordered in at least %min% pcs.', 'category minimum quantity message', 'food-customizer' ),
 		);
 	}
 
@@ -93,6 +99,11 @@ class FC_Settings {
 		}
 		$d = self::label_defaults();
 		return $d[ $key ] ?? $key;
+	}
+
+	/** Is a plugin module enabled? Delivery defaults ON, Catering OFF. */
+	public static function module( $key ) {
+		return (bool) get_option( 'fc_module_' . $key, 'delivery' === $key ? 1 : 0 );
 	}
 
 	/** All labels resolved (for JS localization). */
@@ -191,6 +202,13 @@ JS;
 		register_setting( self::GROUP, 'fc_category_order', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_slug_list' ), 'default' => array() ) );
 		register_setting( self::GROUP, 'fc_layout_direction', array( 'type' => 'string', 'sanitize_callback' => array( $this, 'sanitize_direction' ), 'default' => 'ltr' ) );
 		register_setting( self::GROUP, 'fc_load_fonts', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_bool' ), 'default' => 0 ) );
+		// Modules + catering (Phase 1).
+		register_setting( self::GROUP, 'fc_module_delivery', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_bool' ), 'default' => 1 ) );
+		register_setting( self::GROUP, 'fc_module_catering', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_bool' ), 'default' => 0 ) );
+		register_setting( self::GROUP, 'fc_catering_payment_choice', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_bool' ), 'default' => 1 ) );
+		register_setting( self::GROUP, 'fc_min_qty', array( 'type' => 'integer', 'sanitize_callback' => 'absint', 'default' => 0 ) );
+		register_setting( self::GROUP, 'fc_cat_min_category', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_title', 'default' => '' ) );
+		register_setting( self::GROUP, 'fc_cat_min_qty', array( 'type' => 'integer', 'sanitize_callback' => 'absint', 'default' => 0 ) );
 	}
 
 	public function sanitize_direction( $v ) {
@@ -326,6 +344,15 @@ JS;
 			<h1><?php esc_html_e( 'Food Customizer', 'food-customizer' ); ?></h1>
 			<form method="post" action="options.php">
 				<?php settings_fields( self::GROUP ); ?>
+
+				<h2><?php esc_html_e( 'Modules', 'food-customizer' ); ?></h2>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Turn each mode on or off. Delivery and Catering are independent — run either, or both together.', 'food-customizer' ); ?></p>
+					<table class="form-table" role="presentation">
+						<tr><th scope="row"><?php esc_html_e( 'Delivery', 'food-customizer' ); ?></th>
+							<td><label><input type="checkbox" name="fc_module_delivery" value="1" <?php checked( self::module( 'delivery' ), true ); ?> /> <?php esc_html_e( 'Enable delivery features (zones + delivery options at checkout)', 'food-customizer' ); ?></label></td></tr>
+						<tr><th scope="row"><?php esc_html_e( 'Catering', 'food-customizer' ); ?></th>
+							<td><label><input type="checkbox" name="fc_module_catering" value="1" <?php checked( self::module( 'catering' ), true ); ?> /> <?php esc_html_e( 'Enable catering features (courier POS payment, quantity minimums — configured in the Catering tab)', 'food-customizer' ); ?></label></td></tr>
+					</table>
 
 				<h2><?php esc_html_e( 'Colours', 'food-customizer' ); ?></h2>
 				<table class="form-table" role="presentation">
@@ -530,6 +557,35 @@ JS;
 						</td>
 					</tr>
 				</table>
+
+				<h2><?php esc_html_e( 'Catering', 'food-customizer' ); ?></h2>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'These apply only when the Catering module is enabled (Modules tab).', 'food-customizer' ); ?></p>
+					<table class="form-table" role="presentation">
+						<tr><th scope="row"><?php esc_html_e( 'Courier payment choice', 'food-customizer' ); ?></th>
+							<td><label><input type="checkbox" name="fc_catering_payment_choice" value="1" <?php checked( (bool) get_option( 'fc_catering_payment_choice', 1 ), true ); ?> /> <?php esc_html_e( 'Under "Cash on delivery", let the customer choose cash or the courier\'s POS terminal', 'food-customizer' ); ?></label>
+								<p class="description"><?php esc_html_e( 'Wording is editable in the Texts section (Pay choose / Pay cash / Pay pos).', 'food-customizer' ); ?></p></td></tr>
+						<tr><th scope="row"><?php esc_html_e( 'Minimum items per order', 'food-customizer' ); ?></th>
+							<td><input type="number" min="0" name="fc_min_qty" value="<?php echo esc_attr( (int) get_option( 'fc_min_qty', 0 ) ); ?>" class="small-text" />
+								<p class="description"><?php esc_html_e( 'The cart must contain at least this many items to check out. 0 = no minimum. Message: "Min qty msg" in Texts.', 'food-customizer' ); ?></p></td></tr>
+						<tr><th scope="row"><?php esc_html_e( 'Per-category minimum', 'food-customizer' ); ?></th>
+							<td>
+								<select name="fc_cat_min_category">
+									<option value=""><?php esc_html_e( '— none —', 'food-customizer' ); ?></option>
+									<?php
+									$sel  = (string) get_option( 'fc_cat_min_category', '' );
+									$cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
+									if ( is_array( $cats ) ) {
+										foreach ( $cats as $t ) {
+											printf( '<option value="%s" %s>%s</option>', esc_attr( $t->slug ), selected( $sel, $t->slug, false ), esc_html( $t->name ) );
+										}
+									}
+									?>
+								</select>
+								&nbsp;<?php esc_html_e( 'min', 'food-customizer' ); ?>
+								<input type="number" min="0" name="fc_cat_min_qty" value="<?php echo esc_attr( (int) get_option( 'fc_cat_min_qty', 0 ) ); ?>" class="small-text" /> <?php esc_html_e( 'pcs each', 'food-customizer' ); ?>
+								<p class="description"><?php esc_html_e( 'Every product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Message: "Cat min msg" in Texts.', 'food-customizer' ); ?></p>
+							</td></tr>
+					</table>
 
 				<?php submit_button(); ?>
 			</form>
