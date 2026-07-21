@@ -158,6 +158,7 @@ class FC_Delivery {
 			return;
 		}
 		wp_enqueue_script( 'fc-delivery-admin', FC_URL . 'assets/js/delivery-admin.js', array( 'jquery' ), FC_VERSION, true );
+		wp_localize_script( 'fc-delivery-admin', 'FC_HOODS', self::neighbourhoods() );
 	}
 
 	public function render_page() {
@@ -180,6 +181,12 @@ class FC_Delivery {
 				</table>
 
 				<p class="description"><?php esc_html_e( 'Each zone the customer can choose on checkout. "Covers" is shown to help them pick the right zone. Toggle "Busy" to stop deliveries to that zone (the customer sees the message and cannot order for it).', 'food-customizer' ); ?></p>
+
+				<div class="fc-street-search" style="margin:16px 0;max-width:1100px;">
+					<label for="fc-street-search" style="font-weight:600;"><?php esc_html_e( 'Find which neighbourhood a street is in', 'food-customizer' ); ?></label><br>
+					<input type="search" id="fc-street-search" class="regular-text" placeholder="<?php esc_attr_e( 'Type a street name…', 'food-customizer' ); ?>" autocomplete="off" style="margin-top:6px;">
+					<div id="fc-street-results" data-empty="<?php esc_attr_e( 'No matching streets.', 'food-customizer' ); ?>" style="margin-top:8px;"></div>
+				</div>
 
 				<table class="widefat striped" id="fc-zones-table" style="max-width:1100px;margin-top:10px;">
 					<thead>
