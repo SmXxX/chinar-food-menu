@@ -26,7 +26,7 @@ class FC_Schedule {
 		if ( ! self::enabled() ) {
 			return;
 		}
-		add_action( 'woocommerce_after_order_notes', array( $this, 'checkout_field' ) );
+		add_action( 'woocommerce_before_order_notes', array( $this, 'checkout_field' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'woocommerce_checkout_process', array( $this, 'validate' ) );
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save' ), 10, 2 );
