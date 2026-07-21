@@ -25,5 +25,14 @@ $payload = FC_Options::payload( $product->get_id() );
 			<div class="fc-pp-loading"><span class="fc-spinner" aria-hidden="true"></span></div>
 		</div>
 	</div>
+	<div class="fc-pp-wc-details">
+		<?php
+		// Keep WooCommerce's standard product detail tabs (Description /
+		// Additional information / Reviews) at the bottom of the page.
+		if ( function_exists( 'woocommerce_output_product_data_tabs' ) ) {
+			woocommerce_output_product_data_tabs();
+		}
+		?>
+	</div>
 </div>
 <script>window.FC_PRODUCT = <?php echo wp_json_encode( $payload ); // phpcs:ignore WordPress.Security.EscapeOutput ?>;</script>
