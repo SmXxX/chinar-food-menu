@@ -65,12 +65,13 @@ class FC_Ingredient_Importer {
 			if ( empty( $names ) ) {
 				continue;
 			}
-			$existing = (array) get_post_meta( $product->get_id(), FC_META_INGREDIENTS, true );
+			// NOTE: (array) '' === array('') (non-empty!), so check for a real array.
+			$existing = get_post_meta( $product->get_id(), FC_META_INGREDIENTS, true );
 			$rows[]   = array(
 				'id'       => $product->get_id(),
 				'name'     => $product->get_name(),
 				'ings'     => $names,
-				'has_prev' => ! empty( $existing ),
+				'has_prev' => is_array( $existing ) && ! empty( $existing ),
 			);
 		}
 		return $rows;
@@ -128,6 +129,7 @@ class FC_Ingredient_Importer {
 		}
 		$filled = 0;
 		$skip   = 0;
+		$fail   = 0;
 		foreach ( $this->candidates() as $r ) {
 			if ( $r['has_prev'] ) {
 				$skip++;
@@ -142,10 +144,16 @@ class FC_Ingredient_Importer {
 			}
 			update_post_meta( $r['id'], FC_META_INGREDIENTS, $ingredients );
 			update_post_meta( $r['id'], FC_META_REMOVABLE, $removable );
-			$filled++;
+			// Verify it actually landed (disk-full can make DB writes silently fail).
+			$check = (array) get_post_meta( $r['id'], FC_META_INGREDIENTS, true );
+			if ( count( $check ) === count( $ingredients ) ) {
+				$filled++;
+			} else {
+				$fail++;
+			}
 		}
 		wp_safe_redirect( add_query_arg(
-			array( 'page' => 'fc-import-ingredients', 'done' => $filled, 'skip' => $skip ),
+			array( 'page' => 'fc-import-ingredients', 'done' => $filled, 'skip' => $skip, 'fail' => $fail ),
 			admin_url( 'admin.php' )
 		) );
 		exit;
