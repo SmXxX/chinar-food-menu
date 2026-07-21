@@ -18,6 +18,23 @@ class FC_Ingredient_Importer {
 		add_action( 'admin_post_fc_import_ingredients', array( $this, 'handle' ) );
 	}
 
+	/**
+	 * Hand-curated ingredients for products that list them WITHOUT a "Състав:"
+	 * label (prep/garnish phrases stripped). Keyed by product ID.
+	 *
+	 * @return array<int,string[]>
+	 */
+	private function curated() {
+		return array(
+			7294 => array( 'домати', 'краставици', 'маслини', 'червен лук', 'краве сирене', 'риган' ),                      // Гръцка салата
+			7293 => array( 'цедено краве мляко', 'тиквички', 'сол', 'лимон', 'копър', 'печени орехи' ),                    // Млечна салата с тиквички
+			7291 => array( 'плескавица от свинска кайма', 'печен лук', 'пресни зеленчуци', 'специален сос', 'пържени картофки' ), // Балкански бургер
+			7292 => array( 'сирене', 'кашкавал', 'панко панировка', 'сладко от зелени маслини' ),                          // Мандраджийско дуо
+			7196 => array( 'бешамел от гъби', 'мачкани картофи', 'пудра от трюфел' ),                                       // Джолан от елен на пещ
+			7268 => array( 'зряло краве сирене', 'рукола', 'чери домати', 'сос тартар' ),                                  // Пиперки бюрек
+		);
+	}
+
 	public function menu() {
 		add_submenu_page(
 			'woocommerce',
@@ -56,12 +73,16 @@ class FC_Ingredient_Importer {
 		return $out;
 	}
 
-	/** All parent products with a parseable Състав line + whether they're already set. */
+	/** All parent products with parseable ingredients (Състав line or curated). */
 	private function candidates() {
+		$curated  = $this->curated();
 		$products = wc_get_products( array( 'limit' => -1, 'status' => 'publish', 'return' => 'objects' ) );
 		$rows     = array();
 		foreach ( $products as $product ) {
 			$names = self::parse( $product->get_description() );
+			if ( empty( $names ) && isset( $curated[ $product->get_id() ] ) ) {
+				$names = $curated[ $product->get_id() ]; // no "Състав:" label — use the curated list.
+			}
 			if ( empty( $names ) ) {
 				continue;
 			}
