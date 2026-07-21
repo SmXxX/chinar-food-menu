@@ -78,7 +78,7 @@ class FC_Delivery {
 
 	public function add_menu() {
 		add_submenu_page(
-			'woocommerce',
+			'food-customizer',
 			__( 'Delivery zones', 'food-customizer' ),
 			__( 'Delivery zones', 'food-customizer' ),
 			'manage_woocommerce',

@@ -54,6 +54,7 @@ require_once FC_DIR . 'includes/class-fc-cutlery.php';
 require_once FC_DIR . 'includes/class-fc-delivery.php';
 require_once FC_DIR . 'includes/class-fc-min-order.php';
 require_once FC_DIR . 'includes/class-fc-ingredient-importer.php';
+require_once FC_DIR . 'includes/class-fc-guide.php';
 
 // Load translations so labels follow the WordPress site language.
 add_action( 'init', function () {
@@ -97,6 +98,7 @@ function fc_bootstrap() {
 			( new FC_Settings() )->init();
 			( new FC_Product_Meta() )->init();
 			( new FC_Ingredient_Importer() )->init(); // WooCommerce → Import ingredients tool.
+			( new FC_Guide() )->init(); // WooCommerce → Food Customizer Guide (how-to page).
 		}
 	} catch ( \Throwable $e ) {
 		error_log( 'Food Customizer bootstrap error: ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine() );

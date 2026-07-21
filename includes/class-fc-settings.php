@@ -153,10 +153,23 @@ JS;
 	}
 
 	public function add_menu() {
+		// Top-level menu so all Food Customizer tools (Settings, delivery zones,
+		// ingredient importer, guide) group under one item instead of scattering
+		// across the WooCommerce submenu.
+		add_menu_page(
+			__( 'Food Customizer', 'food-customizer' ),
+			__( 'Food Customizer', 'food-customizer' ),
+			'manage_woocommerce',
+			self::PAGE,
+			array( $this, 'render_page' ),
+			'dashicons-store',
+			56
+		);
+		// Relabel the auto-created first item (WordPress names it after the menu).
 		add_submenu_page(
-			'woocommerce',
-			__( 'Food Customizer', 'food-customizer' ),
-			__( 'Food Customizer', 'food-customizer' ),
+			self::PAGE,
+			__( 'Settings', 'food-customizer' ),
+			__( 'Settings', 'food-customizer' ),
 			'manage_woocommerce',
 			self::PAGE,
 			array( $this, 'render_page' )

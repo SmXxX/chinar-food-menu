@@ -37,7 +37,7 @@ class FC_Ingredient_Importer {
 
 	public function menu() {
 		add_submenu_page(
-			'woocommerce',
+			'food-customizer',
 			__( 'Import ingredients', 'food-customizer' ),
 			__( 'Import ingredients', 'food-customizer' ),
 			'manage_woocommerce',
