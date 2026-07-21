@@ -19,7 +19,7 @@
 /* Fade hint on the right edge while there's more to slide to. */
 .fc-pills-wrap::after {
 	content: ""; position: absolute; top: 0; right: 0; bottom: 14px; width: 48px; z-index: 2; pointer-events: none;
-	background: linear-gradient(to left, var(--dark-bg-color, #0b0b0b), transparent);
+	background: linear-gradient(to left, var(--fc-page-bg, var(--dark-bg-color, #0b0b0b)), transparent);
 	opacity: 0; transition: opacity .2s;
 }
 .fc-pills-wrap.fc-scrollable:not(.fc-at-end)::after { opacity: 1; }

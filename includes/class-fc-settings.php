@@ -39,6 +39,10 @@ class FC_Settings {
 			'fs_pill'       => 13, // category / option pills, px
 			'ff_heading'    => "'Cormorant Garamond', serif", // headings font family
 			'ff_body'       => '',                             // body font family ('' = theme default)
+			// Layout / theme-fit — per-theme; defaults match the current (patiotime) theme.
+			'page_bg'       => '',   // product-page background ('' = inherit theme / --dark-bg-color)
+			'space_header'  => 118,  // top padding to clear a fixed/overlapping header (px)
+			'space_flycart' => 96,   // floating mini-cart bottom offset above a back-to-top button (px)
 		);
 	}
 
@@ -173,6 +177,7 @@ JS;
 		register_setting( self::GROUP, 'fc_category_schedules', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_schedules' ), 'default' => array() ) );
 		register_setting( self::GROUP, 'fc_category_order', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_slug_list' ), 'default' => array() ) );
 		register_setting( self::GROUP, 'fc_layout_direction', array( 'type' => 'string', 'sanitize_callback' => array( $this, 'sanitize_direction' ), 'default' => 'ltr' ) );
+		register_setting( self::GROUP, 'fc_load_fonts', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_bool' ), 'default' => 0 ) );
 	}
 
 	public function sanitize_direction( $v ) {
@@ -233,6 +238,8 @@ JS;
 			}
 			if ( in_array( $k, array( 'radius', 'radius_box', 'border_width' ), true ) ) {
 				$out[ $k ] = max( 0, min( 60, absint( $in[ $k ] ) ) );
+			} elseif ( in_array( $k, array( 'space_header', 'space_flycart' ), true ) ) {
+				$out[ $k ] = max( 0, min( 400, absint( $in[ $k ] ) ) );
 			} elseif ( 0 === strpos( $k, 'fs_' ) ) {
 				$out[ $k ] = max( 8, min( 80, absint( $in[ $k ] ) ) );
 			} elseif ( 0 === strpos( $k, 'ff_' ) ) {
@@ -340,8 +347,21 @@ JS;
 						</tr>
 				</table>
 
+				<h2><?php esc_html_e( 'Layout (theme fit)', 'food-customizer' ); ?></h2>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Adjust these when moving the plugin to another theme. Defaults match this site.', 'food-customizer' ); ?></p>
+					<table class="form-table" role="presentation">
+						<?php $this->color_row( 'page_bg', __( 'Product-page background', 'food-customizer' ) ); ?>
+						<tr><th scope="row"><?php esc_html_e( 'Content top padding', 'food-customizer' ); ?></th>
+							<td><input type="number" min="0" max="400" name="fc_design[space_header]" value="<?php echo esc_attr( self::design( 'space_header' ) ); ?>" class="small-text" /> px
+							<p class="description"><?php esc_html_e( 'Space above the page to clear a fixed / overlapping header. Set 0 for a normal header.', 'food-customizer' ); ?></p></td></tr>
+						<tr><th scope="row"><?php esc_html_e( 'Floating cart offset', 'food-customizer' ); ?></th>
+							<td><input type="number" min="0" max="400" name="fc_design[space_flycart]" value="<?php echo esc_attr( self::design( 'space_flycart' ) ); ?>" class="small-text" /> px
+							<p class="description"><?php esc_html_e( 'Distance from the bottom for the floating mini-cart (raise it to clear a back-to-top button).', 'food-customizer' ); ?></p></td></tr>
+					</table>
+
 				<h2><?php esc_html_e( 'Fonts', 'food-customizer' ); ?></h2>
 					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Text sizes in pixels. Defaults match the current design.', 'food-customizer' ); ?></p>
+					<p><label><input type="checkbox" name="fc_load_fonts" value="1" <?php checked( 1, (int) get_option( 'fc_load_fonts', 0 ) ); ?> /> <?php esc_html_e( 'Load Cormorant Garamond + Jost from Google Fonts (enable if your theme does not already provide them).', 'food-customizer' ); ?></label></p>
 					<table class="form-table" role="presentation">
 						<?php
 						$this->ff_row( 'ff_body', __( 'Body font family', 'food-customizer' ), __( 'Leave blank to use the theme font. Example: "Roboto", sans-serif', 'food-customizer' ) );

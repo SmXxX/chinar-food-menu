@@ -183,8 +183,8 @@
 @keyframes fc-spin { to { transform: rotate(360deg); } }
 
 /* Dark page bg + reveal the transparent overlap header (unchanged) */
-body.fc-food-single { background-color: var(--dark-bg-color, #0b0b0b) !important; }
-body.fc-food-single .fc-product-wrap { padding-top: 118px; }
+body.fc-food-single { background-color: var(--fc-page-bg, var(--dark-bg-color, #0b0b0b)) !important; }
+body.fc-food-single .fc-product-wrap { padding-top: var(--fc-header-pad, 118px); }
 
 @media (max-width: 1024px) {
 	.fc-pp { grid-template-columns: 1fr; gap: 20px 0; }

@@ -12,6 +12,20 @@ class FC_Style {
 
 	public function init() {
 		add_action( 'wp_head', array( $this, 'output' ), 100 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'fonts' ) );
+	}
+
+	/** Optionally load the plugin's fonts from Google (for themes that don't provide them). */
+	public function fonts() {
+		if ( ! get_option( 'fc_load_fonts', 0 ) ) {
+			return;
+		}
+		wp_enqueue_style(
+			'fc-fonts',
+			'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@400;500;600&display=swap',
+			array(),
+			null
+		);
 	}
 
 	public function output() {
@@ -41,6 +55,10 @@ class FC_Style {
 			'--fc-fs-pill'      => (int) $d( 'fs_pill' ) . 'px',
 			'--fc-ff-heading'   => $d( 'ff_heading' ),
 			'--fc-ff-body'      => $d( 'ff_body' ), // empty → skipped → inherits theme font.
+			// Layout / theme-fit tokens (consumed by product.css / frontend.css / shop.css).
+			'--fc-page-bg'         => $d( 'page_bg' ), // empty → skipped → CSS falls back to the theme bg.
+			'--fc-header-pad'      => (int) $d( 'space_header' ) . 'px',
+			'--fc-flycart-bottom'  => (int) $d( 'space_flycart' ) . 'px',
 		);
 
 		$decl = '';
