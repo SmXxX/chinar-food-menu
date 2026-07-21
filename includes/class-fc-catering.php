@@ -34,6 +34,11 @@ class FC_Catering {
 		add_action( 'woocommerce_before_cart', array( $this, 'qty_notices' ), 6 );
 		add_action( 'woocommerce_checkout_before_customer_details', array( $this, 'qty_notices' ), 2 );
 		add_action( 'woocommerce_checkout_process', array( $this, 'block_on_qty' ) );
+		// Below a minimum, don't just block the final submit — stop the customer from
+		// proceeding to checkout at all: hide the cart's "Proceed" button and redirect
+		// the checkout URL back to the cart.
+		add_action( 'woocommerce_before_cart', array( $this, 'maybe_hide_proceed' ), 6 );
+		add_action( 'template_redirect', array( $this, 'gate_checkout' ) );
 	}
 
 	/* ===================================================================== */
@@ -176,5 +181,30 @@ class FC_Catering {
 		foreach ( $this->violations() as $msg ) {
 			wc_add_notice( $msg, 'error' );
 		}
+	}
+
+	/** Hide the cart's "Proceed to checkout" button while a minimum isn't met. */
+	public function maybe_hide_proceed() {
+		if ( $this->violations() ) {
+			remove_action( 'woocommerce_proceed_to_checkout', 'woocommerce_button_proceed_to_checkout', 20 );
+		}
+	}
+
+	/** Block direct checkout access while a minimum isn't met — send back to cart. */
+	public function gate_checkout() {
+		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_wc_endpoint_url() ) {
+			return;
+		}
+		$violations = $this->violations();
+		if ( empty( $violations ) ) {
+			return;
+		}
+		foreach ( $violations as $msg ) {
+			if ( ! wc_has_notice( $msg, 'error' ) ) {
+				wc_add_notice( $msg, 'error' );
+			}
+		}
+		wp_safe_redirect( wc_get_cart_url() );
+		exit;
 	}
 }
