@@ -1,26 +1,30 @@
 /* Food Customizer — front-end styles. */
 
-/* Catering: courier cash/POS choice inside the "Cash on delivery" box. */
-.fc-pay-choice { display: block; margin-top: 12px; }
-.fc-pay-choice-label { display: block; font-weight: 600; margin-bottom: 10px; }
-.fc-pay-opt {
-	display: flex; align-items: center; gap: 11px; width: 100%; box-sizing: border-box;
-	padding: 12px 14px; margin: 8px 0; cursor: pointer;
-	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242, 237, 228, .26));
-	border-radius: var(--fc-radius, 6px); transition: border-color .15s, background .15s;
+/* Catering: courier cash/POS choice inside the "Cash on delivery" box.
+   !important + scoped selectors so the theme's checkout label styles can't
+   force them inline/floated. */
+.fc-pay-choice { display: block !important; margin: 12px 0 0 !important; clear: both; overflow: hidden; }
+.fc-pay-choice .fc-pay-choice-label { display: block !important; font-weight: 600; margin: 0 0 10px !important; float: none !important; }
+.fc-pay-choice .fc-pay-opt {
+	display: flex !important; float: none !important; align-items: center; gap: 11px;
+	width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;
+	padding: 12px 14px !important; margin: 8px 0 !important; cursor: pointer;
+	border: var(--fc-bw, 1px) solid var(--fc-line, rgba(242, 237, 228, .26)) !important;
+	border-radius: var(--fc-radius, 6px) !important; background: transparent;
+	transition: border-color .15s, background .15s;
 }
-.fc-pay-opt:hover { border-color: var(--fc-line-strong, rgba(242, 237, 228, .7)); }
-.fc-pay-opt input[type="radio"] {
-	appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 19px; height: 19px; margin: 0;
-	border: 2px solid var(--fc-line-strong, rgba(242, 237, 228, .7)); border-radius: 50%;
-	position: relative; cursor: pointer; background: transparent;
+.fc-pay-choice .fc-pay-opt:hover { border-color: var(--fc-line-strong, rgba(242, 237, 228, .7)) !important; }
+.fc-pay-choice .fc-pay-opt input[type="radio"] {
+	appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 19px !important; height: 19px !important; margin: 0 !important; padding: 0 !important;
+	border: 2px solid var(--fc-line-strong, rgba(242, 237, 228, .7)) !important; border-radius: 50% !important;
+	position: relative; cursor: pointer; background: transparent !important; box-shadow: none !important;
 }
-.fc-pay-opt input[type="radio"]:checked { border-color: var(--fc-accent, #dd5903); }
-.fc-pay-opt input[type="radio"]:checked::after {
+.fc-pay-choice .fc-pay-opt input[type="radio"]:checked { border-color: var(--fc-accent, #dd5903) !important; }
+.fc-pay-choice .fc-pay-opt input[type="radio"]:checked::after {
 	content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--fc-accent, #dd5903);
 }
-.fc-pay-opt:has(input:checked) { border-color: var(--fc-accent, #dd5903); background: rgba(127, 127, 127, .08); }
-.fc-pay-opt .fc-pay-opt-text { color: inherit; line-height: 1.3; }
+.fc-pay-choice .fc-pay-opt:has(input:checked) { border-color: var(--fc-accent, #dd5903) !important; background: rgba(127, 127, 127, .08); }
+.fc-pay-choice .fc-pay-opt .fc-pay-opt-text { color: inherit; line-height: 1.3; }
 
 .fc-price-bgn {
 	color: #6b7280;

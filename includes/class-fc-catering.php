@@ -62,11 +62,11 @@ class FC_Catering {
 		if ( 'cod' !== $gateway_id || ! self::pos_enabled() ) {
 			return $description;
 		}
-		$html = '<span class="fc-pay-choice"><span class="fc-pay-choice-label">' . esc_html( FC_Settings::label( 'pay_choose' ) ) . '</span>';
+		$html = '<div class="fc-pay-choice"><span class="fc-pay-choice-label">' . esc_html( FC_Settings::label( 'pay_choose' ) ) . '</span>';
 		foreach ( self::pay_options() as $val => $label ) {
 			$html .= '<label class="fc-pay-opt"><input type="radio" name="fc_pay_type" value="' . esc_attr( $val ) . '"' . checked( 'cash', $val, false ) . '><span class="fc-pay-opt-text">' . esc_html( $label ) . '</span></label>';
 		}
-		$html .= '</span>';
+		$html .= '</div>';
 		return $description . $html;
 	}
 
