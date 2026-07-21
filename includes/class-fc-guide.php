@@ -1,6 +1,6 @@
 <?php
 /**
- * In-plugin help page: WooCommerce → "Food Customizer Guide".
+ * In-plugin help page: Food Customizer → Guide.
  * A self-contained how-to covering the menu, per-product options, settings,
  * delivery, checkout extras, the ingredient importer, and re-using the plugin
  * on another theme. Plain admin documentation (not front-end, not translated).
@@ -84,7 +84,7 @@ class FC_Guide {
 
 			<h2 id="settings">3. Global settings <span class="fc-tag">Food Customizer</span></h2>
 			<div class="fc-card">
-				<p><a href="<?php echo esc_url( $settings ); ?>">WooCommerce → Food Customizer</a> has these tabs:</p>
+				<p>The <strong>Food Customizer → <a href="<?php echo esc_url( $settings ); ?>">Settings</a></strong> page (its own top-level menu in the sidebar) has these tabs:</p>
 				<ul>
 					<li><strong>Colours</strong> — text, borders, surfaces, accent (buttons/active tabs).</li>
 					<li><strong>Borders &amp; shape</strong> — corner radius, border thickness, and desktop layout side (options left/right).</li>
@@ -98,7 +98,7 @@ class FC_Guide {
 
 			<h2 id="delivery">4. Delivery zones <span class="fc-tag">Зони за доставка</span></h2>
 			<div class="fc-card">
-				<p><a href="<?php echo esc_url( $zones ); ?>">WooCommerce → Зони за доставка</a>: add zones, each with the areas/streets it covers, an ETA, and a <strong>Busy</strong> toggle (busy zones show a message and block checkout). On checkout the customer picks their zone, chooses delivery to the door or entrance, and ASAP or a scheduled time. The choice is saved on the order and shown in admin/emails. Enable it with the master toggle on that page.</p>
+				<p><a href="<?php echo esc_url( $zones ); ?>">Food Customizer → Delivery zones (Зони за доставка)</a>: add zones, each with the areas/streets it covers, an ETA, and a <strong>Busy</strong> toggle (busy zones show a message and block checkout). On checkout the customer picks their zone, chooses delivery to the door or entrance, and ASAP or a scheduled time. The choice is saved on the order and shown in admin/emails. Enable it with the master toggle on that page.</p>
 			</div>
 
 			<h2 id="checkout">5. Checkout extras</h2>
@@ -111,7 +111,7 @@ class FC_Guide {
 
 			<h2 id="import">6. Import ingredients from descriptions <span class="fc-tag">Import ingredients</span></h2>
 			<div class="fc-card">
-				<p><a href="<?php echo esc_url( $import ); ?>">WooCommerce → Import ingredients</a>: if your product descriptions contain a “<em>Състав:</em>” line, this reads them and fills the Ingredients list (marked removable) in one click. It previews first, only fills products that are still empty, and everything stays editable afterwards.</p>
+				<p><a href="<?php echo esc_url( $import ); ?>">Food Customizer → Import ingredients</a>: if your product descriptions contain a “<em>Състав:</em>” line, this reads them and fills the Ingredients list (marked removable) in one click. It previews first, only fills products that are still empty, and everything stays editable afterwards.</p>
 			</div>
 
 			<h2 id="theme">7. Using the plugin on another theme</h2>
