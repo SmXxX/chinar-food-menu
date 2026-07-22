@@ -66,11 +66,11 @@
 .fc-card-foot .button, .fc-card-foot .fc-customize-btn {
 	display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 100%; box-sizing: border-box; text-align: center;
 	height: 38px; line-height: 1;
-	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
+	background: var(--fc-btn-bg, transparent) !important; color: var(--fc-btn-text, var(--fc-ink)) !important; border: var(--fc-bw, 1px) solid var(--fc-btn-bg, var(--fc-line-strong)) !important; border-radius: var(--fc-radius, 3px) !important;
 	padding: 0 14px !important; font-weight: 600 !important; font-size: var(--fc-fs-button, .76rem) !important; letter-spacing: .09em; text-transform: uppercase;
-	white-space: nowrap; cursor: pointer; text-decoration: none; transition: background .2s, border-color .2s;
+	white-space: nowrap; cursor: pointer; text-decoration: none; transition: background .2s, border-color .2s, color .2s;
 }
-.fc-card-foot .button:hover, .fc-card-foot .fc-customize-btn:hover { background: rgba(255, 255, 255, .09) !important; border-color: var(--fc-ink) !important; }
+.fc-card-foot .button:hover, .fc-card-foot .fc-customize-btn:hover { background: var(--fc-btn-bg-hov, rgba(255, 255, 255, .09)) !important; color: var(--fc-btn-text-hov, var(--fc-ink)) !important; border-color: var(--fc-btn-bg-hov, var(--fc-ink)) !important; }
 
 /* Quantity stepper + add button row (simple products) */
 .fc-card-buy { display: flex; align-items: stretch; gap: 8px; }

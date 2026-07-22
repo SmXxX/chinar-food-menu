@@ -25,6 +25,12 @@ class FC_Settings {
 			'c_panel'       => '#16130f',
 			'c_accent'      => '#f2ede4',
 			'c_accent_text' => '#14110d',
+			// Add-to-cart CTA buttons. Empty = keep the current outlined look; set
+			// them for a filled button (e.g. black bg / white text, inverting on hover).
+			'c_btn_bg'      => '', // button background
+			'c_btn_text'    => '', // button text
+			'c_btn_hov_bg'  => '', // button background on hover
+			'c_btn_hov_text'=> '', // button text on hover
 			'radius'        => 3,
 			'radius_box'    => 6,
 			'border_width'  => 1,
@@ -362,6 +368,13 @@ JS;
 					$this->color_row( 'c_panel', __( 'Popup background', 'food-customizer' ) );
 					$this->color_row( 'c_accent', __( 'Accent (selected)', 'food-customizer' ) );
 					$this->color_row( 'c_accent_text', __( 'Text on accent', 'food-customizer' ) );
+					?>
+					<tr><td colspan="2" style="padding-bottom:0;"><strong><?php esc_html_e( 'Add-to-cart buttons', 'food-customizer' ); ?></strong><p class="description" style="margin:2px 0 0;"><?php esc_html_e( 'Leave empty to keep the current outlined style. Set all four for a filled button that changes colour on hover (e.g. black button / white text → white button / black text on hover).', 'food-customizer' ); ?></p></td></tr>
+					<?php
+					$this->color_row( 'c_btn_bg', __( 'Button background', 'food-customizer' ) );
+					$this->color_row( 'c_btn_text', __( 'Button text', 'food-customizer' ) );
+					$this->color_row( 'c_btn_hov_bg', __( 'Button background (hover)', 'food-customizer' ) );
+					$this->color_row( 'c_btn_hov_text', __( 'Button text (hover)', 'food-customizer' ) );
 					?>
 				</table>
 

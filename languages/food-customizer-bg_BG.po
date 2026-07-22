@@ -1122,3 +1122,21 @@ msgstr "Активирайте кетъринг функциите (плащан
 
 msgid "Each product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Add several categories, each with its own minimum. A per-product override is set in the product's Food Options box. The quantity selector on those products starts at the minimum. Message: \"Cat min msg\" in Texts."
 msgstr "Всеки продукт от избраната категория трябва да се поръча поне в това количество (напр. хапки ≥ 20). Добавете няколко категории, всяка със свой минимум. Индивидуален минимум за продукт се задава в кутията Food Options на продукта. Селекторът за количество при тези продукти започва от минимума. Съобщение: „Cat min msg“ в Текстове."
+
+msgid "Add-to-cart buttons"
+msgstr "Бутони за добавяне в количката"
+
+msgid "Leave empty to keep the current outlined style. Set all four for a filled button that changes colour on hover (e.g. black button / white text → white button / black text on hover)."
+msgstr "Оставете празно, за да запазите текущия стил с контур. Задайте и четирите за плътен бутон, който сменя цвета си при посочване (напр. черен бутон / бял текст → бял бутон / черен текст при посочване)."
+
+msgid "Button background"
+msgstr "Фон на бутон"
+
+msgid "Button text"
+msgstr "Текст на бутон"
+
+msgid "Button background (hover)"
+msgstr "Фон на бутон (при посочване)"
+
+msgid "Button text (hover)"
+msgstr "Текст на бутон (при посочване)"

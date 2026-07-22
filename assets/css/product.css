@@ -160,10 +160,10 @@
 .fc-pp-price:not(.fc-pp-price--num) { font-size: 1rem; font-weight: 500; color: var(--fc-muted); }
 .fc-pp-price .fc-price-bgn { font-size: .85rem; font-weight: 400; color: var(--fc-muted); }
 .fc-pp-add.button {
-	background: transparent !important; color: var(--fc-ink) !important; border: var(--fc-bw, 1px) solid var(--fc-line-strong) !important; border-radius: var(--fc-radius, 3px) !important;
-	height: 40px; padding: 0 26px !important; box-sizing: border-box; line-height: 1; display: inline-flex; align-items: center; justify-content: center; font-weight: 600 !important; font-size: var(--fc-fs-button, .82rem) !important; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s;
+	background: var(--fc-btn-bg, transparent) !important; color: var(--fc-btn-text, var(--fc-ink)) !important; border: var(--fc-bw, 1px) solid var(--fc-btn-bg, var(--fc-line-strong)) !important; border-radius: var(--fc-radius, 3px) !important;
+	height: 40px; padding: 0 26px !important; box-sizing: border-box; line-height: 1; display: inline-flex; align-items: center; justify-content: center; font-weight: 600 !important; font-size: var(--fc-fs-button, .82rem) !important; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s, color .2s;
 }
-.fc-pp-add.button:hover { background: rgba(255, 255, 255, .1) !important; border-color: var(--fc-ink) !important; }
+.fc-pp-add.button:hover { background: var(--fc-btn-bg-hov, rgba(255, 255, 255, .1)) !important; color: var(--fc-btn-text-hov, var(--fc-ink)) !important; border-color: var(--fc-btn-bg-hov, var(--fc-ink)) !important; }
 .fc-pp-add.loading { opacity: .6; pointer-events: none; }
 .fc-pp-add[disabled] { opacity: .4; cursor: not-allowed; pointer-events: none; }
 .fc-pp-unavailable {

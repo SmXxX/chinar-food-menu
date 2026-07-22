@@ -48,6 +48,11 @@ class FC_Style {
 			'--fc-panel-2'      => $d( 'c_panel' ),
 			'--fc-accent'       => $d( 'c_accent' ),
 			'--fc-accent-text'  => $d( 'c_accent_text' ),
+			// CTA button colours (empty → skipped → CSS keeps the current look).
+			'--fc-btn-bg'       => $d( 'c_btn_bg' ),
+			'--fc-btn-text'     => $d( 'c_btn_text' ),
+			'--fc-btn-bg-hov'   => $d( 'c_btn_hov_bg' ),
+			'--fc-btn-text-hov' => $d( 'c_btn_hov_text' ),
 			'--fc-radius'       => (int) $d( 'radius' ) . 'px',
 			'--fc-radius-box'   => (int) $d( 'radius_box' ) . 'px',
 			'--fc-bw'           => (int) $d( 'border_width' ) . 'px',
