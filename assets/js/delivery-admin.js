@@ -69,9 +69,9 @@
 			+ '<td style="width:70px"><button type="button" class="button-link fc-hood-edit">' + esc( I.edit || 'Edit' ) + '</button></td></tr>';
 	}
 
-	function renderResults( streets ) {
-		var $res = $( '#fc-street-results' );
-		if ( ! streets.length ) { $res.html( '<em>' + esc( $res.data( 'empty' ) ) + '</em>' ); return; }
+	function renderResults( streets, $target ) {
+		var $res = $target || $( '#fc-street-results' );
+		if ( ! streets.length ) { $res.html( '<em>' + esc( $res.data( 'empty' ) || '—' ) + '</em>' ); return; }
 		var html = '<table class="widefat striped" style="max-width:720px;"><tbody>';
 		streets.forEach( function ( s ) { html += rowView( s ); } );
 		html += '</tbody></table>';
@@ -85,6 +85,29 @@
 		var names = Object.keys( rev ).filter( function ( s ) { return s.toLowerCase().indexOf( q ) !== -1; } ).sort().slice( 0, 40 );
 		renderResults( names );
 	} );
+
+	// Browse by neighbourhood: pick a quarter -> list all its streets (editable).
+	function fillQuarterPicker() {
+		var $sel = $( '#fc-quarter-pick' );
+		if ( ! $sel.length ) { return; }
+		var cur = $sel.val();
+		var qs = ( ED.quarters && ED.quarters.length ) ? ED.quarters.slice() : Object.keys( HOODS );
+		qs.sort();
+		var opts = '<option value="">' + esc( $sel.data( 'placeholder' ) || '' ) + '</option>';
+		qs.forEach( function ( q ) {
+			opts += '<option value="' + esc( q ) + '">' + esc( q ) + ' (' + ( HOODS[ q ] || [] ).length + ')</option>';
+		} );
+		$sel.html( opts );
+		if ( cur ) { $sel.val( cur ); }
+	}
+	function renderQuarter( q ) {
+		var $res = $( '#fc-quarter-results' );
+		if ( ! q ) { $res.empty(); return; }
+		var streets = ( HOODS[ q ] || [] ).slice().sort();
+		renderResults( streets, $res );
+	}
+	fillQuarterPicker();
+	$( document ).on( 'change', '#fc-quarter-pick', function () { renderQuarter( $( this ).val() ); } );
 
 	// Enter edit mode for a row.
 	$( document ).on( 'click', '.fc-hood-edit', function () {
@@ -112,6 +135,7 @@
 				if ( r && r.success ) {
 					applyLocal( street, r.data.quarters || [] );
 					$tr.replaceWith( rowView( street ) );
+					if ( typeof fillQuarterPicker === 'function' ) { fillQuarterPicker(); }
 				} else {
 					$msg.css( 'color', '#b32d2e' ).text( I.error || 'Error' );
 				}
@@ -148,6 +172,7 @@
 			.done( function ( r ) {
 				if ( r && r.success ) {
 					applyLocal( street, r.data.quarters || [] );
+					if ( typeof fillQuarterPicker === 'function' ) { fillQuarterPicker(); }
 					$msg.css( 'color', '#1a7f37' ).text( I.saved || 'Saved' );
 					$( '#fc-new-street' ).val( '' ); $( '#fc-new-street-q' ).val( [] );
 				} else {

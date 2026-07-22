@@ -303,6 +303,12 @@ class FC_Delivery {
 					<p style="margin-top:8px;"><button type="button" class="button" id="fc-add-street">+ <?php esc_html_e( 'Add a street', 'food-customizer' ); ?></button></p>
 				</div>
 
+				<div class="fc-quarter-browse" style="margin:16px 0;max-width:1100px;">
+					<label for="fc-quarter-pick" style="font-weight:600;"><?php esc_html_e( 'Show all streets in a neighbourhood', 'food-customizer' ); ?></label><br>
+					<select id="fc-quarter-pick" class="regular-text" data-placeholder="<?php esc_attr_e( '— choose a neighbourhood —', 'food-customizer' ); ?>" style="margin-top:6px;"></select>
+					<div id="fc-quarter-results" style="margin-top:8px;"></div>
+				</div>
+
 				<table class="widefat striped" id="fc-zones-table" style="max-width:1100px;margin-top:10px;">
 					<thead>
 						<tr>

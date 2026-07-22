@@ -1086,3 +1086,9 @@ msgstr "Потърсете улица и натиснете Редактиран
 
 msgid "Add a street"
 msgstr "Добави улица"
+
+msgid "Show all streets in a neighbourhood"
+msgstr "Покажи всички улици в квартал"
+
+msgid "— choose a neighbourhood —"
+msgstr "— изберете квартал —"
