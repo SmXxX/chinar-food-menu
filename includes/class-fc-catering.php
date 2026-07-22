@@ -17,10 +17,18 @@ defined( 'ABSPATH' ) || exit;
 
 class FC_Catering {
 
+	const GROUP = 'fc_catering_group';
+	const PAGE  = 'fc-catering';
+
 	public function init() {
 		if ( ! FC_Settings::module( 'catering' ) ) {
 			return;
 		}
+
+		// Admin: dedicated Catering page under the Food Customizer menu (only when
+		// the module is on). Priority 22 so the top-level menu exists first.
+		add_action( 'admin_menu', array( $this, 'add_menu' ), 22 );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
 		// --- #1 Payment sub-choice (cash vs courier POS), shown under COD -------
 		add_filter( 'woocommerce_gateway_description', array( $this, 'cod_description' ), 10, 2 );
@@ -39,6 +47,117 @@ class FC_Catering {
 		// the checkout URL back to the cart.
 		add_action( 'woocommerce_before_cart', array( $this, 'maybe_hide_proceed' ), 6 );
 		add_action( 'template_redirect', array( $this, 'gate_checkout' ) );
+	}
+
+	/* ===================================================================== */
+	/* Admin page (Food Customizer → Catering)                               */
+	/* ===================================================================== */
+
+	public function add_menu() {
+		add_submenu_page(
+			'food-customizer',
+			__( 'Catering', 'food-customizer' ),
+			__( 'Catering', 'food-customizer' ),
+			'manage_woocommerce',
+			self::PAGE,
+			array( $this, 'render_page' )
+		);
+	}
+
+	public function register_settings() {
+		register_setting( self::GROUP, 'fc_catering_payment_choice', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_bool' ), 'default' => 1 ) );
+		register_setting( self::GROUP, 'fc_min_qty', array( 'type' => 'integer', 'sanitize_callback' => 'absint', 'default' => 0 ) );
+		register_setting( self::GROUP, 'fc_cat_min_rules', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_cat_rules' ), 'default' => array() ) );
+	}
+
+	public function sanitize_bool( $v ) {
+		return empty( $v ) ? 0 : 1;
+	}
+
+	/** Per-category minimum rules: [ ['cat'=>slug,'qty'=>int], … ]. */
+	public function sanitize_cat_rules( $in ) {
+		$out = array();
+		if ( ! is_array( $in ) ) {
+			return $out;
+		}
+		foreach ( $in as $r ) {
+			$cat = isset( $r['cat'] ) ? sanitize_title( $r['cat'] ) : '';
+			$qty = isset( $r['qty'] ) ? absint( $r['qty'] ) : 0;
+			if ( '' !== $cat && $qty > 0 ) {
+				$out[] = array( 'cat' => $cat, 'qty' => $qty );
+			}
+		}
+		return $out;
+	}
+
+	public function render_page() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+		$cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
+		$cats = is_array( $cats ) ? $cats : array();
+		$build_opts = function ( $selected ) use ( $cats ) {
+			$h = '<option value="">' . esc_html__( '— category —', 'food-customizer' ) . '</option>';
+			foreach ( $cats as $t ) {
+				$h .= '<option value="' . esc_attr( $t->slug ) . '"' . selected( $selected, $t->slug, false ) . '>' . esc_html( $t->name ) . '</option>';
+			}
+			return $h;
+		};
+		$row = function ( $i, $cat, $qty ) use ( $build_opts ) {
+			return '<div class="fc-catmin-row" style="margin-bottom:6px;">'
+				. '<select name="fc_cat_min_rules[' . esc_attr( $i ) . '][cat]">' . $build_opts( $cat ) . '</select> '
+				. esc_html__( 'min', 'food-customizer' ) . ' '
+				. '<input type="number" min="0" class="small-text" name="fc_cat_min_rules[' . esc_attr( $i ) . '][qty]" value="' . esc_attr( $qty ) . '" /> '
+				. esc_html__( 'pcs each', 'food-customizer' )
+				. ' <button type="button" class="button-link fc-catmin-del" title="' . esc_attr__( 'Remove', 'food-customizer' ) . '">&times;</button></div>';
+		};
+		$rules = self::cat_rules();
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Catering', 'food-customizer' ); ?></h1>
+			<form method="post" action="options.php">
+				<?php settings_fields( self::GROUP ); ?>
+				<table class="form-table" role="presentation">
+					<tr><th scope="row"><?php esc_html_e( 'Courier payment choice', 'food-customizer' ); ?></th>
+						<td><label><input type="checkbox" name="fc_catering_payment_choice" value="1" <?php checked( (bool) get_option( 'fc_catering_payment_choice', 1 ), true ); ?> /> <?php esc_html_e( 'Under "Cash on delivery", let the customer choose cash or the courier\'s POS terminal', 'food-customizer' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Wording is editable in the Texts section (Pay choose / Pay cash / Pay pos).', 'food-customizer' ); ?></p></td></tr>
+					<tr><th scope="row"><?php esc_html_e( 'Minimum items per order', 'food-customizer' ); ?></th>
+						<td><input type="number" min="0" name="fc_min_qty" value="<?php echo esc_attr( (int) get_option( 'fc_min_qty', 0 ) ); ?>" class="small-text" />
+							<p class="description"><?php esc_html_e( 'The cart must contain at least this many items to check out. 0 = no minimum. Message: "Min qty msg" in Texts.', 'food-customizer' ); ?></p></td></tr>
+					<tr><th scope="row"><?php esc_html_e( 'Per-category minimums', 'food-customizer' ); ?></th>
+						<td>
+							<?php
+							echo '<div id="fc-catmin-rows">';
+							if ( empty( $rules ) ) {
+								echo $row( 0, '', '' ); // phpcs:ignore WordPress.Security.EscapeOutput
+							} else {
+								foreach ( $rules as $i => $r ) {
+									echo $row( (int) $i, $r['cat'], $r['qty'] ); // phpcs:ignore WordPress.Security.EscapeOutput
+								}
+							}
+							echo '</div>';
+							echo '<script type="text/template" id="fc-catmin-tpl">' . $row( '__i__', '', '' ) . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput
+							?>
+							<p><button type="button" class="button" id="fc-catmin-add">+ <?php esc_html_e( 'Add category', 'food-customizer' ); ?></button></p>
+							<p class="description"><?php esc_html_e( 'Each product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Add several categories, each with its own minimum. A per-product override is set in the product\'s Food Options box. The quantity selector on those products starts at the minimum. Message: "Cat min msg" in Texts.', 'food-customizer' ); ?></p>
+							<script>
+							( function ( $ ) {
+								$( '#fc-catmin-add' ).on( 'click', function () {
+									$( '#fc-catmin-rows' ).append( $( '#fc-catmin-tpl' ).html().replace( /__i__/g, Date.now() ) );
+								} );
+								$( document ).on( 'click', '.fc-catmin-del', function () {
+									var $rows = $( '#fc-catmin-rows .fc-catmin-row' );
+									if ( $rows.length <= 1 ) { $( this ).closest( '.fc-catmin-row' ).find( 'select,input' ).val( '' ); }
+									else { $( this ).closest( '.fc-catmin-row' ).remove(); }
+								} );
+							} )( jQuery );
+							</script>
+						</td></tr>
+				</table>
+				<?php submit_button(); ?>
+			</form>
+		</div>
+		<?php
 	}
 
 	/* ===================================================================== */
@@ -151,7 +270,11 @@ class FC_Catering {
 		return $out;
 	}
 
-	/** Highest applicable per-category minimum for a product (0 = none). */
+	/**
+	 * Effective minimum order quantity for a product (0 = none).
+	 * A per-product override (Food Options box) wins; otherwise the highest
+	 * applicable per-category minimum.
+	 */
 	public static function product_min_qty( $product_id ) {
 		if ( ! FC_Settings::module( 'catering' ) ) {
 			return 0;
@@ -159,6 +282,10 @@ class FC_Catering {
 		$product_id = (int) $product_id;
 		if ( ! $product_id ) {
 			return 0;
+		}
+		$override = (int) get_post_meta( $product_id, '_food_min_qty', true );
+		if ( $override > 0 ) {
+			return $override;
 		}
 		$min = 0;
 		foreach ( self::cat_rules() as $rule ) {
@@ -189,18 +316,20 @@ class FC_Catering {
 			}
 		}
 
-		// #7 per-category minimums (each product in each category, several categories)
-		foreach ( self::cat_rules() as $rule ) {
-			foreach ( WC()->cart->get_cart() as $item ) {
-				$pid = ! empty( $item['product_id'] ) ? (int) $item['product_id'] : 0;
-				if ( $pid && has_term( $rule['cat'], 'product_cat', $pid ) && (int) $item['quantity'] < $rule['qty'] ) {
-					$name  = isset( $item['data'] ) && is_object( $item['data'] ) ? $item['data']->get_name() : '';
-					$out[] = str_replace(
-						array( '%product%', '%min%' ),
-						array( $name, $rule['qty'] ),
-						FC_Settings::label( 'cat_min_msg' )
-					);
-				}
+		// #7 per-product minimums (per-category rules + per-product overrides)
+		foreach ( WC()->cart->get_cart() as $item ) {
+			$pid = ! empty( $item['product_id'] ) ? (int) $item['product_id'] : 0;
+			if ( ! $pid ) {
+				continue;
+			}
+			$min = self::product_min_qty( $pid );
+			if ( $min > 0 && (int) $item['quantity'] < $min ) {
+				$name  = isset( $item['data'] ) && is_object( $item['data'] ) ? $item['data']->get_name() : '';
+				$out[] = str_replace(
+					array( '%product%', '%min%' ),
+					array( $name, $min ),
+					FC_Settings::label( 'cat_min_msg' )
+				);
 			}
 		}
 		return array_values( array_unique( $out ) );

@@ -110,6 +110,12 @@ class FC_Product_Meta {
 		}
 		echo '</div>';
 
+		// --- Minimum order quantity (per product) --------------------------
+		$min_qty = (int) get_post_meta( $post->ID, '_food_min_qty', true );
+		echo '<hr><h3>' . esc_html__( 'Minimum order quantity', 'food-customizer' ) . '</h3>';
+		echo '<p class="description">' . esc_html__( 'This product must be ordered in at least this quantity (0 = no minimum). Overrides the per-category minimum for this product. Applies when the Catering module is on; the quantity selector starts at this number.', 'food-customizer' ) . '</p>';
+		echo '<input type="number" min="0" step="1" name="fc_min_qty_product" value="' . esc_attr( $min_qty ) . '" class="small-text" />';
+
 		echo '</div>'; // .fc-box
 	}
 
@@ -227,5 +233,9 @@ class FC_Product_Meta {
 		$valid     = FC_Allergens::keys();
 		$allergens = array_values( array_intersect( array_map( 'sanitize_key', $in ), $valid ) );
 		update_post_meta( $post_id, FC_META_ALLERGENS, $allergens );
+
+		// --- Minimum order quantity (per product) --------------------------
+		$min_qty = isset( $_POST['fc_min_qty_product'] ) ? absint( wp_unslash( $_POST['fc_min_qty_product'] ) ) : 0;
+		update_post_meta( $post_id, '_food_min_qty', $min_qty );
 	}
 }

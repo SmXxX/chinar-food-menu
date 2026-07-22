@@ -1110,3 +1110,15 @@ msgstr "Добави категория"
 
 msgid "Each product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Add several categories, each with its own minimum. The quantity selector on those products starts at that minimum. Message: \"Cat min msg\" in Texts."
 msgstr "Всеки продукт от избраната категория трябва да се поръча поне в това количество (напр. хапки ≥ 20). Добавете няколко категории, всяка със свой минимум. Селекторът за количество при тези продукти започва от този минимум. Съобщение: „Cat min msg“ в Текстове."
+
+msgid "Minimum order quantity"
+msgstr "Минимално количество за поръчка"
+
+msgid "This product must be ordered in at least this quantity (0 = no minimum). Overrides the per-category minimum for this product. Applies when the Catering module is on; the quantity selector starts at this number."
+msgstr "Този продукт трябва да се поръча поне в това количество (0 = без минимум). Заменя минимума по категория за този продукт. Прилага се, когато модул Кетъринг е включен; селекторът за количество започва от това число."
+
+msgid "Enable catering features (courier POS payment, quantity minimums). When on, a \"Catering\" page appears in the Food Customizer menu."
+msgstr "Активирайте кетъринг функциите (плащане с ПОС на куриера, минимални количества). Когато е включено, се появява страница „Кетъринг“ в менюто Food Customizer."
+
+msgid "Each product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Add several categories, each with its own minimum. A per-product override is set in the product's Food Options box. The quantity selector on those products starts at the minimum. Message: \"Cat min msg\" in Texts."
+msgstr "Всеки продукт от избраната категория трябва да се поръча поне в това количество (напр. хапки ≥ 20). Добавете няколко категории, всяка със свой минимум. Индивидуален минимум за продукт се задава в кутията Food Options на продукта. Селекторът за количество при тези продукти започва от минимума. Съобщение: „Cat min msg“ в Текстове."
