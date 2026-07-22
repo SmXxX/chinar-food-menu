@@ -22,7 +22,8 @@
 			}
 			// No WooCommerce-variation preselection — the customer must actively pick
 			// each option before the item can be added (the server enforces this too).
-			return { v: v, r: [], a: {}, q: 1, w: {} };
+			var mq = ( product.min_qty && product.min_qty > 0 ) ? product.min_qty : 1; // catering per-category minimum
+			return { v: v, r: [], a: {}, q: mq, w: {} };
 		},
 
 		/** Match a WooCommerce variation to the chosen attributes.
@@ -78,7 +79,8 @@
 					state.a[ a.id ] = q;
 				}
 			} );
-			state.q = Math.max( 1, parseInt( saved.q, 10 ) || 1 );
+			var mq = ( product.min_qty && product.min_qty > 0 ) ? product.min_qty : 1;
+			state.q = Math.max( mq, parseInt( saved.q, 10 ) || mq );
 			return state;
 		},
 

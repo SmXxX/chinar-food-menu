@@ -413,10 +413,12 @@ class FC_Menu {
 			// remaining quantity and show a "само N left" note.
 			$stock = ( $product->managing_stock() && null !== $product->get_stock_quantity() ) ? max( 0, (int) $product->get_stock_quantity() ) : 0;
 			$stock_note = $stock > 0 ? '<div class="fc-card-stock">' . sprintf( esc_html__( 'only %d left', 'food-customizer' ), $stock ) . '</div>' : '';
+			$minqty     = FC_Catering::product_min_qty( $pid );
+			$startqty   = $minqty > 0 ? $minqty : 1;
 			$foot = '<div class="fc-card-foot">'
 				. '<div class="fc-card-priceblock">' . $weight_html . '<span class="fc-card-price">' . $product->get_price_html() . '</span>' . $stock_note . '</div>'
-				. '<div class="fc-card-buy" data-stock="' . esc_attr( $stock ) . '">'
-				. '<span class="fc-card-qty"><button type="button" class="fc-cq-minus" aria-label="&minus;">&minus;</button><span class="fc-cq-val">1</span><button type="button" class="fc-cq-plus" aria-label="+">+</button></span>'
+				. '<div class="fc-card-buy" data-stock="' . esc_attr( $stock ) . '" data-minqty="' . esc_attr( $minqty ) . '">'
+				. '<span class="fc-card-qty"><button type="button" class="fc-cq-minus" aria-label="&minus;">&minus;</button><span class="fc-cq-val">' . esc_html( $startqty ) . '</span><button type="button" class="fc-cq-plus" aria-label="+">+</button></span>'
 				. '<button type="button" class="fc-card-add button" data-product-id="' . esc_attr( $pid ) . '">' . esc_html( FC_Settings::label( 'add_to_cart' ) ) . '</button>'
 				. '</div></div>';
 		} else {

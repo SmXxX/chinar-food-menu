@@ -209,6 +209,7 @@ JS;
 		register_setting( self::GROUP, 'fc_min_qty', array( 'type' => 'integer', 'sanitize_callback' => 'absint', 'default' => 0 ) );
 		register_setting( self::GROUP, 'fc_cat_min_category', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_title', 'default' => '' ) );
 		register_setting( self::GROUP, 'fc_cat_min_qty', array( 'type' => 'integer', 'sanitize_callback' => 'absint', 'default' => 0 ) );
+		register_setting( self::GROUP, 'fc_cat_min_rules', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize_cat_rules' ), 'default' => array() ) );
 	}
 
 	public function sanitize_direction( $v ) {
@@ -225,6 +226,22 @@ JS;
 			return array();
 		}
 		return array_values( array_filter( array_map( 'sanitize_title', $in ) ) );
+	}
+
+	/** Per-category minimum rules: [ ['cat'=>slug,'qty'=>int], … ]. */
+	public function sanitize_cat_rules( $in ) {
+		$out = array();
+		if ( ! is_array( $in ) ) {
+			return $out;
+		}
+		foreach ( $in as $r ) {
+			$cat = isset( $r['cat'] ) ? sanitize_title( $r['cat'] ) : '';
+			$qty = isset( $r['qty'] ) ? absint( $r['qty'] ) : 0;
+			if ( '' !== $cat && $qty > 0 ) {
+				$out[] = array( 'cat' => $cat, 'qty' => $qty );
+			}
+		}
+		return $out;
 	}
 
 	public function sanitize_schedules( $in ) {
@@ -567,23 +584,52 @@ JS;
 						<tr><th scope="row"><?php esc_html_e( 'Minimum items per order', 'food-customizer' ); ?></th>
 							<td><input type="number" min="0" name="fc_min_qty" value="<?php echo esc_attr( (int) get_option( 'fc_min_qty', 0 ) ); ?>" class="small-text" />
 								<p class="description"><?php esc_html_e( 'The cart must contain at least this many items to check out. 0 = no minimum. Message: "Min qty msg" in Texts.', 'food-customizer' ); ?></p></td></tr>
-						<tr><th scope="row"><?php esc_html_e( 'Per-category minimum', 'food-customizer' ); ?></th>
+						<tr><th scope="row"><?php esc_html_e( 'Per-category minimums', 'food-customizer' ); ?></th>
 							<td>
-								<select name="fc_cat_min_category">
-									<option value=""><?php esc_html_e( '— none —', 'food-customizer' ); ?></option>
-									<?php
-									$sel  = (string) get_option( 'fc_cat_min_category', '' );
-									$cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
-									if ( is_array( $cats ) ) {
-										foreach ( $cats as $t ) {
-											printf( '<option value="%s" %s>%s</option>', esc_attr( $t->slug ), selected( $sel, $t->slug, false ), esc_html( $t->name ) );
-										}
+								<?php
+								$cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
+								$cats = is_array( $cats ) ? $cats : array();
+								$build_opts = function ( $selected ) use ( $cats ) {
+									$h = '<option value="">' . esc_html__( '— category —', 'food-customizer' ) . '</option>';
+									foreach ( $cats as $t ) {
+										$h .= '<option value="' . esc_attr( $t->slug ) . '"' . selected( $selected, $t->slug, false ) . '>' . esc_html( $t->name ) . '</option>';
 									}
-									?>
-								</select>
-								&nbsp;<?php esc_html_e( 'min', 'food-customizer' ); ?>
-								<input type="number" min="0" name="fc_cat_min_qty" value="<?php echo esc_attr( (int) get_option( 'fc_cat_min_qty', 0 ) ); ?>" class="small-text" /> <?php esc_html_e( 'pcs each', 'food-customizer' ); ?>
-								<p class="description"><?php esc_html_e( 'Every product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Message: "Cat min msg" in Texts.', 'food-customizer' ); ?></p>
+									return $h;
+								};
+								$row = function ( $i, $cat, $qty ) use ( $build_opts ) {
+									return '<div class="fc-catmin-row" style="margin-bottom:6px;">'
+										. '<select name="fc_cat_min_rules[' . esc_attr( $i ) . '][cat]">' . $build_opts( $cat ) . '</select> '
+										. esc_html__( 'min', 'food-customizer' ) . ' '
+										. '<input type="number" min="0" class="small-text" name="fc_cat_min_rules[' . esc_attr( $i ) . '][qty]" value="' . esc_attr( $qty ) . '" /> '
+										. esc_html__( 'pcs each', 'food-customizer' )
+										. ' <button type="button" class="button-link fc-catmin-del" title="' . esc_attr__( 'Remove', 'food-customizer' ) . '">&times;</button></div>';
+								};
+								$rules = FC_Catering::cat_rules();
+								echo '<div id="fc-catmin-rows">';
+								if ( empty( $rules ) ) {
+									echo $row( 0, '', '' ); // phpcs:ignore WordPress.Security.EscapeOutput
+								} else {
+									foreach ( $rules as $i => $r ) {
+										echo $row( (int) $i, $r['cat'], $r['qty'] ); // phpcs:ignore WordPress.Security.EscapeOutput
+									}
+								}
+								echo '</div>';
+								echo '<script type="text/template" id="fc-catmin-tpl">' . $row( '__i__', '', '' ) . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput
+								?>
+								<p><button type="button" class="button" id="fc-catmin-add">+ <?php esc_html_e( 'Add category', 'food-customizer' ); ?></button></p>
+								<p class="description"><?php esc_html_e( 'Each product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Add several categories, each with its own minimum. The quantity selector on those products starts at that minimum. Message: "Cat min msg" in Texts.', 'food-customizer' ); ?></p>
+								<script>
+								( function ( $ ) {
+									$( '#fc-catmin-add' ).on( 'click', function () {
+										$( '#fc-catmin-rows' ).append( $( '#fc-catmin-tpl' ).html().replace( /__i__/g, Date.now() ) );
+									} );
+									$( document ).on( 'click', '.fc-catmin-del', function () {
+										var $rows = $( '#fc-catmin-rows .fc-catmin-row' );
+										if ( $rows.length <= 1 ) { $( this ).closest( '.fc-catmin-row' ).find( 'select,input' ).val( '' ); }
+										else { $( this ).closest( '.fc-catmin-row' ).remove(); }
+									} );
+								} )( jQuery );
+								</script>
 							</td></tr>
 					</table>
 

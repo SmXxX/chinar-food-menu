@@ -127,10 +127,46 @@ class FC_Catering {
 		return (int) get_option( 'fc_min_qty', 0 );
 	}
 
-	private static function cat_rule() {
-		$cat = (string) get_option( 'fc_cat_min_category', '' );
-		$qty = (int) get_option( 'fc_cat_min_qty', 0 );
-		return ( '' !== $cat && $qty > 0 ) ? array( 'cat' => $cat, 'qty' => $qty ) : null;
+	/** All per-category minimum rules: [ ['cat'=>slug,'qty'=>int], … ]. */
+	public static function cat_rules() {
+		$out   = array();
+		$rules = get_option( 'fc_cat_min_rules', array() );
+		if ( is_array( $rules ) ) {
+			foreach ( $rules as $r ) {
+				$cat = isset( $r['cat'] ) ? (string) $r['cat'] : '';
+				$qty = isset( $r['qty'] ) ? (int) $r['qty'] : 0;
+				if ( '' !== $cat && $qty > 0 ) {
+					$out[] = array( 'cat' => $cat, 'qty' => $qty );
+				}
+			}
+		}
+		// Backward-compat: migrate the old single-category setting if no rules exist yet.
+		if ( empty( $out ) ) {
+			$cat = (string) get_option( 'fc_cat_min_category', '' );
+			$qty = (int) get_option( 'fc_cat_min_qty', 0 );
+			if ( '' !== $cat && $qty > 0 ) {
+				$out[] = array( 'cat' => $cat, 'qty' => $qty );
+			}
+		}
+		return $out;
+	}
+
+	/** Highest applicable per-category minimum for a product (0 = none). */
+	public static function product_min_qty( $product_id ) {
+		if ( ! FC_Settings::module( 'catering' ) ) {
+			return 0;
+		}
+		$product_id = (int) $product_id;
+		if ( ! $product_id ) {
+			return 0;
+		}
+		$min = 0;
+		foreach ( self::cat_rules() as $rule ) {
+			if ( has_term( $rule['cat'], 'product_cat', $product_id ) ) {
+				$min = max( $min, (int) $rule['qty'] );
+			}
+		}
+		return $min;
 	}
 
 	/** Collect any active quantity violations as ready-to-show messages. */
@@ -153,9 +189,8 @@ class FC_Catering {
 			}
 		}
 
-		// #7 per-category minimum (each product in the category)
-		$rule = self::cat_rule();
-		if ( $rule ) {
+		// #7 per-category minimums (each product in each category, several categories)
+		foreach ( self::cat_rules() as $rule ) {
 			foreach ( WC()->cart->get_cart() as $item ) {
 				$pid = ! empty( $item['product_id'] ) ? (int) $item['product_id'] : 0;
 				if ( $pid && has_term( $rule['cat'], 'product_cat', $pid ) && (int) $item['quantity'] < $rule['qty'] ) {
@@ -168,7 +203,7 @@ class FC_Catering {
 				}
 			}
 		}
-		return $out;
+		return array_values( array_unique( $out ) );
 	}
 
 	public function qty_notices() {

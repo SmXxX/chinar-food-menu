@@ -192,8 +192,9 @@
 		persist(); refreshPrice();
 	} );
 	$( document ).on( 'click', '#fc-product-app .fc-qplus, #fc-product-app .fc-qminus', function () {
+		var mq = ( p.min_qty && p.min_qty > 0 ) ? p.min_qty : 1; // catering per-category minimum
 		state.q += $( this ).hasClass( 'fc-qplus' ) ? 1 : -1;
-		if ( state.q < 1 ) { state.q = 1; }
+		if ( state.q < mq ) { state.q = mq; }
 		if ( p.stock && p.stock > 0 && state.q > p.stock ) { state.q = p.stock; } // cap at remaining stock
 		$( '#fc-product-app .fc-main-qty' ).text( state.q );
 		persist(); refreshPrice();

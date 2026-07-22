@@ -1098,3 +1098,15 @@ msgstr "Цена за доставка (%s)"
 
 msgid "Free"
 msgstr "Безплатна"
+
+msgid "Per-category minimums"
+msgstr "Минимуми по категория"
+
+msgid "— category —"
+msgstr "— категория —"
+
+msgid "Add category"
+msgstr "Добави категория"
+
+msgid "Each product in the chosen category must be ordered in at least this quantity (e.g. bites ≥ 20). Add several categories, each with its own minimum. The quantity selector on those products starts at that minimum. Message: \"Cat min msg\" in Texts."
+msgstr "Всеки продукт от избраната категория трябва да се поръча поне в това количество (напр. хапки ≥ 20). Добавете няколко категории, всяка със свой минимум. Селекторът за количество при тези продукти започва от този минимум. Съобщение: „Cat min msg“ в Текстове."

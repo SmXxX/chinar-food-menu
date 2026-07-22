@@ -35,11 +35,14 @@
 	// Card quantity stepper.
 	$( document ).on( 'click', '.fc-card-qty .fc-cq-plus, .fc-card-qty .fc-cq-minus', function () {
 		var $val = $( this ).siblings( '.fc-cq-val' );
-		var stock = parseInt( $( this ).closest( '.fc-card-buy' ).data( 'stock' ), 10 ) || 0;
+		var $buy = $( this ).closest( '.fc-card-buy' );
+		var stock = parseInt( $buy.data( 'stock' ), 10 ) || 0;
+		var minq = parseInt( $buy.data( 'minqty' ), 10 ) || 1; // catering per-category minimum
+		if ( minq < 1 ) { minq = 1; }
 		var max = stock > 0 ? stock : 99; // cap at remaining stock for rental/limited items
-		var q = parseInt( $val.text(), 10 ) || 1;
+		var q = parseInt( $val.text(), 10 ) || minq;
 		q += $( this ).hasClass( 'fc-cq-plus' ) ? 1 : -1;
-		if ( q < 1 ) { q = 1; }
+		if ( q < minq ) { q = minq; }
 		if ( q > max ) { q = max; }
 		$val.text( q );
 	} );
@@ -59,7 +62,8 @@
 					if ( res.data.fragments ) { $.each( res.data.fragments, function ( sel, html ) { $( sel ).replaceWith( html ); } ); }
 					$( document.body ).trigger( 'wc_fragment_refresh' );
 					$btn.removeClass( 'loading' ).addClass( 'fc-added' ).text( ( ( D.i18n && D.i18n.added ) || 'Added' ) + ' ✓' );
-					setTimeout( function () { $btn.removeClass( 'fc-added' ).text( orig ); $buy.find( '.fc-cq-val' ).text( '1' ); }, 1400 );
+					var rq = parseInt( $buy.data( 'minqty' ), 10 ) || 1; if ( rq < 1 ) { rq = 1; }
+					setTimeout( function () { $btn.removeClass( 'fc-added' ).text( orig ); $buy.find( '.fc-cq-val' ).text( rq ); }, 1400 );
 				} else {
 					alert( ( res && res.data && res.data.message ) || ( D.i18n && D.i18n.error ) );
 					$btn.removeClass( 'loading' );

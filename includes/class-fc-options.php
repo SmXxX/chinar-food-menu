@@ -194,6 +194,7 @@ class FC_Options {
 			'unavailable_msg' => $blocked ? FC_Menu::unavailable_message( $product_id ) : '',
 			'stock'       => $stock,
 			'stock_note'  => $stock > 0 ? sprintf( __( 'only %d left', 'food-customizer' ), $stock ) : '',
+			'min_qty'     => FC_Catering::product_min_qty( $product_id ),
 		);
 	}
 
