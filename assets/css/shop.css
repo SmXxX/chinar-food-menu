@@ -28,7 +28,7 @@
 	padding: 9px 20px; border-radius: var(--fc-radius, 3px); font-weight: 600; font-size: var(--fc-fs-pill, .8rem); letter-spacing: .08em; text-transform: uppercase;
 	cursor: pointer; white-space: nowrap; transition: all .18s;
 }
-.fc-pill:hover { border-color: var(--fc-line-strong); }
+.fc-pill:hover { background: var(--fc-btn-bg-hov, transparent); color: var(--fc-btn-text-hov, var(--fc-ink)); border-color: var(--fc-btn-bg-hov, var(--fc-line-strong)); }
 .fc-pill.is-active { background: var(--fc-accent, var(--fc-ink)); border-color: var(--fc-accent, var(--fc-ink)); color: var(--fc-accent-text, #14110d); }
 
 /* Grid */
