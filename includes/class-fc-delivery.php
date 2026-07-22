@@ -16,10 +16,11 @@ defined( 'ABSPATH' ) || exit;
 
 class FC_Delivery {
 
-	const OPT_ENABLED = 'fc_delivery_enabled';
-	const OPT_ZONES   = 'fc_delivery_zones';
-	const GROUP       = 'fc_delivery_group';
-	const PAGE        = 'fc-delivery-zones';
+	const OPT_ENABLED   = 'fc_delivery_enabled';
+	const OPT_ZONES     = 'fc_delivery_zones';
+	const OPT_OVERRIDES = 'fc_hood_overrides';
+	const GROUP         = 'fc_delivery_group';
+	const PAGE          = 'fc-delivery-zones';
 
 	public function init() {
 		// Admin: zones management page. Priority 20 so the Food Customizer top-level
@@ -27,6 +28,8 @@ class FC_Delivery {
 		add_action( 'admin_menu', array( $this, 'add_menu' ), 20 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ) );
+		// Editor for correcting a street's neighbourhood(s).
+		add_action( 'wp_ajax_fc_save_street_hood', array( $this, 'ajax_save_street_hood' ) );
 
 		if ( ! self::is_enabled() ) {
 			return;
@@ -74,8 +77,8 @@ class FC_Delivery {
 		return $out;
 	}
 
-	/** Bundled Varna dataset: [ neighbourhood => [streets…] ] (from OpenStreetMap). */
-	public static function neighbourhoods() {
+	/** Bundled Varna dataset as shipped (unmodified): [ neighbourhood => [streets…] ]. */
+	public static function base_neighbourhoods() {
 		static $data = null;
 		if ( null !== $data ) {
 			return $data;
@@ -83,6 +86,100 @@ class FC_Delivery {
 		$file = FC_DIR . 'assets/data/varna-neighbourhoods.json';
 		$data = file_exists( $file ) ? (array) json_decode( (string) file_get_contents( $file ), true ) : array();
 		return $data;
+	}
+
+	/** Admin corrections: [ street => [neighbourhoods…] ]. Overrides the bundled data. */
+	public static function overrides() {
+		$o = get_option( self::OPT_OVERRIDES, array() );
+		return is_array( $o ) ? $o : array();
+	}
+
+	/**
+	 * Effective dataset: bundled data with the owner's corrections applied.
+	 * [ neighbourhood => [streets…] ]. An override replaces that street's
+	 * neighbourhood list entirely (an empty list removes the street).
+	 */
+	public static function neighbourhoods() {
+		static $eff = null;
+		if ( null !== $eff ) {
+			return $eff;
+		}
+		// Invert the bundled data to street => set of neighbourhoods.
+		$by_street = array();
+		foreach ( self::base_neighbourhoods() as $q => $streets ) {
+			foreach ( (array) $streets as $s ) {
+				$by_street[ (string) $s ][ (string) $q ] = true;
+			}
+		}
+		// Apply corrections.
+		foreach ( self::overrides() as $s => $qs ) {
+			$s              = (string) $s;
+			$by_street[ $s ] = array();
+			foreach ( (array) $qs as $q ) {
+				$q = (string) $q;
+				if ( '' !== $q ) {
+					$by_street[ $s ][ $q ] = true;
+				}
+			}
+		}
+		// Re-invert to neighbourhood => [streets].
+		$out = array();
+		foreach ( $by_street as $s => $qset ) {
+			foreach ( array_keys( $qset ) as $q ) {
+				$out[ $q ][] = $s;
+			}
+		}
+		foreach ( $out as $q => $streets ) {
+			$streets = array_values( array_unique( $streets ) );
+			sort( $streets, SORT_LOCALE_STRING );
+			$out[ $q ] = $streets;
+		}
+		ksort( $out, SORT_LOCALE_STRING );
+		$eff = $out;
+		return $eff;
+	}
+
+	/** All known neighbourhood names (from the effective dataset), sorted. */
+	public static function all_quarters() {
+		return array_keys( self::neighbourhoods() );
+	}
+
+	/** Save/clear a street's neighbourhood correction (AJAX). */
+	public function ajax_save_street_hood() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'msg' => 'forbidden' ), 403 );
+		}
+		check_ajax_referer( 'fc_hood_edit', 'nonce' );
+		$street = isset( $_POST['street'] ) ? sanitize_text_field( wp_unslash( $_POST['street'] ) ) : '';
+		if ( '' === $street ) {
+			wp_send_json_error( array( 'msg' => 'no-street' ) );
+		}
+		$ov = self::overrides();
+		if ( ! empty( $_POST['reset'] ) ) {
+			// Remove the correction — the street reverts to the bundled assignment.
+			unset( $ov[ $street ] );
+			update_option( self::OPT_OVERRIDES, $ov, false );
+			// Return the bundled assignment for this street.
+			$base = array();
+			foreach ( self::base_neighbourhoods() as $q => $streets ) {
+				if ( in_array( $street, (array) $streets, true ) ) {
+					$base[] = (string) $q;
+				}
+			}
+			wp_send_json_success( array( 'street' => $street, 'quarters' => array_values( array_unique( $base ) ) ) );
+		}
+		$qs_in    = isset( $_POST['quarters'] ) ? (array) wp_unslash( $_POST['quarters'] ) : array();
+		$quarters = array();
+		foreach ( $qs_in as $q ) {
+			$q = sanitize_text_field( $q );
+			if ( '' !== $q ) {
+				$quarters[] = $q;
+			}
+		}
+		$quarters       = array_values( array_unique( $quarters ) );
+		$ov[ $street ]  = $quarters;
+		update_option( self::OPT_OVERRIDES, $ov, false );
+		wp_send_json_success( array( 'street' => $street, 'quarters' => $quarters ) );
 	}
 
 	/** Per-zone street lists (union of the zone's neighbourhoods) for the checkout. */
@@ -159,6 +256,22 @@ class FC_Delivery {
 		}
 		wp_enqueue_script( 'fc-delivery-admin', FC_URL . 'assets/js/delivery-admin.js', array( 'jquery' ), FC_VERSION, true );
 		wp_localize_script( 'fc-delivery-admin', 'FC_HOODS', self::neighbourhoods() );
+		wp_localize_script( 'fc-delivery-admin', 'FC_HOODEDIT', array(
+			'ajax'     => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'fc_hood_edit' ),
+			'quarters' => self::all_quarters(),
+			'i18n'     => array(
+				'edit'       => __( 'Edit', 'food-customizer' ),
+				'save'       => __( 'Save', 'food-customizer' ),
+				'cancel'     => __( 'Cancel', 'food-customizer' ),
+				'reset'      => __( 'Reset to auto', 'food-customizer' ),
+				'saved'      => __( 'Saved', 'food-customizer' ),
+				'error'      => __( 'Error, try again', 'food-customizer' ),
+				'none'       => __( '(not assigned)', 'food-customizer' ),
+				'streetname' => __( 'Street name', 'food-customizer' ),
+				'addhint'    => __( 'Assign to one or more neighbourhoods (Ctrl/Cmd-click for several):', 'food-customizer' ),
+			),
+		) );
 	}
 
 	public function render_page() {
@@ -185,7 +298,9 @@ class FC_Delivery {
 				<div class="fc-street-search" style="margin:16px 0;max-width:1100px;">
 					<label for="fc-street-search" style="font-weight:600;"><?php esc_html_e( 'Find which neighbourhood a street is in', 'food-customizer' ); ?></label><br>
 					<input type="search" id="fc-street-search" class="regular-text" placeholder="<?php esc_attr_e( 'Type a street name…', 'food-customizer' ); ?>" autocomplete="off" style="margin-top:6px;">
+					<p class="description" style="margin:4px 0 8px;"><?php esc_html_e( 'Search a street, then click Edit to correct its neighbourhood(s). The mapping is auto-generated, so fix any that are wrong — your corrections are kept and used at checkout.', 'food-customizer' ); ?></p>
 					<div id="fc-street-results" data-empty="<?php esc_attr_e( 'No matching streets.', 'food-customizer' ); ?>" style="margin-top:8px;"></div>
+					<p style="margin-top:8px;"><button type="button" class="button" id="fc-add-street">+ <?php esc_html_e( 'Add a street', 'food-customizer' ); ?></button></p>
 				</div>
 
 				<table class="widefat striped" id="fc-zones-table" style="max-width:1100px;margin-top:10px;">

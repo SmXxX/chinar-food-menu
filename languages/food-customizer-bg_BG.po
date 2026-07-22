@@ -1053,3 +1053,36 @@ msgstr "Въведете име на улица…"
 
 msgid "No matching streets."
 msgstr "Няма съвпадащи улици."
+
+msgid "Edit"
+msgstr "Редактиране"
+
+msgid "Save"
+msgstr "Запази"
+
+msgid "Cancel"
+msgstr "Отказ"
+
+msgid "Reset to auto"
+msgstr "Върни към автоматично"
+
+msgid "Saved"
+msgstr "Запазено"
+
+msgid "Error, try again"
+msgstr "Грешка, опитайте пак"
+
+msgid "(not assigned)"
+msgstr "(без квартал)"
+
+msgid "Street name"
+msgstr "Име на улица"
+
+msgid "Assign to one or more neighbourhoods (Ctrl/Cmd-click for several):"
+msgstr "Задайте един или повече квартали (Ctrl/Cmd-клик за няколко):"
+
+msgid "Search a street, then click Edit to correct its neighbourhood(s). The mapping is auto-generated, so fix any that are wrong — your corrections are kept and used at checkout."
+msgstr "Потърсете улица и натиснете Редактиране, за да коригирате квартала ѝ. Съответствието е автоматично генерирано, така че поправете грешните — корекциите ви се запазват и се използват при поръчка."
+
+msgid "Add a street"
+msgstr "Добави улица"
