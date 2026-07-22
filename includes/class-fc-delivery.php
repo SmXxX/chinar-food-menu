@@ -37,6 +37,8 @@ class FC_Delivery {
 
 		// Checkout.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
+		// Per-zone delivery price -> cart fee (recalculated when the zone changes).
+		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'add_delivery_fee' ) );
 		// Render at the very top of the checkout form — prominent, outside every box
 		// and before the column layout (so it can't disrupt the theme's grid), yet
 		// still inside <form> so the fields submit.
@@ -69,6 +71,7 @@ class FC_Delivery {
 				'name'     => (string) $z['name'],
 				'areas'    => isset( $z['areas'] ) ? (string) $z['areas'] : '',
 				'eta'      => isset( $z['eta'] ) ? (string) $z['eta'] : '',
+				'price'    => isset( $z['price'] ) ? (float) $z['price'] : 0.0,
 				'busy'     => ! empty( $z['busy'] ),
 				'busy_msg' => isset( $z['busy_msg'] ) ? (string) $z['busy_msg'] : '',
 				'hoods'    => ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? array_values( array_map( 'strval', $z['hoods'] ) ) : array(),
@@ -242,6 +245,7 @@ class FC_Delivery {
 				'name'     => $name,
 				'areas'    => isset( $z['areas'] ) ? sanitize_textarea_field( $z['areas'] ) : '',
 				'eta'      => isset( $z['eta'] ) ? sanitize_text_field( $z['eta'] ) : '',
+				'price'    => isset( $z['price'] ) ? max( 0, (float) $z['price'] ) : 0,
 				'busy'     => empty( $z['busy'] ) ? 0 : 1,
 				'busy_msg' => isset( $z['busy_msg'] ) ? sanitize_text_field( $z['busy_msg'] ) : '',
 				'hoods'    => $hoods,
@@ -314,8 +318,9 @@ class FC_Delivery {
 						<tr>
 							<th style="width:13%"><?php esc_html_e( 'Zone name', 'food-customizer' ); ?></th>
 							<th><?php esc_html_e( 'Covers (streets / areas)', 'food-customizer' ); ?></th>
-							<th style="width:22%"><?php esc_html_e( 'Neighbourhoods (streets auto-load at checkout)', 'food-customizer' ); ?></th>
+							<th style="width:20%"><?php esc_html_e( 'Neighbourhoods (streets auto-load at checkout)', 'food-customizer' ); ?></th>
 							<th style="width:9%"><?php esc_html_e( 'ETA', 'food-customizer' ); ?></th>
+							<th style="width:9%"><?php /* translators: %s = currency symbol */ printf( esc_html__( 'Delivery price (%s)', 'food-customizer' ), esc_html( get_woocommerce_currency_symbol() ) ); ?></th>
 							<th style="width:6%"><?php esc_html_e( 'Busy', 'food-customizer' ); ?></th>
 							<th style="width:15%"><?php esc_html_e( 'Busy message (optional)', 'food-customizer' ); ?></th>
 							<th style="width:4%"></th>
@@ -348,6 +353,7 @@ class FC_Delivery {
 		$name      = isset( $z['name'] ) ? $z['name'] : '';
 		$area      = isset( $z['areas'] ) ? $z['areas'] : '';
 		$eta       = isset( $z['eta'] ) ? $z['eta'] : '';
+		$price     = ( isset( $z['price'] ) && $z['price'] > 0 ) ? (float) $z['price'] : '';
 		$busy      = ! empty( $z['busy'] );
 		$msg       = isset( $z['busy_msg'] ) ? $z['busy_msg'] : '';
 		$hoods_sel = ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? $z['hoods'] : array();
@@ -359,6 +365,7 @@ class FC_Delivery {
 			<td><textarea class="widefat" rows="2" name="<?php echo esc_attr( $b ); ?>[areas]" placeholder="<?php esc_attr_e( 'e.g. ul. Vitosha, ul. Graf Ignatiev, bul. Vasil Levski…', 'food-customizer' ); ?>"><?php echo esc_textarea( $area ); ?></textarea></td>
 			<td><select multiple size="5" class="widefat" name="<?php echo esc_attr( $b ); ?>[hoods][]"><?php foreach ( self::neighbourhoods() as $hn => $streets ) : ?><option value="<?php echo esc_attr( $hn ); ?>"<?php selected( in_array( (string) $hn, array_map( 'strval', $hoods_sel ), true ) ); ?>><?php echo esc_html( $hn ); ?> (<?php echo count( (array) $streets ); ?>)</option><?php endforeach; ?></select></td>
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[eta]" value="<?php echo esc_attr( $eta ); ?>" placeholder="<?php esc_attr_e( 'e.g. 45 min', 'food-customizer' ); ?>" /></td>
+			<td><input type="number" step="0.01" min="0" class="widefat" name="<?php echo esc_attr( $b ); ?>[price]" value="<?php echo esc_attr( $price ); ?>" placeholder="0.00" /></td>
 			<td style="text-align:center"><input type="checkbox" name="<?php echo esc_attr( $b ); ?>[busy]" value="1" <?php checked( $busy, true ); ?> /></td>
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[busy_msg]" value="<?php echo esc_attr( $msg ); ?>" placeholder="<?php echo esc_attr( FC_Settings::label( 'del_busy' ) ); ?>" /></td>
 			<td style="text-align:center"><button type="button" class="button-link fc-del-zone" title="<?php esc_attr_e( 'Remove', 'food-customizer' ); ?>">&times;</button></td>
@@ -380,13 +387,65 @@ class FC_Delivery {
 		}
 		wp_enqueue_style( 'fc-delivery', FC_URL . 'assets/css/delivery.css', array(), FC_VERSION );
 		wp_enqueue_script( 'fc-delivery', FC_URL . 'assets/js/delivery.js', array( 'jquery' ), FC_VERSION, true );
+		$prices = array();
+		foreach ( self::zones() as $i => $z ) {
+			$prices[ $i ] = ( $z['price'] > 0 ) ? FC_Currency::format_plain( $z['price'] ) : '';
+		}
 		wp_localize_script( 'fc-delivery', 'FC_DELIVERY', array(
 			'zones'       => self::zones(),
 			'busyDefault' => FC_Settings::label( 'del_busy' ),
 			'etaLabel'    => FC_Settings::label( 'del_eta' ),
 			'streets'     => self::zone_streets(),
 			'streetLabel' => __( 'Choose your street', 'food-customizer' ),
+			'prices'      => $prices,
+			'freeLabel'   => __( 'Free', 'food-customizer' ),
 		) );
+	}
+
+	/** Index of the zone the customer has selected (from the checkout form / session). */
+	private function selected_zone_index() {
+		$zi = null;
+		// During the update_order_review AJAX the form is serialised in post_data.
+		if ( isset( $_POST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			parse_str( wp_unslash( $_POST['post_data'] ), $pd ); // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+			if ( isset( $pd['fc_delivery_zone'] ) ) {
+				$zi = sanitize_text_field( $pd['fc_delivery_zone'] );
+			}
+		}
+		// During the final submit the field is posted directly.
+		if ( null === $zi && isset( $_POST['fc_delivery_zone'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$zi = sanitize_text_field( wp_unslash( $_POST['fc_delivery_zone'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		}
+		if ( null !== $zi ) {
+			if ( WC()->session ) {
+				WC()->session->set( 'fc_delivery_zone', $zi );
+			}
+			return $zi;
+		}
+		$s = ( WC()->session ) ? WC()->session->get( 'fc_delivery_zone' ) : '';
+		return ( null === $s ) ? '' : (string) $s;
+	}
+
+	/** Add the selected zone's delivery price as a cart fee. */
+	public function add_delivery_fee( $cart ) {
+		if ( ! is_object( $cart ) ) {
+			return;
+		}
+		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			return;
+		}
+		$zones = self::zones();
+		if ( empty( $zones ) ) {
+			return;
+		}
+		$zi = $this->selected_zone_index();
+		if ( '' === $zi || ! isset( $zones[ $zi ] ) ) {
+			return;
+		}
+		$price = (float) $zones[ $zi ]['price'];
+		if ( $price > 0 ) {
+			$cart->add_fee( __( 'Delivery', 'food-customizer' ), $price, false );
+		}
 	}
 
 	public function render_fields( $checkout = null ) {
@@ -420,6 +479,7 @@ class FC_Delivery {
 		echo '<div class="fc-del-info" hidden>';
 		echo '<div class="fc-del-covers"><strong>' . esc_html( $L( 'del_covers' ) ) . ':</strong> <span class="fc-del-covers-val"></span></div>';
 		echo '<div class="fc-del-eta">' . esc_html( $L( 'del_eta' ) ) . ': <span class="fc-del-eta-val"></span></div>';
+		echo '<div class="fc-del-price"><strong>' . esc_html__( 'Delivery', 'food-customizer' ) . ':</strong> <span class="fc-del-price-val"></span></div>';
 		echo '</div>';
 		echo '<div class="fc-del-busy" role="alert" hidden></div>';
 

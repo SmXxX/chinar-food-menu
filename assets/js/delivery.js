@@ -42,11 +42,13 @@
 			return;
 		}
 
-		// Covered areas + ETA.
+		// Covered areas + ETA + delivery price.
 		$( '.fc-del-covers-val' ).text( z.areas || '' );
 		$( '.fc-del-covers' ).toggle( !! z.areas );
 		$( '.fc-del-eta-val' ).text( z.eta || '' );
 		$( '.fc-del-eta' ).toggle( !! z.eta );
+		var priceTxt = ( D.prices && D.prices[ $( '#fc_delivery_zone' ).val() ] ) ? D.prices[ $( '#fc_delivery_zone' ).val() ] : '';
+		$( '.fc-del-price-val' ).text( priceTxt || D.freeLabel || '' );
 		$info.prop( 'hidden', false );
 		$( '.fc-del-asap-eta' ).text( z.eta ? '(' + z.eta + ')' : '' );
 
@@ -89,7 +91,11 @@
 		}
 	}
 
-	$( document ).on( 'change', '#fc_delivery_zone', refresh );
+	// On zone change: update the panel, then recalculate totals so the delivery fee updates.
+	$( document ).on( 'change', '#fc_delivery_zone', function () {
+		refresh();
+		$( document.body ).trigger( 'update_checkout' );
+	} );
 	$( document ).on( 'change', 'input[name="fc_delivery_time_mode"]', timeMode );
 	$( window ).on( 'resize', placeInOrderColumn );
 

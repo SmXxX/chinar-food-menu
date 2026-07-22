@@ -1092,3 +1092,9 @@ msgstr "Покажи всички улици в квартал"
 
 msgid "— choose a neighbourhood —"
 msgstr "— изберете квартал —"
+
+msgid "Delivery price (%s)"
+msgstr "Цена за доставка (%s)"
+
+msgid "Free"
+msgstr "Безплатна"
