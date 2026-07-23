@@ -18,6 +18,7 @@ class FC_Delivery {
 
 	const OPT_ENABLED   = 'fc_delivery_enabled';
 	const OPT_ZONES     = 'fc_delivery_zones';
+	const OPT_SHAPES    = 'fc_zone_shapes';
 	const OPT_OVERRIDES = 'fc_hood_overrides';
 	const GROUP         = 'fc_delivery_group';
 	const PAGE          = 'fc-delivery-zones';
@@ -77,7 +78,6 @@ class FC_Delivery {
 				'eta'      => isset( $z['eta'] ) ? (string) $z['eta'] : '',
 				'price'    => isset( $z['price'] ) ? (float) $z['price'] : 0.0,
 				'color'    => isset( $z['color'] ) ? (string) $z['color'] : '',
-				'shape'    => ( isset( $z['shape'] ) && is_array( $z['shape'] ) ) ? $z['shape'] : array(),
 				'busy'     => ! empty( $z['busy'] ),
 				'busy_msg' => isset( $z['busy_msg'] ) ? (string) $z['busy_msg'] : '',
 				'hoods'    => ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? array_values( array_map( 'strval', $z['hoods'] ) ) : array(),
@@ -251,13 +251,16 @@ class FC_Delivery {
 		if ( ! is_array( $raw ) ) {
 			$raw = array();
 		}
-		$zones = get_option( self::OPT_ZONES, array() );
-		$zones = is_array( $zones ) ? array_values( $zones ) : array();
-		foreach ( $zones as $i => $z ) {
-			$zones[ $i ]['shape'] = isset( $raw[ $i ] ) ? $this->sanitize_shape( $raw[ $i ] ) : array();
+		// Stored in a SEPARATE option so saving the zones table never wipes the shapes.
+		$shapes = array();
+		foreach ( $raw as $i => $shape ) {
+			$clean = $this->sanitize_shape( $shape );
+			if ( ! empty( $clean ) ) {
+				$shapes[ (int) $i ] = $clean;
+			}
 		}
-		update_option( self::OPT_ZONES, $this->sanitize_zones( $zones ) );
-		wp_send_json_success( array( 'saved' => count( $zones ) ) );
+		update_option( self::OPT_SHAPES, $shapes, false );
+		wp_send_json_success( array( 'saved' => count( $shapes ) ) );
 	}
 
 	/** The Varna 2-zone production configuration, built from the current neighbourhoods. */
@@ -337,16 +340,18 @@ class FC_Delivery {
 	 * otherwise the pre-dissolved default blob for that zone index. Keyed by zone index.
 	 */
 	public static function zone_shapes() {
-		$byidx = array();
-		$sf    = FC_DIR . 'assets/data/varna-zone-shapes.json';
-		$pre   = file_exists( $sf ) ? json_decode( (string) file_get_contents( $sf ), true ) : array();
+		$custom = get_option( self::OPT_SHAPES, array() );
+		$custom = is_array( $custom ) ? $custom : array();
+		$byidx  = array();
+		$sf     = FC_DIR . 'assets/data/varna-zone-shapes.json';
+		$pre    = file_exists( $sf ) ? json_decode( (string) file_get_contents( $sf ), true ) : array();
 		foreach ( (array) $pre as $p ) {
 			$byidx[ (int) $p['zone'] ] = $p['latlngs'];
 		}
 		$out = array();
-		foreach ( self::zones() as $i => $z ) {
-			if ( ! empty( $z['shape'] ) ) {
-				$out[ $i ] = $z['shape'];
+		foreach ( array_keys( self::zones() ) as $i ) {
+			if ( ! empty( $custom[ $i ] ) ) {
+				$out[ $i ] = $custom[ $i ];
 			} elseif ( isset( $byidx[ $i ] ) ) {
 				$out[ $i ] = $byidx[ $i ];
 			}
@@ -522,7 +527,6 @@ class FC_Delivery {
 				'eta'      => isset( $z['eta'] ) ? sanitize_text_field( $z['eta'] ) : '',
 				'price'    => isset( $z['price'] ) ? max( 0, (float) $z['price'] ) : 0,
 				'color'    => isset( $z['color'] ) ? (string) sanitize_hex_color( $z['color'] ) : '',
-				'shape'    => isset( $z['shape'] ) ? $this->sanitize_shape( $z['shape'] ) : array(),
 				'busy'     => empty( $z['busy'] ) ? 0 : 1,
 				'busy_msg' => isset( $z['busy_msg'] ) ? sanitize_text_field( $z['busy_msg'] ) : '',
 				'hoods'    => $hoods,
