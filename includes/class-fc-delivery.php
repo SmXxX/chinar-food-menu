@@ -264,14 +264,12 @@ class FC_Delivery {
 
 		// Compute the streets inside each drawn shape (point-in-polygon) and cache them,
 		// so the checkout loads the streets that are geographically inside the zone.
-		$geo    = array();
-		$counts = array();
+		$geo = array();
 		foreach ( $shapes as $i => $shape ) {
 			$geo[ (int) $i ] = $this->streets_in_shape( $shape );
-			$counts[ (int) $i ] = count( $geo[ (int) $i ] );
 		}
 		update_option( self::OPT_ZSTREETS, $geo, false );
-		wp_send_json_success( array( 'saved' => count( $shapes ), 'streets' => $counts ) );
+		wp_send_json_success( array( 'saved' => count( $shapes ), 'streets' => $geo ) );
 	}
 
 	/** The Varna 2-zone production configuration, built from the current neighbourhoods. */
@@ -650,15 +648,20 @@ class FC_Delivery {
 				'shape' => isset( $shapes[ $i ] ) ? $shapes[ $i ] : array(),
 			);
 		}
+		$geo_streets = get_option( self::OPT_ZSTREETS, array() );
 		wp_localize_script( 'fc-zone-map-admin', 'FC_ZONEMAP', array(
-			'ajax'  => admin_url( 'admin-ajax.php' ),
-			'nonce' => wp_create_nonce( 'fc_zone_map' ),
-			'zones' => $zdata,
-			'i18n'  => array(
+			'ajax'    => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'fc_zone_map' ),
+			'zones'   => $zdata,
+			'streets' => is_array( $geo_streets ) ? $geo_streets : array(),
+			'i18n'    => array(
 				'saved'    => __( 'Boundaries saved.', 'food-customizer' ),
 				'saving'   => __( 'Saving…', 'food-customizer' ),
 				'error'    => __( 'Error, try again', 'food-customizer' ),
 				'drawnFor' => __( 'Drawing for', 'food-customizer' ),
+				'streets'  => __( 'streets', 'food-customizer' ),
+				'noneIn'   => __( 'No streets inside — draw a shape and save.', 'food-customizer' ),
+				'showHide' => __( 'show / hide', 'food-customizer' ),
 			),
 		) );
 		wp_localize_script( 'fc-delivery-admin', 'FC_ZONEPRESET', array(
@@ -734,6 +737,9 @@ class FC_Delivery {
 						<span id="fc-zonemap-msg" style="margin-left:8px;"></span>
 					</p>
 					<div id="fc-zone-map-editor" style="height:520px;border:1px solid #ccd0d4;border-radius:8px;"></div>
+					<h3 style="margin:16px 0 4px;"><?php esc_html_e( 'Streets inside each zone', 'food-customizer' ); ?></h3>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Computed from the drawn polygons when you save. These are the streets the checkout loads for the zone.', 'food-customizer' ); ?></p>
+					<div id="fc-zone-streets"></div>
 				</div>
 
 				<table class="widefat striped" id="fc-zones-table" style="max-width:1100px;margin-top:10px;">

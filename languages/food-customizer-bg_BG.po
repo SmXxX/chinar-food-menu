@@ -1185,3 +1185,18 @@ msgstr "Запазване…"
 
 msgid "Drawing for"
 msgstr "Чертане за"
+
+msgid "streets"
+msgstr "улици"
+
+msgid "Streets inside each zone"
+msgstr "Улици във всяка зона"
+
+msgid "Computed from the drawn polygons when you save. These are the streets the checkout loads for the zone."
+msgstr "Изчисляват се от начертаните полигони при запазване. Това са улиците, които се зареждат за зоната при поръчка."
+
+msgid "No streets inside — draw a shape and save."
+msgstr "Няма улици вътре — начертайте форма и запазете."
+
+msgid "show / hide"
+msgstr "покажи / скрий"

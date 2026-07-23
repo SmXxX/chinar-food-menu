@@ -7,6 +7,33 @@
 		if ( ! el || typeof L === 'undefined' || ! window.FC_ZONEMAP ) { return; }
 		var C = window.FC_ZONEMAP, I = C.i18n || {};
 
+		function esc( s ) { return $( '<div/>' ).text( s == null ? '' : s ).html(); }
+
+		// Render the per-zone list of streets that fall inside the drawn polygons.
+		function renderZoneStreets( byZone ) {
+			var $c = $( '#fc-zone-streets' ).empty();
+			byZone = byZone || {};
+			C.zones.forEach( function ( z ) {
+				if ( z.busy ) { return; }
+				var list = byZone[ z.i ] || byZone[ String( z.i ) ] || [];
+				var $box = $( '<div style="margin:8px 0;border:1px solid #dcdcde;border-radius:6px;overflow:hidden;"></div>' );
+				var $head = $( '<button type="button" style="width:100%;text-align:left;background:#f6f7f7;border:0;border-bottom:1px solid #dcdcde;padding:8px 12px;cursor:pointer;font-weight:600;"></button>' );
+				$head.html( '<span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:' + esc( z.color ) + ';margin-right:8px;vertical-align:-1px;"></span>'
+					+ esc( z.name ) + ' — ' + list.length + ' ' + esc( I.streets || 'streets' )
+					+ ' <span style="color:#787c82;font-weight:400;">(' + esc( I.showHide || '' ) + ')</span>' );
+				var $body = $( '<div style="display:none;padding:8px 12px;max-height:240px;overflow:auto;font-size:13px;"></div>' );
+				if ( list.length ) {
+					$body.css( { 'column-count': 3, 'column-gap': '18px' } );
+					$body.html( list.map( function ( s ) { return '<div style="break-inside:avoid;">' + esc( s ) + '</div>'; } ).join( '' ) );
+				} else {
+					$body.html( '<em>' + esc( I.noneIn || '—' ) + '</em>' );
+				}
+				$head.on( 'click', function () { $body.toggle(); } );
+				$box.append( $head ).append( $body );
+				$c.append( $box );
+			} );
+		}
+
 		var map = L.map( el ).setView( [ 43.21, 27.91 ], 12 );
 		L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19, attribution: '&copy; OpenStreetMap'
@@ -38,6 +65,7 @@
 			$( '#fc-zonemap-target' ).append( $( '<option>' ).val( z.i ).text( z.name ) );
 		} );
 		if ( group.length ) { map.fitBounds( L.featureGroup( group ).getBounds(), { padding: [ 20, 20 ] } ); }
+		renderZoneStreets( C.streets || {} );
 
 		if ( map.pm ) {
 			map.pm.addControls( {
@@ -82,10 +110,11 @@
 			$.post( C.ajax, { action: 'fc_save_zone_shapes', nonce: C.nonce, shapes: JSON.stringify( shapes ) } )
 				.done( function ( r ) {
 					if ( r && r.success ) {
-						var counts = ( r.data && r.data.streets ) || {};
-						var parts = Object.keys( counts ).map( function ( k ) {
+						var byZone = ( r.data && r.data.streets ) || {};
+						renderZoneStreets( byZone );
+						var parts = Object.keys( byZone ).map( function ( k ) {
 							var z = zoneById( parseInt( k, 10 ) );
-							return ( z ? z.name : k ) + ': ' + counts[ k ];
+							return ( z ? z.name : k ) + ': ' + ( byZone[ k ] || [] ).length;
 						} );
 						$m.css( 'color', '#1a7f37' ).text( ( I.saved || 'Saved' ) + ( parts.length ? ' — ' + parts.join( ', ' ) : '' ) );
 					} else { $m.css( 'color', '#b32d2e' ).text( I.error || 'Error' ); }
