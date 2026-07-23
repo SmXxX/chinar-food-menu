@@ -220,12 +220,8 @@ class FC_Delivery {
 		return 0;
 	}
 
-	/** One-click: configure Зона 1 (central) / Зона 2 (outer) / no-delivery like production. */
-	public function ajax_apply_zone_preset() {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'msg' => 'forbidden' ), 403 );
-		}
-		check_ajax_referer( 'fc_zone_preset', 'nonce' );
+	/** The Varna 2-zone production configuration, built from the current neighbourhoods. */
+	public static function preset_zones() {
 		$z1 = array();
 		$z2 = array();
 		foreach ( array_keys( self::neighbourhoods() ) as $n ) {
@@ -236,14 +232,22 @@ class FC_Delivery {
 				$z1[] = $n;
 			}
 		}
-		$zones = array(
+		return array(
 			array( 'name' => 'Зона 1', 'areas' => 'Централна Варна', 'eta' => 'до 60 мин', 'price' => 2.04, 'color' => '#e0553a', 'busy' => 0, 'busy_msg' => '', 'hoods' => $z1 ),
 			array( 'name' => 'Зона 2', 'areas' => 'Виница, Св.св. Константин и Елена, Аспарухово, Галата, Владиславово, ЗПЗ, Летище Варна', 'eta' => 'до 60 мин', 'price' => 2.56, 'color' => '#f0b23e', 'busy' => 0, 'busy_msg' => '', 'hoods' => $z2 ),
 			array( 'name' => 'КК Златни Пясъци', 'areas' => '', 'eta' => '', 'price' => 0, 'color' => '#b8b2a6', 'busy' => 1, 'busy_msg' => 'Не се извършва разнос до КК Златни Пясъци', 'hoods' => array() ),
 		);
-		update_option( self::OPT_ZONES, $this->sanitize_zones( $zones ) );
+	}
+
+	/** One-click: configure Зона 1 (central) / Зона 2 (outer) / no-delivery like production. */
+	public function ajax_apply_zone_preset() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'msg' => 'forbidden' ), 403 );
+		}
+		check_ajax_referer( 'fc_zone_preset', 'nonce' );
+		update_option( self::OPT_ZONES, $this->sanitize_zones( self::preset_zones() ) );
 		update_option( self::OPT_ENABLED, 1 );
-		wp_send_json_success( array( 'zones' => count( $zones ) ) );
+		wp_send_json_success( array( 'zones' => 3 ) );
 	}
 
 	/** Zone colour + neighbourhood→zone lookup, shared by both map renderers. */
