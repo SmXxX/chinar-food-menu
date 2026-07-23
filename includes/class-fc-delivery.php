@@ -265,6 +265,8 @@ class FC_Delivery {
 				}
 			}
 		}
+		// Returns the zone index a polygon's neighbourhood is assigned to, or null when
+		// that neighbourhood is not in any configured zone (so the map can skip it).
 		$zone_of = function ( $name ) use ( $lookup ) {
 			$k  = self::norm_hood( $name );
 			$k2 = self::norm_hood( $name, true );
@@ -274,7 +276,7 @@ class FC_Delivery {
 			if ( isset( $lookup[ $k2 ] ) ) {
 				return $lookup[ $k2 ];
 			}
-			return self::preset_zone_index( $name );
+			return null;
 		};
 		return array( $color, $zone_of );
 	}
@@ -301,10 +303,11 @@ class FC_Delivery {
 
 		$features = array();
 		foreach ( $polys as $name => $ring ) {
-			if ( false !== mb_stripos( $name, 'море' ) || false !== mb_stripos( $name, 'езеро' ) ) {
-				continue;
+			$zi = $zone_of( $name );
+			if ( null === $zi ) {
+				continue; // only draw neighbourhoods assigned to a zone in the plugin
 			}
-			$features[] = array( 'n' => $name, 'c' => $color( $zone_of( $name ) ), 'r' => $ring );
+			$features[] = array( 'n' => $name, 'c' => $color( $zi ), 'r' => $ring );
 		}
 
 		$fmt = function ( $p ) { return FC_Currency::format_plain( (float) $p ); };
@@ -352,11 +355,11 @@ class FC_Delivery {
 
 		$svg = '<svg class="fc-delivery-map" viewBox="' . esc_attr( $vb ) . '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' . esc_attr__( 'Delivery zones map', 'food-customizer' ) . '">';
 		foreach ( $data['polys'] as $name => $d ) {
-			// Water bodies (sea / lake) aren't a zone — let the water-coloured background show.
-			if ( false !== mb_stripos( $name, 'море' ) || false !== mb_stripos( $name, 'езеро' ) ) {
-				continue;
+			$zi = $zone_of( $name );
+			if ( null === $zi ) {
+				continue; // only draw neighbourhoods assigned to a zone in the plugin
 			}
-			$svg .= '<path d="' . esc_attr( $d ) . '" fill="' . esc_attr( $zone_color( $zone_of( $name ) ) ) . '" fill-opacity="0.82" stroke="#fff" stroke-width="0.8"><title>' . esc_html( $name ) . '</title></path>';
+			$svg .= '<path d="' . esc_attr( $d ) . '" fill="' . esc_attr( $zone_color( $zi ) ) . '" fill-opacity="0.82" stroke="#fff" stroke-width="0.8"><title>' . esc_html( $name ) . '</title></path>';
 		}
 		$svg .= '</svg>';
 
