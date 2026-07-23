@@ -193,6 +193,16 @@ class FC_Delivery {
 	/* Varna 2-zone preset + delivery map                                    */
 	/* --------------------------------------------------------------------- */
 
+	/** Normalise a neighbourhood/area name for matching (strip prefixes, optional trailing number). */
+	private static function norm_hood( $s, $strip_num = false ) {
+		$s = mb_strtolower( (string) $s );
+		$s = preg_replace( '/\b(кв|ж\.?к|с\.?о|м-т|мт|к\.?к|в\.?з|со)\.?\s*/u', '', $s );
+		if ( $strip_num ) {
+			$s = preg_replace( '/\s*\d+\s*$/u', '', $s );
+		}
+		return trim( preg_replace( '/[^\p{L}\p{N}]/u', '', $s ) );
+	}
+
 	/** Which preset zone an area name belongs to: 0 = central, 1 = outer, 2 = no delivery. */
 	public static function preset_zone_index( $name ) {
 		$name = (string) $name;
@@ -246,12 +256,28 @@ class FC_Delivery {
 		if ( empty( $data['polys'] ) ) {
 			return '';
 		}
-		$zones = self::zones();
-		$z1c = ( isset( $zones[0]['color'] ) && $zones[0]['color'] ) ? $zones[0]['color'] : '#e0553a';
-		$z2c = ( isset( $zones[1]['color'] ) && $zones[1]['color'] ) ? $zones[1]['color'] : '#f0b23e';
-		$exc = '#b8b2a6';
-		$colors = array( $z1c, $z2c, $exc );
-		$vb  = isset( $data['viewBox'] ) ? $data['viewBox'] : '0 0 1195.8 1080';
+		$zones  = self::zones();
+		$defcol = array( '#e0553a', '#f0b23e', '#b8b2a6', '#5a8f4e', '#4a78c0', '#9b59b6' );
+		$zone_color = function ( $zi ) use ( $zones, $defcol ) {
+			if ( isset( $zones[ $zi ]['color'] ) && $zones[ $zi ]['color'] ) {
+				return $zones[ $zi ]['color'];
+			}
+			return isset( $defcol[ $zi ] ) ? $defcol[ $zi ] : '#c9c4ba';
+		};
+
+		// Build a neighbourhood → zone-index lookup from the ACTUAL zone configuration,
+		// so re-assigning a neighbourhood in the admin recolours its region on the map.
+		$lookup = array();
+		foreach ( $zones as $zi => $z ) {
+			foreach ( (array) $z['hoods'] as $h ) {
+				$lookup[ self::norm_hood( $h ) ]        = $zi;
+				$k2 = self::norm_hood( $h, true );
+				if ( ! isset( $lookup[ $k2 ] ) ) {
+					$lookup[ $k2 ] = $zi;
+				}
+			}
+		}
+		$vb = isset( $data['viewBox'] ) ? $data['viewBox'] : '0 0 1195.8 1080';
 
 		$svg = '<svg class="fc-delivery-map" viewBox="' . esc_attr( $vb ) . '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' . esc_attr__( 'Delivery zones map', 'food-customizer' ) . '">';
 		foreach ( $data['polys'] as $name => $d ) {
@@ -259,23 +285,27 @@ class FC_Delivery {
 			if ( false !== mb_stripos( $name, 'море' ) || false !== mb_stripos( $name, 'езеро' ) ) {
 				continue;
 			}
-			$fill = $colors[ self::preset_zone_index( $name ) ];
-			$svg .= '<path d="' . esc_attr( $d ) . '" fill="' . esc_attr( $fill ) . '" fill-opacity="0.82" stroke="#fff" stroke-width="0.8"><title>' . esc_html( $name ) . '</title></path>';
+			$k  = self::norm_hood( $name );
+			$k2 = self::norm_hood( $name, true );
+			if ( isset( $lookup[ $k ] ) ) {
+				$zi = $lookup[ $k ];
+			} elseif ( isset( $lookup[ $k2 ] ) ) {
+				$zi = $lookup[ $k2 ];
+			} else {
+				$zi = self::preset_zone_index( $name ); // fallback for landmark/unmatched polygons
+			}
+			$svg .= '<path d="' . esc_attr( $d ) . '" fill="' . esc_attr( $zone_color( $zi ) ) . '" fill-opacity="0.82" stroke="#fff" stroke-width="0.8"><title>' . esc_html( $name ) . '</title></path>';
 		}
 		$svg .= '</svg>';
 
 		$fmt = function ( $p ) { return FC_Currency::format_plain( (float) $p ); };
 		$leg = '<ul class="fc-delivery-map-legend">';
-		foreach ( array( 0, 1 ) as $i ) {
-			if ( ! isset( $zones[ $i ] ) ) {
-				continue;
-			}
-			$leg .= '<li><span class="fc-dm-swatch" style="background:' . esc_attr( $colors[ $i ] ) . '"></span> <strong>' . esc_html( $zones[ $i ]['name'] ) . '</strong>' . ( $zones[ $i ]['price'] > 0 ? ' — ' . esc_html( $fmt( $zones[ $i ]['price'] ) ) : '' ) . '</li>';
-		}
-		foreach ( $zones as $z ) {
+		foreach ( $zones as $zi => $z ) {
+			$sw = '<span class="fc-dm-swatch" style="background:' . esc_attr( $zone_color( $zi ) ) . '"></span> ';
 			if ( ! empty( $z['busy'] ) ) {
-				$leg .= '<li><span class="fc-dm-swatch" style="background:' . esc_attr( $exc ) . '"></span> ' . esc_html( $z['busy_msg'] ? $z['busy_msg'] : $z['name'] ) . '</li>';
-				break;
+				$leg .= '<li>' . $sw . esc_html( $z['busy_msg'] ? $z['busy_msg'] : $z['name'] ) . '</li>';
+			} else {
+				$leg .= '<li>' . $sw . '<strong>' . esc_html( $z['name'] ) . '</strong>' . ( $z['price'] > 0 ? ' — ' . esc_html( $fmt( $z['price'] ) ) : '' ) . '</li>';
 			}
 		}
 		$leg .= '</ul>';
