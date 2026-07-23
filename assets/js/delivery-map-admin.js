@@ -71,8 +71,14 @@
 			var $m = $( '#fc-zonemap-msg' ).css( 'color', '#646970' ).text( I.saving || '…' );
 			$.post( C.ajax, { action: 'fc_save_zone_shapes', nonce: C.nonce, shapes: JSON.stringify( shapes ) } )
 				.done( function ( r ) {
-					if ( r && r.success ) { $m.css( 'color', '#1a7f37' ).text( I.saved || 'Saved' ); }
-					else { $m.css( 'color', '#b32d2e' ).text( I.error || 'Error' ); }
+					if ( r && r.success ) {
+						var counts = ( r.data && r.data.streets ) || {};
+						var parts = Object.keys( counts ).map( function ( k ) {
+							var z = zoneById( parseInt( k, 10 ) );
+							return ( z ? z.name : k ) + ': ' + counts[ k ];
+						} );
+						$m.css( 'color', '#1a7f37' ).text( ( I.saved || 'Saved' ) + ( parts.length ? ' — ' + parts.join( ', ' ) : '' ) );
+					} else { $m.css( 'color', '#b32d2e' ).text( I.error || 'Error' ); }
 				} )
 				.fail( function () { $m.css( 'color', '#b32d2e' ).text( I.error || 'Error' ); } );
 		} );

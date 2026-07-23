@@ -19,6 +19,7 @@ class FC_Delivery {
 	const OPT_ENABLED   = 'fc_delivery_enabled';
 	const OPT_ZONES     = 'fc_delivery_zones';
 	const OPT_SHAPES    = 'fc_zone_shapes';
+	const OPT_ZSTREETS  = 'fc_zone_streets_geo';
 	const OPT_OVERRIDES = 'fc_hood_overrides';
 	const GROUP         = 'fc_delivery_group';
 	const PAGE          = 'fc-delivery-zones';
@@ -260,7 +261,17 @@ class FC_Delivery {
 			}
 		}
 		update_option( self::OPT_SHAPES, $shapes, false );
-		wp_send_json_success( array( 'saved' => count( $shapes ) ) );
+
+		// Compute the streets inside each drawn shape (point-in-polygon) and cache them,
+		// so the checkout loads the streets that are geographically inside the zone.
+		$geo    = array();
+		$counts = array();
+		foreach ( $shapes as $i => $shape ) {
+			$geo[ (int) $i ] = $this->streets_in_shape( $shape );
+			$counts[ (int) $i ] = count( $geo[ (int) $i ] );
+		}
+		update_option( self::OPT_ZSTREETS, $geo, false );
+		wp_send_json_success( array( 'saved' => count( $shapes ), 'streets' => $counts ) );
 	}
 
 	/** The Varna 2-zone production configuration, built from the current neighbourhoods. */
@@ -465,11 +476,21 @@ class FC_Delivery {
 		return $css . '<div class="fc-delivery-map-wrap">' . $svg . $leg . '</div>';
 	}
 
-	/** Per-zone street lists (union of the zone's neighbourhoods) for the checkout. */
+	/**
+	 * Per-zone street lists for the checkout. If a zone has a hand-drawn map shape,
+	 * its streets come from point-in-polygon (streets geographically inside the shape,
+	 * cached at save time); otherwise from the union of the zone's neighbourhoods.
+	 */
 	public static function zone_streets() {
+		$geo   = get_option( self::OPT_ZSTREETS, array() );
+		$geo   = is_array( $geo ) ? $geo : array();
 		$hoods = self::neighbourhoods();
 		$out   = array();
 		foreach ( self::zones() as $i => $z ) {
+			if ( ! empty( $geo[ $i ] ) ) {
+				$out[ $i ] = $geo[ $i ];
+				continue;
+			}
 			$streets = array();
 			foreach ( (array) $z['hoods'] as $h ) {
 				if ( isset( $hoods[ $h ] ) ) {
@@ -480,6 +501,76 @@ class FC_Delivery {
 			sort( $streets, SORT_LOCALE_STRING );
 			$out[ $i ] = $streets;
 		}
+		return $out;
+	}
+
+	/** Bundled street → sample coordinate points, for point-in-polygon zone assignment. */
+	public static function street_points() {
+		static $data = null;
+		if ( null !== $data ) {
+			return $data;
+		}
+		$file = FC_DIR . 'assets/data/varna-street-points.json';
+		$data = file_exists( $file ) ? (array) json_decode( (string) file_get_contents( $file ), true ) : array();
+		return $data;
+	}
+
+	/** Flatten a drawn shape (nested latlngs) to a list of rings [[[lat,lng],…],…]. */
+	private function shape_rings( $shape ) {
+		$rings = array();
+		$walk  = function ( $v ) use ( &$walk, &$rings ) {
+			if ( ! is_array( $v ) || empty( $v ) ) {
+				return;
+			}
+			// A ring is an array whose first element is a [lat,lng] number pair.
+			if ( isset( $v[0][0] ) && ! is_array( $v[0][0] ) && is_numeric( $v[0][0] ) ) {
+				$rings[] = $v;
+				return;
+			}
+			foreach ( $v as $item ) {
+				$walk( $item );
+			}
+		};
+		$walk( $shape );
+		return $rings;
+	}
+
+	/** Even-odd ray-casting point-in-polygon across all rings of a shape. */
+	private function point_in_rings( $lat, $lng, $rings ) {
+		$inside = false;
+		foreach ( $rings as $ring ) {
+			$n = count( $ring );
+			$j = $n - 1;
+			for ( $i = 0; $i < $n; $i++ ) {
+				$yi = $ring[ $i ][0]; $xi = $ring[ $i ][1];
+				$yj = $ring[ $j ][0]; $xj = $ring[ $j ][1];
+				$dy = ( $yj - $yi );
+				if ( ( ( $yi > $lat ) !== ( $yj > $lat ) ) && ( $lng < ( $xj - $xi ) * ( $lat - $yi ) / ( 0.0 !== $dy ? $dy : 1e-12 ) + $xi ) ) {
+					$inside = ! $inside;
+				}
+				$j = $i;
+			}
+		}
+		return $inside;
+	}
+
+	/** Streets whose coordinates fall inside a drawn shape (sorted, unique). */
+	private function streets_in_shape( $shape ) {
+		$rings = $this->shape_rings( $shape );
+		if ( empty( $rings ) ) {
+			return array();
+		}
+		$out = array();
+		foreach ( self::street_points() as $name => $coords ) {
+			foreach ( (array) $coords as $c ) {
+				if ( isset( $c[0], $c[1] ) && $this->point_in_rings( (float) $c[0], (float) $c[1], $rings ) ) {
+					$out[] = $name;
+					break;
+				}
+			}
+		}
+		$out = array_values( array_unique( $out ) );
+		sort( $out, SORT_LOCALE_STRING );
 		return $out;
 	}
 
