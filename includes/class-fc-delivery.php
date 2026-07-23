@@ -294,24 +294,36 @@ class FC_Delivery {
 
 	/** OpenStreetMap (Leaflet) with zone polygons overlaid in real GPS coordinates. */
 	private function render_map_osm( $atts ) {
-		$file = FC_DIR . 'assets/data/varna-zones-latlon.json';
-		if ( ! file_exists( $file ) ) {
-			return $this->render_map_svg();
-		}
-		$polys = json_decode( (string) file_get_contents( $file ), true );
-		if ( empty( $polys ) ) {
-			return '';
-		}
 		$zones = self::zones();
 		list( $color, $zone_of ) = $this->map_zone_helpers( $zones );
-
 		$features = array();
-		foreach ( $polys as $name => $ring ) {
-			$zi = $zone_of( $name );
-			if ( null === $zi ) {
-				continue; // only draw neighbourhoods assigned to a zone in the plugin
+
+		// Prefer the pre-dissolved smooth zone shapes (one blob per zone, production look).
+		$sf     = FC_DIR . 'assets/data/varna-zone-shapes.json';
+		$shapes = file_exists( $sf ) ? json_decode( (string) file_get_contents( $sf ), true ) : array();
+		if ( ! empty( $shapes ) ) {
+			foreach ( $shapes as $sh ) {
+				$zi = (int) $sh['zone'];
+				$features[] = array(
+					'n' => isset( $zones[ $zi ]['name'] ) ? $zones[ $zi ]['name'] : '',
+					'c' => $color( $zi ),
+					'r' => $sh['latlngs'],
+				);
 			}
-			$features[] = array( 'n' => $name, 'c' => $color( $zi ), 'r' => $ring );
+		} else {
+			// Fallback: individual neighbourhood polygons.
+			$pf    = FC_DIR . 'assets/data/varna-zones-latlon.json';
+			$polys = file_exists( $pf ) ? json_decode( (string) file_get_contents( $pf ), true ) : array();
+			foreach ( (array) $polys as $name => $ring ) {
+				$zi = $zone_of( $name );
+				if ( null === $zi ) {
+					continue;
+				}
+				$features[] = array( 'n' => $name, 'c' => $color( $zi ), 'r' => $ring );
+			}
+		}
+		if ( empty( $features ) ) {
+			return $this->render_map_svg();
 		}
 
 		$fmt = function ( $p ) { return FC_Currency::format_plain( (float) $p ); };

@@ -17,13 +17,15 @@
 				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			} ).addTo( map );
 
-			var bounds = [];
+			var layers = [];
 			( d.features || [] ).forEach( function ( f ) {
-				var poly = L.polygon( f.r, { color: '#ffffff', weight: 1, fillColor: f.c, fillOpacity: 0.5 } ).addTo( map );
+				var poly = L.polygon( f.r, { color: '#ffffff', weight: 1.5, lineJoin: 'round', fillColor: f.c, fillOpacity: 0.55 } ).addTo( map );
 				if ( f.n ) { poly.bindTooltip( f.n, { sticky: true } ); }
-				f.r.forEach( function ( p ) { bounds.push( p ); } );
+				layers.push( poly );
 			} );
-			if ( bounds.length ) { map.fitBounds( bounds, { padding: [ 10, 10 ] } ); }
+			if ( layers.length ) {
+				map.fitBounds( L.featureGroup( layers ).getBounds(), { padding: [ 12, 12 ] } );
+			}
 
 			if ( d.legend && d.legend.length ) {
 				var lg = L.control( { position: 'bottomleft' } );
