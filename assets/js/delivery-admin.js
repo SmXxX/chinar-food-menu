@@ -182,4 +182,17 @@
 			.fail( function () { $msg.css( 'color', '#b32d2e' ).text( I.error || 'Error' ); } );
 	} );
 
+	// One-click Varna 2-zone preset.
+	$( '#fc-zone-preset' ).on( 'click', function () {
+		var Z = window.FC_ZONEPRESET || {};
+		if ( ! window.confirm( Z.confirm || '' ) ) { return; }
+		var $m = $( '#fc-zone-preset-msg' ).css( 'color', '#646970' ).text( Z.applying || '…' );
+		$.post( Z.ajax, { action: 'fc_apply_zone_preset', nonce: Z.nonce } )
+			.done( function ( r ) {
+				if ( r && r.success ) { $m.css( 'color', '#1a7f37' ).text( Z.done || '' ); location.reload(); }
+				else { $m.css( 'color', '#b32d2e' ).text( Z.error || 'Error' ); }
+			} )
+			.fail( function () { $m.css( 'color', '#b32d2e' ).text( Z.error || 'Error' ); } );
+	} );
+
 } )( jQuery );

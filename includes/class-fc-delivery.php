@@ -30,6 +30,9 @@ class FC_Delivery {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ) );
 		// Editor for correcting a street's neighbourhood(s).
 		add_action( 'wp_ajax_fc_save_street_hood', array( $this, 'ajax_save_street_hood' ) );
+		// One-click Varna 2-zone preset + [fc_delivery_map] shortcode.
+		add_action( 'wp_ajax_fc_apply_zone_preset', array( $this, 'ajax_apply_zone_preset' ) );
+		add_shortcode( 'fc_delivery_map', array( $this, 'render_map' ) );
 
 		if ( ! self::is_enabled() ) {
 			return;
@@ -72,6 +75,7 @@ class FC_Delivery {
 				'areas'    => isset( $z['areas'] ) ? (string) $z['areas'] : '',
 				'eta'      => isset( $z['eta'] ) ? (string) $z['eta'] : '',
 				'price'    => isset( $z['price'] ) ? (float) $z['price'] : 0.0,
+				'color'    => isset( $z['color'] ) ? (string) $z['color'] : '',
 				'busy'     => ! empty( $z['busy'] ),
 				'busy_msg' => isset( $z['busy_msg'] ) ? (string) $z['busy_msg'] : '',
 				'hoods'    => ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? array_values( array_map( 'strval', $z['hoods'] ) ) : array(),
@@ -185,6 +189,106 @@ class FC_Delivery {
 		wp_send_json_success( array( 'street' => $street, 'quarters' => $quarters ) );
 	}
 
+	/* --------------------------------------------------------------------- */
+	/* Varna 2-zone preset + delivery map                                    */
+	/* --------------------------------------------------------------------- */
+
+	/** Which preset zone an area name belongs to: 0 = central, 1 = outer, 2 = no delivery. */
+	public static function preset_zone_index( $name ) {
+		$name = (string) $name;
+		foreach ( array( 'Златни', 'Слънчев' ) as $k ) {
+			if ( false !== mb_stripos( $name, $k ) ) {
+				return 2;
+			}
+		}
+		$outer = array( 'Виница', 'Аспарухово', 'Галата', 'Владиславово', 'Евксиноград', 'Боровец', 'Трака', 'Зеленика', 'Прибой', 'Рибарско', 'Ален', 'Добрева', 'Телевизионна', 'Лозите', 'Сотира', 'Ракитника', 'Фичоза', 'Кочмар', 'Планова', 'Сълзица', 'Акчелар', 'Пчелина', 'Перчемлията', 'Салтанат', 'Франга', 'Тарла', 'Балам', 'Боклук', 'Казашко', 'Каменар', 'Звездица', 'Константин', 'Тополи', 'Летище', 'Западна промишлена', 'Крушките', 'Лазур', 'Ментешето', 'Орехчето', 'Припек', 'Кантара', 'Погреби', 'Малка Чайка', 'Елена' );
+		foreach ( $outer as $k ) {
+			if ( false !== mb_stripos( $name, $k ) ) {
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	/** One-click: configure Зона 1 (central) / Зона 2 (outer) / no-delivery like production. */
+	public function ajax_apply_zone_preset() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'msg' => 'forbidden' ), 403 );
+		}
+		check_ajax_referer( 'fc_zone_preset', 'nonce' );
+		$z1 = array();
+		$z2 = array();
+		foreach ( array_keys( self::neighbourhoods() ) as $n ) {
+			$zi = self::preset_zone_index( $n );
+			if ( 1 === $zi ) {
+				$z2[] = $n;
+			} elseif ( 0 === $zi ) {
+				$z1[] = $n;
+			}
+		}
+		$zones = array(
+			array( 'name' => 'Зона 1', 'areas' => 'Централна Варна', 'eta' => 'до 60 мин', 'price' => 2.04, 'color' => '#e0553a', 'busy' => 0, 'busy_msg' => '', 'hoods' => $z1 ),
+			array( 'name' => 'Зона 2', 'areas' => 'Виница, Св.св. Константин и Елена, Аспарухово, Галата, Владиславово, ЗПЗ, Летище Варна', 'eta' => 'до 60 мин', 'price' => 2.56, 'color' => '#f0b23e', 'busy' => 0, 'busy_msg' => '', 'hoods' => $z2 ),
+			array( 'name' => 'КК Златни Пясъци', 'areas' => '', 'eta' => '', 'price' => 0, 'color' => '#b8b2a6', 'busy' => 1, 'busy_msg' => 'Не се извършва разнос до КК Златни Пясъци', 'hoods' => array() ),
+		);
+		update_option( self::OPT_ZONES, $this->sanitize_zones( $zones ) );
+		update_option( self::OPT_ENABLED, 1 );
+		wp_send_json_success( array( 'zones' => count( $zones ) ) );
+	}
+
+	/** [fc_delivery_map] — a coloured Зона 1 / Зона 2 map of Varna (real polygons). */
+	public function render_map( $atts = array() ) {
+		$file = FC_DIR . 'assets/data/varna-polygons.json';
+		if ( ! file_exists( $file ) ) {
+			return '';
+		}
+		$data = json_decode( (string) file_get_contents( $file ), true );
+		if ( empty( $data['polys'] ) ) {
+			return '';
+		}
+		$zones = self::zones();
+		$z1c = ( isset( $zones[0]['color'] ) && $zones[0]['color'] ) ? $zones[0]['color'] : '#e0553a';
+		$z2c = ( isset( $zones[1]['color'] ) && $zones[1]['color'] ) ? $zones[1]['color'] : '#f0b23e';
+		$exc = '#b8b2a6';
+		$colors = array( $z1c, $z2c, $exc );
+		$vb  = isset( $data['viewBox'] ) ? $data['viewBox'] : '0 0 1195.8 1080';
+
+		$svg = '<svg class="fc-delivery-map" viewBox="' . esc_attr( $vb ) . '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' . esc_attr__( 'Delivery zones map', 'food-customizer' ) . '">';
+		foreach ( $data['polys'] as $name => $d ) {
+			// Water bodies (sea / lake) aren't a zone — let the water-coloured background show.
+			if ( false !== mb_stripos( $name, 'море' ) || false !== mb_stripos( $name, 'езеро' ) ) {
+				continue;
+			}
+			$fill = $colors[ self::preset_zone_index( $name ) ];
+			$svg .= '<path d="' . esc_attr( $d ) . '" fill="' . esc_attr( $fill ) . '" fill-opacity="0.82" stroke="#fff" stroke-width="0.8"><title>' . esc_html( $name ) . '</title></path>';
+		}
+		$svg .= '</svg>';
+
+		$fmt = function ( $p ) { return FC_Currency::format_plain( (float) $p ); };
+		$leg = '<ul class="fc-delivery-map-legend">';
+		foreach ( array( 0, 1 ) as $i ) {
+			if ( ! isset( $zones[ $i ] ) ) {
+				continue;
+			}
+			$leg .= '<li><span class="fc-dm-swatch" style="background:' . esc_attr( $colors[ $i ] ) . '"></span> <strong>' . esc_html( $zones[ $i ]['name'] ) . '</strong>' . ( $zones[ $i ]['price'] > 0 ? ' — ' . esc_html( $fmt( $zones[ $i ]['price'] ) ) : '' ) . '</li>';
+		}
+		foreach ( $zones as $z ) {
+			if ( ! empty( $z['busy'] ) ) {
+				$leg .= '<li><span class="fc-dm-swatch" style="background:' . esc_attr( $exc ) . '"></span> ' . esc_html( $z['busy_msg'] ? $z['busy_msg'] : $z['name'] ) . '</li>';
+				break;
+			}
+		}
+		$leg .= '</ul>';
+
+		$css = '';
+		static $printed = false;
+		if ( ! $printed ) {
+			$printed = true;
+			$css = '<style>.fc-delivery-map-wrap{max-width:720px;margin:0 auto}.fc-delivery-map{width:100%;height:auto;display:block;background:#e9f2f6;border-radius:12px}.fc-delivery-map-legend{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-wrap:wrap;gap:16px}.fc-delivery-map-legend li{display:flex;align-items:center;gap:8px;font-size:14px}.fc-dm-swatch{width:16px;height:16px;border-radius:3px;display:inline-block;flex:0 0 auto}</style>';
+		}
+		return $css . '<div class="fc-delivery-map-wrap">' . $svg . $leg . '</div>';
+	}
+
 	/** Per-zone street lists (union of the zone's neighbourhoods) for the checkout. */
 	public static function zone_streets() {
 		$hoods = self::neighbourhoods();
@@ -246,6 +350,7 @@ class FC_Delivery {
 				'areas'    => isset( $z['areas'] ) ? sanitize_textarea_field( $z['areas'] ) : '',
 				'eta'      => isset( $z['eta'] ) ? sanitize_text_field( $z['eta'] ) : '',
 				'price'    => isset( $z['price'] ) ? max( 0, (float) $z['price'] ) : 0,
+				'color'    => isset( $z['color'] ) ? (string) sanitize_hex_color( $z['color'] ) : '',
 				'busy'     => empty( $z['busy'] ) ? 0 : 1,
 				'busy_msg' => isset( $z['busy_msg'] ) ? sanitize_text_field( $z['busy_msg'] ) : '',
 				'hoods'    => $hoods,
@@ -260,6 +365,14 @@ class FC_Delivery {
 		}
 		wp_enqueue_script( 'fc-delivery-admin', FC_URL . 'assets/js/delivery-admin.js', array( 'jquery' ), FC_VERSION, true );
 		wp_localize_script( 'fc-delivery-admin', 'FC_HOODS', self::neighbourhoods() );
+		wp_localize_script( 'fc-delivery-admin', 'FC_ZONEPRESET', array(
+			'ajax'     => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'fc_zone_preset' ),
+			'confirm'  => __( 'This replaces your current zones with the Varna 2-zone setup: Зона 1 (central), Зона 2 (outer), and no delivery to Златни Пясъци. Prices are the EUR equivalent of 4 / 5 лв — adjust after. Continue?', 'food-customizer' ),
+			'applying' => __( 'Applying…', 'food-customizer' ),
+			'done'     => __( 'Done — reloading…', 'food-customizer' ),
+			'error'    => __( 'Error, try again', 'food-customizer' ),
+		) );
 		wp_localize_script( 'fc-delivery-admin', 'FC_HOODEDIT', array(
 			'ajax'     => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'fc_hood_edit' ),
@@ -299,6 +412,9 @@ class FC_Delivery {
 
 				<p class="description"><?php esc_html_e( 'Each zone the customer can choose on checkout. "Covers" is shown to help them pick the right zone. Toggle "Busy" to stop deliveries to that zone (the customer sees the message and cannot order for it).', 'food-customizer' ); ?></p>
 
+				<p><button type="button" class="button button-secondary" id="fc-zone-preset">⚡ <?php esc_html_e( 'Apply Varna 2-zone preset (Зона 1 / Зона 2)', 'food-customizer' ); ?></button> <span id="fc-zone-preset-msg" style="margin-left:8px;"></span></p>
+				<p class="description" style="margin-top:-6px;"><?php esc_html_e( 'Sets up Зона 1 (central, ~4 лв) and Зона 2 (outer, ~5 лв) with the neighbourhoods grouped, plus no delivery to Златни Пясъци. Show the coloured map on any page with the [fc_delivery_map] shortcode.', 'food-customizer' ); ?></p>
+
 				<div class="fc-street-search" style="margin:16px 0;max-width:1100px;">
 					<label for="fc-street-search" style="font-weight:600;"><?php esc_html_e( 'Find which neighbourhood a street is in', 'food-customizer' ); ?></label><br>
 					<input type="search" id="fc-street-search" class="regular-text" placeholder="<?php esc_attr_e( 'Type a street name…', 'food-customizer' ); ?>" autocomplete="off" style="margin-top:6px;">
@@ -321,6 +437,7 @@ class FC_Delivery {
 							<th style="width:20%"><?php esc_html_e( 'Neighbourhoods (streets auto-load at checkout)', 'food-customizer' ); ?></th>
 							<th style="width:9%"><?php esc_html_e( 'ETA', 'food-customizer' ); ?></th>
 							<th style="width:9%"><?php /* translators: %s = currency symbol */ printf( esc_html__( 'Delivery price (%s)', 'food-customizer' ), esc_html( get_woocommerce_currency_symbol() ) ); ?></th>
+							<th style="width:5%"><?php esc_html_e( 'Map colour', 'food-customizer' ); ?></th>
 							<th style="width:6%"><?php esc_html_e( 'Busy', 'food-customizer' ); ?></th>
 							<th style="width:15%"><?php esc_html_e( 'Busy message (optional)', 'food-customizer' ); ?></th>
 							<th style="width:4%"></th>
@@ -354,6 +471,7 @@ class FC_Delivery {
 		$area      = isset( $z['areas'] ) ? $z['areas'] : '';
 		$eta       = isset( $z['eta'] ) ? $z['eta'] : '';
 		$price     = ( isset( $z['price'] ) && $z['price'] > 0 ) ? (float) $z['price'] : '';
+		$color     = ( isset( $z['color'] ) && $z['color'] ) ? $z['color'] : '#dd5903';
 		$busy      = ! empty( $z['busy'] );
 		$msg       = isset( $z['busy_msg'] ) ? $z['busy_msg'] : '';
 		$hoods_sel = ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? $z['hoods'] : array();
@@ -366,6 +484,7 @@ class FC_Delivery {
 			<td><select multiple size="5" class="widefat" name="<?php echo esc_attr( $b ); ?>[hoods][]"><?php foreach ( self::neighbourhoods() as $hn => $streets ) : ?><option value="<?php echo esc_attr( $hn ); ?>"<?php selected( in_array( (string) $hn, array_map( 'strval', $hoods_sel ), true ) ); ?>><?php echo esc_html( $hn ); ?> (<?php echo count( (array) $streets ); ?>)</option><?php endforeach; ?></select></td>
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[eta]" value="<?php echo esc_attr( $eta ); ?>" placeholder="<?php esc_attr_e( 'e.g. 45 min', 'food-customizer' ); ?>" /></td>
 			<td><input type="number" step="0.01" min="0" class="widefat" name="<?php echo esc_attr( $b ); ?>[price]" value="<?php echo esc_attr( $price ); ?>" placeholder="0.00" /></td>
+			<td style="text-align:center"><input type="color" name="<?php echo esc_attr( $b ); ?>[color]" value="<?php echo esc_attr( $color ); ?>" title="<?php esc_attr_e( 'Colour on the delivery map', 'food-customizer' ); ?>" /></td>
 			<td style="text-align:center"><input type="checkbox" name="<?php echo esc_attr( $b ); ?>[busy]" value="1" <?php checked( $busy, true ); ?> /></td>
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[busy_msg]" value="<?php echo esc_attr( $msg ); ?>" placeholder="<?php echo esc_attr( FC_Settings::label( 'del_busy' ) ); ?>" /></td>
 			<td style="text-align:center"><button type="button" class="button-link fc-del-zone" title="<?php esc_attr_e( 'Remove', 'food-customizer' ); ?>">&times;</button></td>

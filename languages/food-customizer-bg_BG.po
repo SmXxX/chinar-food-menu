@@ -1140,3 +1140,27 @@ msgstr "Фон на бутон (при посочване)"
 
 msgid "Button text (hover)"
 msgstr "Текст на бутон (при посочване)"
+
+msgid "Map colour"
+msgstr "Цвят на картата"
+
+msgid "Colour on the delivery map"
+msgstr "Цвят на картата за доставка"
+
+msgid "Apply Varna 2-zone preset (Зона 1 / Зона 2)"
+msgstr "Приложи 2-зонов вариант за Варна (Зона 1 / Зона 2)"
+
+msgid "Sets up Зона 1 (central, ~4 лв) and Зона 2 (outer, ~5 лв) with the neighbourhoods grouped, plus no delivery to Златни Пясъци. Show the coloured map on any page with the [fc_delivery_map] shortcode."
+msgstr "Създава Зона 1 (централна, ~4 лв) и Зона 2 (крайна, ~5 лв) с групирани квартали и без разнос до Златни Пясъци. Покажете цветната карта на всяка страница с шорткода [fc_delivery_map]."
+
+msgid "This replaces your current zones with the Varna 2-zone setup: Зона 1 (central), Зона 2 (outer), and no delivery to Златни Пясъци. Prices are the EUR equivalent of 4 / 5 лв — adjust after. Continue?"
+msgstr "Това заменя текущите зони с 2-зоновия вариант за Варна: Зона 1 (централна), Зона 2 (крайна) и без разнос до Златни Пясъци. Цените са в евро, еквивалент на 4 / 5 лв — коригирайте след това. Продължавате ли?"
+
+msgid "Applying…"
+msgstr "Прилагане…"
+
+msgid "Done — reloading…"
+msgstr "Готово — презареждане…"
+
+msgid "Delivery zones map"
+msgstr "Карта на зоните за доставка"
