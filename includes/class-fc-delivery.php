@@ -35,6 +35,7 @@ class FC_Delivery {
 		// One-click Varna 2-zone preset + [fc_delivery_map] shortcode.
 		add_action( 'wp_ajax_fc_apply_zone_preset', array( $this, 'ajax_apply_zone_preset' ) );
 		add_action( 'wp_ajax_fc_save_zone_shapes', array( $this, 'ajax_save_zone_shapes' ) );
+		add_action( 'wp_ajax_fc_save_zone_streets', array( $this, 'ajax_save_zone_streets' ) );
 		add_shortcode( 'fc_delivery_map', array( $this, 'render_map' ) );
 
 		if ( ! self::is_enabled() ) {
@@ -270,6 +271,35 @@ class FC_Delivery {
 		}
 		update_option( self::OPT_ZSTREETS, $geo, false );
 		wp_send_json_success( array( 'saved' => count( $shapes ), 'streets' => $geo ) );
+	}
+
+	/** Save hand-edited per-zone street lists from the admin (AJAX). */
+	public function ajax_save_zone_streets() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'msg' => 'forbidden' ), 403 );
+		}
+		check_ajax_referer( 'fc_zone_map', 'nonce' );
+		$raw = isset( $_POST['streets'] ) ? json_decode( wp_unslash( $_POST['streets'] ), true ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		if ( ! is_array( $raw ) ) {
+			$raw = array();
+		}
+		$out = array();
+		foreach ( $raw as $i => $list ) {
+			$clean = array();
+			foreach ( (array) $list as $s ) {
+				$s = sanitize_text_field( $s );
+				if ( '' !== $s ) {
+					$clean[] = $s;
+				}
+			}
+			$clean = array_values( array_unique( $clean ) );
+			sort( $clean, SORT_LOCALE_STRING );
+			if ( ! empty( $clean ) ) {
+				$out[ (int) $i ] = $clean;
+			}
+		}
+		update_option( self::OPT_ZSTREETS, $out, false );
+		wp_send_json_success( array( 'saved' => count( $out ) ) );
 	}
 
 	/** The Varna 2-zone production configuration, built from the current neighbourhoods. */
@@ -629,7 +659,6 @@ class FC_Delivery {
 			return;
 		}
 		wp_enqueue_script( 'fc-delivery-admin', FC_URL . 'assets/js/delivery-admin.js', array( 'jquery' ), FC_VERSION, true );
-		wp_localize_script( 'fc-delivery-admin', 'FC_HOODS', self::neighbourhoods() );
 
 		// On-map boundary editor: Leaflet + Leaflet-Geoman.
 		wp_enqueue_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
@@ -650,18 +679,22 @@ class FC_Delivery {
 		}
 		$geo_streets = get_option( self::OPT_ZSTREETS, array() );
 		wp_localize_script( 'fc-zone-map-admin', 'FC_ZONEMAP', array(
-			'ajax'    => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'fc_zone_map' ),
-			'zones'   => $zdata,
-			'streets' => is_array( $geo_streets ) ? $geo_streets : array(),
-			'i18n'    => array(
-				'saved'    => __( 'Boundaries saved.', 'food-customizer' ),
-				'saving'   => __( 'Saving…', 'food-customizer' ),
-				'error'    => __( 'Error, try again', 'food-customizer' ),
-				'drawnFor' => __( 'Drawing for', 'food-customizer' ),
-				'streets'  => __( 'streets', 'food-customizer' ),
-				'noneIn'   => __( 'No streets inside — draw a shape and save.', 'food-customizer' ),
-				'showHide' => __( 'show / hide', 'food-customizer' ),
+			'ajax'       => admin_url( 'admin-ajax.php' ),
+			'nonce'      => wp_create_nonce( 'fc_zone_map' ),
+			'zones'      => $zdata,
+			'streets'    => is_array( $geo_streets ) ? $geo_streets : array(),
+			'allStreets' => array_keys( self::street_points() ),
+			'i18n'       => array(
+				'saved'     => __( 'Boundaries saved.', 'food-customizer' ),
+				'saving'    => __( 'Saving…', 'food-customizer' ),
+				'error'     => __( 'Error, try again', 'food-customizer' ),
+				'streets'   => __( 'streets', 'food-customizer' ),
+				'noneIn'    => __( 'No streets yet — draw a shape and save the boundaries.', 'food-customizer' ),
+				'showHide'  => __( 'show / hide', 'food-customizer' ),
+				'filter'    => __( 'search a street in this zone…', 'food-customizer' ),
+				'addPlace'  => __( 'add a street…', 'food-customizer' ),
+				'add'       => __( 'Add', 'food-customizer' ),
+				'savedStr'  => __( 'Streets saved.', 'food-customizer' ),
 			),
 		) );
 		wp_localize_script( 'fc-delivery-admin', 'FC_ZONEPRESET', array(
@@ -671,22 +704,6 @@ class FC_Delivery {
 			'applying' => __( 'Applying…', 'food-customizer' ),
 			'done'     => __( 'Done — reloading…', 'food-customizer' ),
 			'error'    => __( 'Error, try again', 'food-customizer' ),
-		) );
-		wp_localize_script( 'fc-delivery-admin', 'FC_HOODEDIT', array(
-			'ajax'     => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'fc_hood_edit' ),
-			'quarters' => self::all_quarters(),
-			'i18n'     => array(
-				'edit'       => __( 'Edit', 'food-customizer' ),
-				'save'       => __( 'Save', 'food-customizer' ),
-				'cancel'     => __( 'Cancel', 'food-customizer' ),
-				'reset'      => __( 'Reset to auto', 'food-customizer' ),
-				'saved'      => __( 'Saved', 'food-customizer' ),
-				'error'      => __( 'Error, try again', 'food-customizer' ),
-				'none'       => __( '(not assigned)', 'food-customizer' ),
-				'streetname' => __( 'Street name', 'food-customizer' ),
-				'addhint'    => __( 'Assign to one or more neighbourhoods (Ctrl/Cmd-click for several):', 'food-customizer' ),
-			),
 		) );
 	}
 
@@ -714,20 +731,6 @@ class FC_Delivery {
 				<p><button type="button" class="button button-secondary" id="fc-zone-preset">⚡ <?php esc_html_e( 'Apply Varna 2-zone preset (Зона 1 / Зона 2)', 'food-customizer' ); ?></button> <span id="fc-zone-preset-msg" style="margin-left:8px;"></span></p>
 				<p class="description" style="margin-top:-6px;"><?php esc_html_e( 'Sets up Зона 1 (central, ~4 лв) and Зона 2 (outer, ~5 лв) with the neighbourhoods grouped, plus no delivery to Златни Пясъци. Show the coloured map on any page with the [fc_delivery_map] shortcode.', 'food-customizer' ); ?></p>
 
-				<div class="fc-street-search" style="margin:16px 0;max-width:1100px;">
-					<label for="fc-street-search" style="font-weight:600;"><?php esc_html_e( 'Find which neighbourhood a street is in', 'food-customizer' ); ?></label><br>
-					<input type="search" id="fc-street-search" class="regular-text" placeholder="<?php esc_attr_e( 'Type a street name…', 'food-customizer' ); ?>" autocomplete="off" style="margin-top:6px;">
-					<p class="description" style="margin:4px 0 8px;"><?php esc_html_e( 'Search a street, then click Edit to correct its neighbourhood(s). The mapping is auto-generated, so fix any that are wrong — your corrections are kept and used at checkout.', 'food-customizer' ); ?></p>
-					<div id="fc-street-results" data-empty="<?php esc_attr_e( 'No matching streets.', 'food-customizer' ); ?>" style="margin-top:8px;"></div>
-					<p style="margin-top:8px;"><button type="button" class="button" id="fc-add-street">+ <?php esc_html_e( 'Add a street', 'food-customizer' ); ?></button></p>
-				</div>
-
-				<div class="fc-quarter-browse" style="margin:16px 0;max-width:1100px;">
-					<label for="fc-quarter-pick" style="font-weight:600;"><?php esc_html_e( 'Show all streets in a neighbourhood', 'food-customizer' ); ?></label><br>
-					<select id="fc-quarter-pick" class="regular-text" data-placeholder="<?php esc_attr_e( '— choose a neighbourhood —', 'food-customizer' ); ?>" style="margin-top:6px;"></select>
-					<div id="fc-quarter-results" style="margin-top:8px;"></div>
-				</div>
-
 				<div class="fc-zone-map-edit" style="margin:20px 0;max-width:1100px;">
 					<h2 style="margin-bottom:4px;"><?php esc_html_e( 'Edit zone boundaries on the map', 'food-customizer' ); ?></h2>
 					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Click "Edit" in the map toolbar to drag the boundary points. To add an area to a zone, pick the zone below, click the polygon tool, and draw — a zone can have several separate polygons (draw as many as you like). Click "Save boundaries" when done; the checkout then loads the streets inside your shapes.', 'food-customizer' ); ?></p>
@@ -737,18 +740,20 @@ class FC_Delivery {
 						<span id="fc-zonemap-msg" style="margin-left:8px;"></span>
 					</p>
 					<div id="fc-zone-map-editor" style="height:520px;border:1px solid #ccd0d4;border-radius:8px;"></div>
-					<h3 style="margin:16px 0 4px;"><?php esc_html_e( 'Streets inside each zone', 'food-customizer' ); ?></h3>
-					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Computed from the drawn polygons when you save. These are the streets the checkout loads for the zone.', 'food-customizer' ); ?></p>
+
+					<h3 style="margin:18px 0 4px;"><?php esc_html_e( 'Streets in each zone', 'food-customizer' ); ?></h3>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Filled from the drawn polygons when you save the boundaries. You can also edit them by hand: search within a zone, remove a street, or add one. Click "Save streets" to keep your edits — these are the streets the checkout loads for the zone.', 'food-customizer' ); ?></p>
+					<p style="margin:8px 0;"><button type="button" class="button button-primary" id="fc-zonestreets-save"><?php esc_html_e( 'Save streets', 'food-customizer' ); ?></button> <span id="fc-zonestreets-msg" style="margin-left:8px;"></span></p>
 					<div id="fc-zone-streets"></div>
+					<datalist id="fc-all-streets"></datalist>
 				</div>
 
 				<table class="widefat striped" id="fc-zones-table" style="max-width:1100px;margin-top:10px;">
 					<thead>
 						<tr>
-							<th style="width:13%"><?php esc_html_e( 'Zone name', 'food-customizer' ); ?></th>
+							<th style="width:15%"><?php esc_html_e( 'Zone name', 'food-customizer' ); ?></th>
 							<th><?php esc_html_e( 'Covers (streets / areas)', 'food-customizer' ); ?></th>
-							<th style="width:20%"><?php esc_html_e( 'Neighbourhoods (streets auto-load at checkout)', 'food-customizer' ); ?></th>
-							<th style="width:9%"><?php esc_html_e( 'ETA', 'food-customizer' ); ?></th>
+							<th style="width:11%"><?php esc_html_e( 'ETA', 'food-customizer' ); ?></th>
 							<th style="width:9%"><?php /* translators: %s = currency symbol */ printf( esc_html__( 'Delivery price (%s)', 'food-customizer' ), esc_html( get_woocommerce_currency_symbol() ) ); ?></th>
 							<th style="width:5%"><?php esc_html_e( 'Map colour', 'food-customizer' ); ?></th>
 							<th style="width:6%"><?php esc_html_e( 'Busy', 'food-customizer' ); ?></th>
@@ -794,8 +799,9 @@ class FC_Delivery {
 		<tr class="fc-zone-row">
 			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e( 'e.g. Center', 'food-customizer' ); ?>" /></td>
 			<td><textarea class="widefat" rows="2" name="<?php echo esc_attr( $b ); ?>[areas]" placeholder="<?php esc_attr_e( 'e.g. ul. Vitosha, ul. Graf Ignatiev, bul. Vasil Levski…', 'food-customizer' ); ?>"><?php echo esc_textarea( $area ); ?></textarea></td>
-			<td><select multiple size="5" class="widefat" name="<?php echo esc_attr( $b ); ?>[hoods][]"><?php foreach ( self::neighbourhoods() as $hn => $streets ) : ?><option value="<?php echo esc_attr( $hn ); ?>"<?php selected( in_array( (string) $hn, array_map( 'strval', $hoods_sel ), true ) ); ?>><?php echo esc_html( $hn ); ?> (<?php echo count( (array) $streets ); ?>)</option><?php endforeach; ?></select></td>
-			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[eta]" value="<?php echo esc_attr( $eta ); ?>" placeholder="<?php esc_attr_e( 'e.g. 45 min', 'food-customizer' ); ?>" /></td>
+			<td><input type="text" class="widefat" name="<?php echo esc_attr( $b ); ?>[eta]" value="<?php echo esc_attr( $eta ); ?>" placeholder="<?php esc_attr_e( 'e.g. 45 min', 'food-customizer' ); ?>" />
+					<?php // Preserve any legacy neighbourhood grouping (no picker shown any more). ?>
+					<?php foreach ( (array) $hoods_sel as $hn ) : ?><input type="hidden" name="<?php echo esc_attr( $b ); ?>[hoods][]" value="<?php echo esc_attr( $hn ); ?>" /><?php endforeach; ?></td>
 			<td><input type="number" step="0.01" min="0" class="widefat" name="<?php echo esc_attr( $b ); ?>[price]" value="<?php echo esc_attr( $price ); ?>" placeholder="0.00" /></td>
 			<td style="text-align:center"><input type="color" name="<?php echo esc_attr( $b ); ?>[color]" value="<?php echo esc_attr( $color ); ?>" title="<?php esc_attr_e( 'Colour on the delivery map', 'food-customizer' ); ?>" /></td>
 			<td style="text-align:center"><input type="checkbox" name="<?php echo esc_attr( $b ); ?>[busy]" value="1" <?php checked( $busy, true ); ?> /></td>

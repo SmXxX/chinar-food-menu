@@ -1200,3 +1200,27 @@ msgstr "Няма улици вътре — начертайте форма и з
 
 msgid "show / hide"
 msgstr "покажи / скрий"
+
+msgid "Streets in each zone"
+msgstr "Улици във всяка зона"
+
+msgid "Filled from the drawn polygons when you save the boundaries. You can also edit them by hand: search within a zone, remove a street, or add one. Click \"Save streets\" to keep your edits — these are the streets the checkout loads for the zone."
+msgstr "Попълват се от начертаните полигони при запазване на границите. Може да ги редактирате и ръчно: търсене в зона, премахване или добавяне на улица. Натиснете „Запази улици“, за да запазите промените — това са улиците, които се зареждат за зоната при поръчка."
+
+msgid "Save streets"
+msgstr "Запази улици"
+
+msgid "Streets saved."
+msgstr "Улиците са запазени."
+
+msgid "No streets yet — draw a shape and save the boundaries."
+msgstr "Все още няма улици — начертайте форма и запазете границите."
+
+msgid "search a street in this zone…"
+msgstr "търсене на улица в тази зона…"
+
+msgid "add a street…"
+msgstr "добави улица…"
+
+msgid "Add"
+msgstr "Добави"
