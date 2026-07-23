@@ -727,7 +727,7 @@ class FC_Delivery {
 
 				<div class="fc-zone-map-edit" style="margin:20px 0;max-width:1100px;">
 					<h2 style="margin-bottom:4px;"><?php esc_html_e( 'Edit zone boundaries on the map', 'food-customizer' ); ?></h2>
-					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Click "Edit" in the map toolbar to drag the boundary points. To draw a fresh shape for a zone, pick it below, click the polygon tool, and draw. Click "Save boundaries" when done — the checkout map then uses your shapes.', 'food-customizer' ); ?></p>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Click "Edit" in the map toolbar to drag the boundary points. To add an area to a zone, pick the zone below, click the polygon tool, and draw — a zone can have several separate polygons (draw as many as you like). Click "Save boundaries" when done; the checkout then loads the streets inside your shapes.', 'food-customizer' ); ?></p>
 					<p style="margin:8px 0;">
 						<label><?php esc_html_e( 'Draw new shape for:', 'food-customizer' ); ?> <select id="fc-zonemap-target"></select></label>
 						&nbsp; <button type="button" class="button button-primary" id="fc-zonemap-save"><?php esc_html_e( 'Save boundaries', 'food-customizer' ); ?></button>
