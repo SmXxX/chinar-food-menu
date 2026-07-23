@@ -32,6 +32,59 @@
 		$( '#fc_delivery_zone' ).val( zi === undefined || zi === null ? '' : zi );
 	}
 
+	/* ---------- clickable zone map ---------- */
+	var map = null, zoneLayers = {}, suppressStreet = false;
+
+	function highlightZone( zi ) {
+		Object.keys( zoneLayers ).forEach( function ( k ) {
+			var on = ( String( k ) === String( zi ) );
+			zoneLayers[ k ].setStyle( { fillOpacity: on ? 0.72 : 0.32, weight: on ? 3 : 1.5, color: on ? '#111' : '#fff' } );
+		} );
+	}
+
+	// Load the chosen zone's streets into the searchable dropdown.
+	function fillStreets( zi ) {
+		var streets = ( D.streets && D.streets[ zi ] ) ? D.streets[ zi ] : [];
+		var $s = $( '#fc_delivery_street' );
+		if ( ! $s.length ) { return; }
+		var cur = $s.val();
+		suppressStreet = true;
+		$s.empty().append( '<option value=""></option>' );
+		streets.forEach( function ( st ) { $s.append( $( '<option>' ).val( st ).text( st ) ); } );
+		$s.val( cur && streets.indexOf( cur ) !== -1 ? cur : '' );
+		$s.trigger( 'change.select2' ); // refresh the Select2 display without firing our handler
+		suppressStreet = false;
+	}
+
+	function pickZone( zi ) {
+		$( '#fc_delivery_zone' ).val( zi );
+		fillStreets( zi );
+		highlightZone( zi );
+		refresh();
+		$( document.body ).trigger( 'update_checkout' );
+	}
+
+	function initMap() {
+		var el = document.getElementById( 'fc-del-map' );
+		if ( ! el || map || typeof L === 'undefined' || ! D.mapFeatures || ! D.mapFeatures.length ) { return; }
+		map = L.map( el, { scrollWheelZoom: false } );
+		L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' } ).addTo( map );
+		var group = [];
+		D.mapFeatures.forEach( function ( f ) {
+			var layer = L.polygon( f.r, { color: '#fff', weight: 1.5, fillColor: f.color, fillOpacity: 0.4, lineJoin: 'round' } ).addTo( map );
+			layer.bindTooltip( f.name, { sticky: true } );
+			layer.on( 'click', function () { pickZone( f.zi ); } );
+			zoneLayers[ f.zi ] = layer;
+			group.push( layer );
+		} );
+		if ( group.length ) { map.fitBounds( L.featureGroup( group ).getBounds(), { padding: [ 10, 10 ] } ); }
+		setTimeout( function () { map.invalidateSize(); }, 200 );
+		map.on( 'focus', function () { map.scrollWheelZoom.enable(); } );
+		map.on( 'blur', function () { map.scrollWheelZoom.disable(); } );
+		var cur = $( '#fc_delivery_zone' ).val();
+		if ( cur !== '' ) { highlightZone( cur ); }
+	}
+
 	function refresh() {
 		var z = selectedZone();
 		var $info = $( '.fc-del-info' );
@@ -92,9 +145,10 @@
 		}
 	}
 
-	// On street change: resolve the zone, update the panel, recalc totals (fee).
+	// On street change: recalc totals (fee). Zone is already set by the map click.
 	$( document ).on( 'change', '#fc_delivery_street', function () {
-		resolveZone();
+		if ( suppressStreet ) { return; }
+		resolveZone(); // keep the hidden zone in sync with the chosen street
 		refresh();
 		$( document.body ).trigger( 'update_checkout' );
 	} );
@@ -103,8 +157,17 @@
 
 	// #place_order lives in the payment column, which WooCommerce re-renders on
 	// update_checkout — re-apply the busy state afterwards.
-	$( document.body ).on( 'updated_checkout', function () { initStreetSelect(); refresh(); placeInOrderColumn(); } );
+	$( document.body ).on( 'updated_checkout', function () { initStreetSelect(); initMap(); refresh(); placeInOrderColumn(); } );
 
-	$( function () { initStreetSelect(); placeInOrderColumn(); resolveZone(); refresh(); timeMode(); } );
+	$( function () {
+		initStreetSelect();
+		initMap();
+		placeInOrderColumn();
+		// Restore a previously chosen zone (its streets + highlight).
+		var z = $( '#fc_delivery_zone' ).val();
+		if ( z !== '' ) { fillStreets( z ); highlightZone( z ); }
+		refresh();
+		timeMode();
+	} );
 
 } )( jQuery );

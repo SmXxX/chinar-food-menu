@@ -67,3 +67,8 @@
 	border-radius: var(--fc-radius, 3px);
 }
 #place_order.fc-del-blocked { opacity: .5; cursor: not-allowed; }
+
+/* Checkout: clickable zone map + hint */
+.fc-del-maphint { font-size: 13px; color: var(--fc-muted, #a49e93); margin: 6px 0 4px; }
+.fc-del-map { height: 300px; width: 100%; border-radius: 10px; overflow: hidden; margin: 4px 0 12px; z-index: 0; cursor: pointer; }
+.fc-del-map .leaflet-container { font: inherit; }

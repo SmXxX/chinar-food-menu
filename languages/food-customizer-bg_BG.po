@@ -1233,3 +1233,21 @@ msgstr "Моля, изберете вашата улица."
 
 msgid "We do not deliver to that street yet — please contact us."
 msgstr "Все още не доставяме до тази улица — моля, свържете се с нас."
+
+msgid "Click your delivery zone on the map, then choose your street."
+msgstr "Кликнете вашата зона за доставка на картата, след което изберете улица."
+
+msgid "No. / block / entrance / apt."
+msgstr "№ / блок / вход / апартамент"
+
+msgid "e.g. 12, bl. 3, ent. B, apt. 45"
+msgstr "напр. 12, бл. 3, вх. Б, ап. 45"
+
+msgid "Please enter your building / house number."
+msgstr "Моля, въведете вашия номер / блок."
+
+msgid "Please choose your delivery zone on the map and your street."
+msgstr "Моля, изберете вашата зона на картата и вашата улица."
+
+msgid "Click your zone on the map first."
+msgstr "Първо кликнете вашата зона на картата."

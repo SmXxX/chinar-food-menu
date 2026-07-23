@@ -52,6 +52,8 @@ class FC_Delivery {
 		add_action( 'woocommerce_checkout_before_customer_details', array( $this, 'render_fields' ) );
 		add_action( 'woocommerce_checkout_process', array( $this, 'validate' ) );
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_to_order' ), 20, 2 );
+		// The street/number come from the zone selector — drop WooCommerce's own street lines.
+		add_filter( 'woocommerce_checkout_fields', array( $this, 'remove_address_fields' ) );
 
 		// Show on order (admin + customer + emails).
 		add_action( 'woocommerce_admin_order_data_after_shipping_address', array( $this, 'admin_display' ) );
@@ -532,6 +534,29 @@ class FC_Delivery {
 		return $out;
 	}
 
+	/** Clickable zone polygons for the checkout map: [ {zi,name,color,busy,r}, … ]. */
+	public static function checkout_map_features() {
+		$zones  = self::zones();
+		$defcol = array( '#e0553a', '#f0b23e', '#b8b2a6', '#5a8f4e', '#4a78c0', '#9b59b6' );
+		$out    = array();
+		foreach ( self::zone_shapes() as $i => $shape ) {
+			if ( empty( $shape ) ) {
+				continue;
+			}
+			$color = ( isset( $zones[ $i ]['color'] ) && $zones[ $i ]['color'] )
+				? $zones[ $i ]['color']
+				: ( isset( $defcol[ $i ] ) ? $defcol[ $i ] : '#999999' );
+			$out[] = array(
+				'zi'    => (int) $i,
+				'name'  => isset( $zones[ $i ]['name'] ) ? $zones[ $i ]['name'] : '',
+				'color' => $color,
+				'busy'  => ! empty( $zones[ $i ]['busy'] ),
+				'r'     => $shape,
+			);
+		}
+		return $out;
+	}
+
 	/** [ street => zone index ] across all zones (first zone wins for a shared street). */
 	public static function street_zone_map() {
 		$map = array();
@@ -840,7 +865,10 @@ class FC_Delivery {
 		// WooCommerce's bundled Select2 (selectWoo) for a searchable street dropdown.
 		wp_enqueue_style( 'select2' );
 		wp_enqueue_script( 'selectWoo' );
-		wp_enqueue_script( 'fc-delivery', FC_URL . 'assets/js/delivery.js', array( 'jquery', 'selectWoo' ), FC_VERSION, true );
+		// Leaflet for the clickable zone map.
+		wp_enqueue_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
+		wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
+		wp_enqueue_script( 'fc-delivery', FC_URL . 'assets/js/delivery.js', array( 'jquery', 'selectWoo', 'leaflet' ), FC_VERSION, true );
 		$prices = array();
 		foreach ( self::zones() as $i => $z ) {
 			$prices[ $i ] = ( $z['price'] > 0 ) ? FC_Currency::format_plain( $z['price'] ) : '';
@@ -850,7 +878,10 @@ class FC_Delivery {
 			'busyDefault' => FC_Settings::label( 'del_busy' ),
 			'etaLabel'    => FC_Settings::label( 'del_eta' ),
 			'streetZone'  => self::street_zone_map(),
+			'streets'     => self::zone_streets(),
+			'mapFeatures' => self::checkout_map_features(),
 			'streetLabel' => __( 'Choose your street', 'food-customizer' ),
+			'pickZoneMsg' => __( 'Click your zone on the map first.', 'food-customizer' ),
 			'prices'      => $prices,
 			'freeLabel'   => __( 'Free', 'food-customizer' ),
 		) );
@@ -921,28 +952,31 @@ class FC_Delivery {
 		echo '<div id="fc-delivery" class="fc-delivery">';
 		echo '<h3 class="fc-del-heading">' . esc_html__( 'Delivery', 'food-customizer' ) . '</h3>';
 
-		// Street selector — the customer picks their street (searchable); the zone is
-		// resolved from it. The zone index rides along in a hidden field.
-		$streets = array_keys( self::street_zone_map() );
-		sort( $streets, SORT_LOCALE_STRING );
-		echo '<p class="form-row form-row-wide validate-required" id="fc_delivery_street_field">';
-		echo '<label for="fc_delivery_street">' . esc_html__( 'Your street', 'food-customizer' ) . '&nbsp;<abbr class="required" title="required">*</abbr></label>';
-		echo '<span class="woocommerce-input-wrapper">';
 		echo '<input type="hidden" name="fc_delivery_zone" id="fc_delivery_zone" value="" />';
-		echo '<select name="fc_delivery_street" id="fc_delivery_street" class="select fc-street-select" required data-placeholder="' . esc_attr__( 'Choose your street', 'food-customizer' ) . '">';
-		echo '<option value=""></option>';
-		foreach ( $streets as $s ) {
-			echo '<option value="' . esc_attr( $s ) . '">' . esc_html( $s ) . '</option>';
-		}
-		echo '</select></span></p>';
 
-		// Info panel (filled by JS from the resolved zone).
+		// Interactive zone map — the customer clicks their zone; its streets then load.
+		if ( self::checkout_map_features() ) {
+			echo '<p class="fc-del-maphint">' . esc_html__( 'Click your delivery zone on the map, then choose your street.', 'food-customizer' ) . '</p>';
+			echo '<div id="fc-del-map" class="fc-del-map"></div>';
+		}
+
+		// Info panel (filled by JS from the selected zone).
 		echo '<div class="fc-del-info" hidden>';
 		echo '<div class="fc-del-zonename"><strong>' . esc_html( $L( 'del_zone' ) ) . ':</strong> <span class="fc-del-zone-val"></span></div>';
-		echo '<div class="fc-del-eta">' . esc_html( $L( 'del_eta' ) ) . ': <span class="fc-del-eta-val"></span></div>';
 		echo '<div class="fc-del-price"><strong>' . esc_html__( 'Delivery', 'food-customizer' ) . ':</strong> <span class="fc-del-price-val"></span></div>';
+		echo '<div class="fc-del-eta">' . esc_html( $L( 'del_eta' ) ) . ': <span class="fc-del-eta-val"></span></div>';
 		echo '</div>';
 		echo '<div class="fc-del-busy" role="alert" hidden></div>';
+
+		// Street selector — options load by JS from the chosen zone (searchable).
+		echo '<p class="form-row form-row-wide validate-required" id="fc_delivery_street_field">';
+		echo '<label for="fc_delivery_street">' . esc_html__( 'Your street', 'food-customizer' ) . '&nbsp;<abbr class="required" title="required">*</abbr></label>';
+		echo '<span class="woocommerce-input-wrapper"><select name="fc_delivery_street" id="fc_delivery_street" class="select fc-street-select" required data-placeholder="' . esc_attr__( 'Choose your street', 'food-customizer' ) . '"><option value=""></option></select></span></p>';
+
+		// House / building number (fills the billing address together with the street).
+		echo '<p class="form-row form-row-wide validate-required" id="fc_delivery_number_field">';
+		echo '<label for="fc_delivery_number">' . esc_html__( 'No. / block / entrance / apt.', 'food-customizer' ) . '&nbsp;<abbr class="required" title="required">*</abbr></label>';
+		echo '<span class="woocommerce-input-wrapper"><input type="text" name="fc_delivery_number" id="fc_delivery_number" class="input-text" required placeholder="' . esc_attr__( 'e.g. 12, bl. 3, ent. B, apt. 45', 'food-customizer' ) . '" value="" /></span></p>';
 
 		// Delivery option.
 		echo '<p class="form-row form-row-wide" id="fc_delivery_type_field">';
@@ -964,20 +998,30 @@ class FC_Delivery {
 		echo '</div>';
 	}
 
+	/** Remove WooCommerce's street-address lines — the zone/street selector replaces them. */
+	public function remove_address_fields( $fields ) {
+		unset( $fields['billing']['billing_address_1'], $fields['billing']['billing_address_2'] );
+		unset( $fields['shipping']['shipping_address_1'], $fields['shipping']['shipping_address_2'] );
+		return $fields;
+	}
+
 	public function validate() {
 		$zones = self::zones();
 		if ( empty( $zones ) ) {
 			return;
 		}
 		$street = isset( $_POST['fc_delivery_street'] ) ? sanitize_text_field( wp_unslash( $_POST['fc_delivery_street'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-		if ( '' === $street ) {
-			wc_add_notice( __( 'Please choose your street.', 'food-customizer' ), 'error' );
+		$number = isset( $_POST['fc_delivery_number'] ) ? sanitize_text_field( wp_unslash( $_POST['fc_delivery_number'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$zi     = $this->selected_zone_index();
+		if ( '' === $zi || ! isset( $zones[ $zi ] ) ) {
+			wc_add_notice( __( 'Please choose your delivery zone on the map and your street.', 'food-customizer' ), 'error' );
 			return;
 		}
-		$zi = $this->selected_zone_index();
-		if ( '' === $zi || ! isset( $zones[ $zi ] ) ) {
-			wc_add_notice( __( 'We do not deliver to that street yet — please contact us.', 'food-customizer' ), 'error' );
-			return;
+		if ( '' === $street ) {
+			wc_add_notice( __( 'Please choose your street.', 'food-customizer' ), 'error' );
+		}
+		if ( '' === $number ) {
+			wc_add_notice( __( 'Please enter your building / house number.', 'food-customizer' ), 'error' );
 		}
 		if ( ! empty( $zones[ $zi ]['busy'] ) ) {
 			$msg = $zones[ $zi ]['busy_msg'] ? $zones[ $zi ]['busy_msg'] : FC_Settings::label( 'del_busy' );
@@ -1003,8 +1047,24 @@ class FC_Delivery {
 		}
 
 		$street = isset( $_POST['fc_delivery_street'] ) ? sanitize_text_field( wp_unslash( $_POST['fc_delivery_street'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$number = isset( $_POST['fc_delivery_number'] ) ? sanitize_text_field( wp_unslash( $_POST['fc_delivery_number'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 		if ( '' !== $street ) {
 			$order->update_meta_data( '_fc_delivery_street', $street );
+		}
+		if ( '' !== $number ) {
+			$order->update_meta_data( '_fc_delivery_number', $number );
+		}
+		// Compose the billing/shipping street address from the zone-street + number.
+		$addr = trim( $street . ( '' !== $number ? ' ' . $number : '' ) );
+		if ( '' !== $addr ) {
+			$order->set_billing_address_1( $addr );
+			$order->set_shipping_address_1( $addr );
+			if ( ! $order->get_billing_city() ) {
+				$order->set_billing_city( 'Варна' );
+			}
+			if ( ! $order->get_shipping_city() ) {
+				$order->set_shipping_city( $order->get_billing_city() ? $order->get_billing_city() : 'Варна' );
+			}
 		}
 
 		$type = isset( $_POST['fc_delivery_type'] ) ? sanitize_text_field( wp_unslash( $_POST['fc_delivery_type'] ) ) : 'door'; // phpcs:ignore WordPress.Security.NonceVerification
