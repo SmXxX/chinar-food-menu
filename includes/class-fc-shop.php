@@ -24,10 +24,12 @@ class FC_Shop {
 		add_action( 'wp_ajax_fc_add_to_cart', array( $this, 'ajax_add_to_cart' ) );
 		add_action( 'wp_ajax_nopriv_fc_add_to_cart', array( $this, 'ajax_add_to_cart' ) );
 
+
 		// Floating mini-cart (count + total), updated live via cart fragments.
 		add_action( 'wp_footer', array( $this, 'render_fly_cart' ) );
 		add_filter( 'woocommerce_add_to_cart_fragments', array( $this, 'fly_cart_fragment' ) );
 	}
+
 
 
 	/** Floating cart HTML (used both in the footer and as a refreshable fragment). */
