@@ -32,6 +32,7 @@ class FC_Delivery {
 		add_action( 'wp_ajax_fc_save_street_hood', array( $this, 'ajax_save_street_hood' ) );
 		// One-click Varna 2-zone preset + [fc_delivery_map] shortcode.
 		add_action( 'wp_ajax_fc_apply_zone_preset', array( $this, 'ajax_apply_zone_preset' ) );
+		add_action( 'wp_ajax_fc_save_zone_shapes', array( $this, 'ajax_save_zone_shapes' ) );
 		add_shortcode( 'fc_delivery_map', array( $this, 'render_map' ) );
 
 		if ( ! self::is_enabled() ) {
@@ -76,6 +77,7 @@ class FC_Delivery {
 				'eta'      => isset( $z['eta'] ) ? (string) $z['eta'] : '',
 				'price'    => isset( $z['price'] ) ? (float) $z['price'] : 0.0,
 				'color'    => isset( $z['color'] ) ? (string) $z['color'] : '',
+				'shape'    => ( isset( $z['shape'] ) && is_array( $z['shape'] ) ) ? $z['shape'] : array(),
 				'busy'     => ! empty( $z['busy'] ),
 				'busy_msg' => isset( $z['busy_msg'] ) ? (string) $z['busy_msg'] : '',
 				'hoods'    => ( isset( $z['hoods'] ) && is_array( $z['hoods'] ) ) ? array_values( array_map( 'strval', $z['hoods'] ) ) : array(),
@@ -220,6 +222,44 @@ class FC_Delivery {
 		return 0;
 	}
 
+	/** Recursively sanitise a drawn polygon shape (nested arrays of [lat,lng] floats). */
+	private function sanitize_shape( $v, $depth = 0 ) {
+		if ( $depth > 6 || ! is_array( $v ) ) {
+			return array();
+		}
+		// Leaf: a [lat, lng] coordinate pair.
+		if ( 2 === count( $v ) && isset( $v[0] ) && ! is_array( $v[0] ) && is_numeric( $v[0] ) && is_numeric( $v[1] ) ) {
+			return array( round( (float) $v[0], 6 ), round( (float) $v[1], 6 ) );
+		}
+		$out = array();
+		foreach ( $v as $item ) {
+			$s = $this->sanitize_shape( $item, $depth + 1 );
+			if ( ! empty( $s ) ) {
+				$out[] = $s;
+			}
+		}
+		return $out;
+	}
+
+	/** Save hand-drawn zone boundaries from the admin map editor (AJAX). */
+	public function ajax_save_zone_shapes() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'msg' => 'forbidden' ), 403 );
+		}
+		check_ajax_referer( 'fc_zone_map', 'nonce' );
+		$raw = isset( $_POST['shapes'] ) ? json_decode( wp_unslash( $_POST['shapes'] ), true ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		if ( ! is_array( $raw ) ) {
+			$raw = array();
+		}
+		$zones = get_option( self::OPT_ZONES, array() );
+		$zones = is_array( $zones ) ? array_values( $zones ) : array();
+		foreach ( $zones as $i => $z ) {
+			$zones[ $i ]['shape'] = isset( $raw[ $i ] ) ? $this->sanitize_shape( $raw[ $i ] ) : array();
+		}
+		update_option( self::OPT_ZONES, $this->sanitize_zones( $zones ) );
+		wp_send_json_success( array( 'saved' => count( $zones ) ) );
+	}
+
 	/** The Varna 2-zone production configuration, built from the current neighbourhoods. */
 	public static function preset_zones() {
 		$z1 = array();
@@ -292,34 +332,54 @@ class FC_Delivery {
 		return ( 'flat' === $atts['style'] ) ? $this->render_map_svg() : $this->render_map_osm( $atts );
 	}
 
+	/**
+	 * Per-zone map boundary to render/edit: the admin's hand-drawn shape if set,
+	 * otherwise the pre-dissolved default blob for that zone index. Keyed by zone index.
+	 */
+	public static function zone_shapes() {
+		$byidx = array();
+		$sf    = FC_DIR . 'assets/data/varna-zone-shapes.json';
+		$pre   = file_exists( $sf ) ? json_decode( (string) file_get_contents( $sf ), true ) : array();
+		foreach ( (array) $pre as $p ) {
+			$byidx[ (int) $p['zone'] ] = $p['latlngs'];
+		}
+		$out = array();
+		foreach ( self::zones() as $i => $z ) {
+			if ( ! empty( $z['shape'] ) ) {
+				$out[ $i ] = $z['shape'];
+			} elseif ( isset( $byidx[ $i ] ) ) {
+				$out[ $i ] = $byidx[ $i ];
+			}
+		}
+		return $out;
+	}
+
 	/** OpenStreetMap (Leaflet) with zone polygons overlaid in real GPS coordinates. */
 	private function render_map_osm( $atts ) {
 		$zones = self::zones();
 		list( $color, $zone_of ) = $this->map_zone_helpers( $zones );
 		$features = array();
 
-		// Prefer the pre-dissolved smooth zone shapes (one blob per zone, production look).
-		$sf     = FC_DIR . 'assets/data/varna-zone-shapes.json';
-		$shapes = file_exists( $sf ) ? json_decode( (string) file_get_contents( $sf ), true ) : array();
-		if ( ! empty( $shapes ) ) {
-			foreach ( $shapes as $sh ) {
-				$zi = (int) $sh['zone'];
-				$features[] = array(
-					'n' => isset( $zones[ $zi ]['name'] ) ? $zones[ $zi ]['name'] : '',
-					'c' => $color( $zi ),
-					'r' => $sh['latlngs'],
-				);
+		$shapes = self::zone_shapes();
+		foreach ( $shapes as $i => $shape ) {
+			if ( empty( $shape ) ) {
+				continue;
 			}
-		} else {
+			$features[] = array(
+				'n' => isset( $zones[ $i ]['name'] ) ? $zones[ $i ]['name'] : '',
+				'c' => $color( $i ),
+				'r' => $shape,
+			);
+		}
+		if ( empty( $features ) ) {
 			// Fallback: individual neighbourhood polygons.
 			$pf    = FC_DIR . 'assets/data/varna-zones-latlon.json';
 			$polys = file_exists( $pf ) ? json_decode( (string) file_get_contents( $pf ), true ) : array();
 			foreach ( (array) $polys as $name => $ring ) {
 				$zi = $zone_of( $name );
-				if ( null === $zi ) {
-					continue;
+				if ( null !== $zi ) {
+					$features[] = array( 'n' => $name, 'c' => $color( $zi ), 'r' => $ring );
 				}
-				$features[] = array( 'n' => $name, 'c' => $color( $zi ), 'r' => $ring );
 			}
 		}
 		if ( empty( $features ) ) {
@@ -462,6 +522,7 @@ class FC_Delivery {
 				'eta'      => isset( $z['eta'] ) ? sanitize_text_field( $z['eta'] ) : '',
 				'price'    => isset( $z['price'] ) ? max( 0, (float) $z['price'] ) : 0,
 				'color'    => isset( $z['color'] ) ? (string) sanitize_hex_color( $z['color'] ) : '',
+				'shape'    => isset( $z['shape'] ) ? $this->sanitize_shape( $z['shape'] ) : array(),
 				'busy'     => empty( $z['busy'] ) ? 0 : 1,
 				'busy_msg' => isset( $z['busy_msg'] ) ? sanitize_text_field( $z['busy_msg'] ) : '',
 				'hoods'    => $hoods,
@@ -476,6 +537,35 @@ class FC_Delivery {
 		}
 		wp_enqueue_script( 'fc-delivery-admin', FC_URL . 'assets/js/delivery-admin.js', array( 'jquery' ), FC_VERSION, true );
 		wp_localize_script( 'fc-delivery-admin', 'FC_HOODS', self::neighbourhoods() );
+
+		// On-map boundary editor: Leaflet + Leaflet-Geoman.
+		wp_enqueue_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
+		wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
+		wp_enqueue_style( 'leaflet-geoman', 'https://unpkg.com/@geoman-io/leaflet-geoman-free@2.15.0/dist/leaflet-geoman.css', array( 'leaflet' ), '2.15.0' );
+		wp_enqueue_script( 'leaflet-geoman', 'https://unpkg.com/@geoman-io/leaflet-geoman-free@2.15.0/dist/leaflet-geoman.min.js', array( 'leaflet' ), '2.15.0', true );
+		wp_enqueue_script( 'fc-zone-map-admin', FC_URL . 'assets/js/delivery-map-admin.js', array( 'jquery', 'leaflet', 'leaflet-geoman' ), FC_VERSION, true );
+		$zdata = array();
+		$shapes = self::zone_shapes();
+		foreach ( self::zones() as $i => $z ) {
+			$zdata[] = array(
+				'i'     => $i,
+				'name'  => $z['name'],
+				'color' => $z['color'] ? $z['color'] : '#3388ff',
+				'busy'  => (bool) $z['busy'],
+				'shape' => isset( $shapes[ $i ] ) ? $shapes[ $i ] : array(),
+			);
+		}
+		wp_localize_script( 'fc-zone-map-admin', 'FC_ZONEMAP', array(
+			'ajax'  => admin_url( 'admin-ajax.php' ),
+			'nonce' => wp_create_nonce( 'fc_zone_map' ),
+			'zones' => $zdata,
+			'i18n'  => array(
+				'saved'    => __( 'Boundaries saved.', 'food-customizer' ),
+				'saving'   => __( 'Saving…', 'food-customizer' ),
+				'error'    => __( 'Error, try again', 'food-customizer' ),
+				'drawnFor' => __( 'Drawing for', 'food-customizer' ),
+			),
+		) );
 		wp_localize_script( 'fc-delivery-admin', 'FC_ZONEPRESET', array(
 			'ajax'     => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'fc_zone_preset' ),
@@ -538,6 +628,17 @@ class FC_Delivery {
 					<label for="fc-quarter-pick" style="font-weight:600;"><?php esc_html_e( 'Show all streets in a neighbourhood', 'food-customizer' ); ?></label><br>
 					<select id="fc-quarter-pick" class="regular-text" data-placeholder="<?php esc_attr_e( '— choose a neighbourhood —', 'food-customizer' ); ?>" style="margin-top:6px;"></select>
 					<div id="fc-quarter-results" style="margin-top:8px;"></div>
+				</div>
+
+				<div class="fc-zone-map-edit" style="margin:20px 0;max-width:1100px;">
+					<h2 style="margin-bottom:4px;"><?php esc_html_e( 'Edit zone boundaries on the map', 'food-customizer' ); ?></h2>
+					<p class="description" style="margin-top:0;"><?php esc_html_e( 'Click "Edit" in the map toolbar to drag the boundary points. To draw a fresh shape for a zone, pick it below, click the polygon tool, and draw. Click "Save boundaries" when done — the checkout map then uses your shapes.', 'food-customizer' ); ?></p>
+					<p style="margin:8px 0;">
+						<label><?php esc_html_e( 'Draw new shape for:', 'food-customizer' ); ?> <select id="fc-zonemap-target"></select></label>
+						&nbsp; <button type="button" class="button button-primary" id="fc-zonemap-save"><?php esc_html_e( 'Save boundaries', 'food-customizer' ); ?></button>
+						<span id="fc-zonemap-msg" style="margin-left:8px;"></span>
+					</p>
+					<div id="fc-zone-map-editor" style="height:520px;border:1px solid #ccd0d4;border-radius:8px;"></div>
 				</div>
 
 				<table class="widefat striped" id="fc-zones-table" style="max-width:1100px;margin-top:10px;">

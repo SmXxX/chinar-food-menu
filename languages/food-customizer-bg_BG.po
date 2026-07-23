@@ -1164,3 +1164,24 @@ msgstr "Готово — презареждане…"
 
 msgid "Delivery zones map"
 msgstr "Карта на зоните за доставка"
+
+msgid "Edit zone boundaries on the map"
+msgstr "Редактиране на границите на зоните върху картата"
+
+msgid "Click \"Edit\" in the map toolbar to drag the boundary points. To draw a fresh shape for a zone, pick it below, click the polygon tool, and draw. Click \"Save boundaries\" when done — the checkout map then uses your shapes."
+msgstr "Натиснете „Edit“ в лентата на картата, за да местите точките на границата. За да начертаете нова форма за зона, изберете я по-долу, натиснете инструмента полигон и чертайте. Натиснете „Запази граници“, когато сте готови — картата при поръчка ще използва вашите форми."
+
+msgid "Draw new shape for:"
+msgstr "Начертай нова форма за:"
+
+msgid "Save boundaries"
+msgstr "Запази граници"
+
+msgid "Boundaries saved."
+msgstr "Границите са запазени."
+
+msgid "Saving…"
+msgstr "Запазване…"
+
+msgid "Drawing for"
+msgstr "Чертане за"
