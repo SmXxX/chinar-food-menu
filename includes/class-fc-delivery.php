@@ -246,8 +246,98 @@ class FC_Delivery {
 		wp_send_json_success( array( 'zones' => count( $zones ) ) );
 	}
 
-	/** [fc_delivery_map] — a coloured Зона 1 / Зона 2 map of Varna (real polygons). */
+	/** Zone colour + neighbourhood→zone lookup, shared by both map renderers. */
+	private function map_zone_helpers( $zones ) {
+		$defcol = array( '#e0553a', '#f0b23e', '#b8b2a6', '#5a8f4e', '#4a78c0', '#9b59b6' );
+		$color  = function ( $zi ) use ( $zones, $defcol ) {
+			if ( isset( $zones[ $zi ]['color'] ) && $zones[ $zi ]['color'] ) {
+				return $zones[ $zi ]['color'];
+			}
+			return isset( $defcol[ $zi ] ) ? $defcol[ $zi ] : '#c9c4ba';
+		};
+		$lookup = array();
+		foreach ( $zones as $zi => $z ) {
+			foreach ( (array) $z['hoods'] as $h ) {
+				$lookup[ self::norm_hood( $h ) ] = $zi;
+				$k2 = self::norm_hood( $h, true );
+				if ( ! isset( $lookup[ $k2 ] ) ) {
+					$lookup[ $k2 ] = $zi;
+				}
+			}
+		}
+		$zone_of = function ( $name ) use ( $lookup ) {
+			$k  = self::norm_hood( $name );
+			$k2 = self::norm_hood( $name, true );
+			if ( isset( $lookup[ $k ] ) ) {
+				return $lookup[ $k ];
+			}
+			if ( isset( $lookup[ $k2 ] ) ) {
+				return $lookup[ $k2 ];
+			}
+			return self::preset_zone_index( $name );
+		};
+		return array( $color, $zone_of );
+	}
+
+	/** [fc_delivery_map] — OpenStreetMap with the delivery zones overlaid (default),
+	 *  or a flat coloured SVG map with style="flat". */
 	public function render_map( $atts = array() ) {
+		$atts = shortcode_atts( array( 'style' => 'osm', 'height' => 460 ), (array) $atts, 'fc_delivery_map' );
+		return ( 'flat' === $atts['style'] ) ? $this->render_map_svg() : $this->render_map_osm( $atts );
+	}
+
+	/** OpenStreetMap (Leaflet) with zone polygons overlaid in real GPS coordinates. */
+	private function render_map_osm( $atts ) {
+		$file = FC_DIR . 'assets/data/varna-zones-latlon.json';
+		if ( ! file_exists( $file ) ) {
+			return $this->render_map_svg();
+		}
+		$polys = json_decode( (string) file_get_contents( $file ), true );
+		if ( empty( $polys ) ) {
+			return '';
+		}
+		$zones = self::zones();
+		list( $color, $zone_of ) = $this->map_zone_helpers( $zones );
+
+		$features = array();
+		foreach ( $polys as $name => $ring ) {
+			if ( false !== mb_stripos( $name, 'море' ) || false !== mb_stripos( $name, 'езеро' ) ) {
+				continue;
+			}
+			$features[] = array( 'n' => $name, 'c' => $color( $zone_of( $name ) ), 'r' => $ring );
+		}
+
+		$fmt = function ( $p ) { return FC_Currency::format_plain( (float) $p ); };
+		$legend = array();
+		foreach ( $zones as $zi => $z ) {
+			$label = ! empty( $z['busy'] )
+				? ( $z['busy_msg'] ? $z['busy_msg'] : $z['name'] )
+				: $z['name'] . ( $z['price'] > 0 ? ' — ' . $fmt( $z['price'] ) : '' );
+			$legend[] = array( 'color' => $color( $zi ), 'label' => $label );
+		}
+
+		wp_enqueue_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
+		wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
+		wp_enqueue_script( 'fc-delivery-map', FC_URL . 'assets/js/delivery-map.js', array( 'leaflet' ), FC_VERSION, true );
+
+		static $n = 0;
+		$n++;
+		$id  = 'fc-delivery-map-' . $n;
+		$h   = max( 240, (int) $atts['height'] );
+		$css = '';
+		static $printed = false;
+		if ( ! $printed ) {
+			$printed = true;
+			$css = '<style>.fc-delivery-leaflet{width:100%;border-radius:12px;overflow:hidden;z-index:0}.fc-map-legend{background:#fff;padding:8px 11px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:13px;line-height:1.75}.fc-map-legend span{display:block;white-space:nowrap}.fc-map-legend i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:7px;vertical-align:-2px}</style>';
+		}
+		$data = wp_json_encode( array( 'features' => $features, 'legend' => $legend ) );
+		return $css
+			. '<div id="' . esc_attr( $id ) . '" class="fc-delivery-leaflet" style="height:' . $h . 'px"></div>'
+			. '<script type="application/json" class="fc-delivery-map-data" data-for="' . esc_attr( $id ) . '">' . $data . '</script>';
+	}
+
+	/** Flat coloured SVG map (no external tiles) — [fc_delivery_map style="flat"]. */
+	private function render_map_svg() {
 		$file = FC_DIR . 'assets/data/varna-polygons.json';
 		if ( ! file_exists( $file ) ) {
 			return '';
@@ -256,27 +346,8 @@ class FC_Delivery {
 		if ( empty( $data['polys'] ) ) {
 			return '';
 		}
-		$zones  = self::zones();
-		$defcol = array( '#e0553a', '#f0b23e', '#b8b2a6', '#5a8f4e', '#4a78c0', '#9b59b6' );
-		$zone_color = function ( $zi ) use ( $zones, $defcol ) {
-			if ( isset( $zones[ $zi ]['color'] ) && $zones[ $zi ]['color'] ) {
-				return $zones[ $zi ]['color'];
-			}
-			return isset( $defcol[ $zi ] ) ? $defcol[ $zi ] : '#c9c4ba';
-		};
-
-		// Build a neighbourhood → zone-index lookup from the ACTUAL zone configuration,
-		// so re-assigning a neighbourhood in the admin recolours its region on the map.
-		$lookup = array();
-		foreach ( $zones as $zi => $z ) {
-			foreach ( (array) $z['hoods'] as $h ) {
-				$lookup[ self::norm_hood( $h ) ]        = $zi;
-				$k2 = self::norm_hood( $h, true );
-				if ( ! isset( $lookup[ $k2 ] ) ) {
-					$lookup[ $k2 ] = $zi;
-				}
-			}
-		}
+		$zones = self::zones();
+		list( $zone_color, $zone_of ) = $this->map_zone_helpers( $zones );
 		$vb = isset( $data['viewBox'] ) ? $data['viewBox'] : '0 0 1195.8 1080';
 
 		$svg = '<svg class="fc-delivery-map" viewBox="' . esc_attr( $vb ) . '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' . esc_attr__( 'Delivery zones map', 'food-customizer' ) . '">';
@@ -285,16 +356,7 @@ class FC_Delivery {
 			if ( false !== mb_stripos( $name, 'море' ) || false !== mb_stripos( $name, 'езеро' ) ) {
 				continue;
 			}
-			$k  = self::norm_hood( $name );
-			$k2 = self::norm_hood( $name, true );
-			if ( isset( $lookup[ $k ] ) ) {
-				$zi = $lookup[ $k ];
-			} elseif ( isset( $lookup[ $k2 ] ) ) {
-				$zi = $lookup[ $k2 ];
-			} else {
-				$zi = self::preset_zone_index( $name ); // fallback for landmark/unmatched polygons
-			}
-			$svg .= '<path d="' . esc_attr( $d ) . '" fill="' . esc_attr( $zone_color( $zi ) ) . '" fill-opacity="0.82" stroke="#fff" stroke-width="0.8"><title>' . esc_html( $name ) . '</title></path>';
+			$svg .= '<path d="' . esc_attr( $d ) . '" fill="' . esc_attr( $zone_color( $zone_of( $name ) ) ) . '" fill-opacity="0.82" stroke="#fff" stroke-width="0.8"><title>' . esc_html( $name ) . '</title></path>';
 		}
 		$svg .= '</svg>';
 
