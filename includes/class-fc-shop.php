@@ -29,6 +29,7 @@ class FC_Shop {
 		add_filter( 'woocommerce_add_to_cart_fragments', array( $this, 'fly_cart_fragment' ) );
 	}
 
+
 	/** Floating cart HTML (used both in the footer and as a refreshable fragment). */
 	private function fly_cart_html() {
 		$count = ( WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;

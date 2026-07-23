@@ -222,32 +222,60 @@ class FC_Options {
 		// correct. A variation only resolves when EVERY one of its required options is
 		// among the customer's choices — an incomplete selection leaves variation_id 0.
 		if ( $product && $product->is_type( 'variable' ) ) {
-			$want_vals = array();
+			// Customer's chosen attributes, keyed (attribute_<slug> => value).
+			$chosen = array();
 			if ( isset( $selection['wc'] ) && is_array( $selection['wc'] ) ) {
-				foreach ( $selection['wc'] as $v ) {
+				foreach ( $selection['wc'] as $k => $v ) {
 					$v = (string) $v;
-					if ( '' !== $v ) { $want_vals[] = $v; }
+					if ( '' !== $v ) { $chosen[ urldecode( (string) $k ) ] = $v; }
 				}
 			}
+			$want_vals = array_values( $chosen );
+
+			// Require a choice for every attribute used across the variations.
+			$req_keys = array();
 			foreach ( $product->get_available_variations() as $vd ) {
-				if ( empty( $vd['variation_id'] ) || false === $vd['display_price'] ) {
-					continue;
+				foreach ( array_keys( (array) $vd['attributes'] ) as $k ) {
+					$req_keys[ urldecode( (string) $k ) ] = true;
 				}
-				$attrs = array();
-				$need  = array();
-				foreach ( (array) $vd['attributes'] as $k => $v ) {
-					$attrs[ $k ] = $v; // keep WC's original (encoded) key for add_to_cart.
-					if ( '' !== $v ) { $need[] = (string) $v; } // '' means "any".
-				}
-				$ok = true;
-				foreach ( $need as $nv ) {
-					if ( ! in_array( $nv, $want_vals, true ) ) { $ok = false; break; }
-				}
-				if ( $ok && count( $want_vals ) >= count( $need ) && ! empty( $need ) ) {
-					$variation_id    = (int) $vd['variation_id'];
-					$variation_attrs = $attrs;
-					$base            = (float) $vd['display_price'];
-					break;
+			}
+			$all_chosen = true;
+			foreach ( array_keys( $req_keys ) as $k ) {
+				if ( ! isset( $chosen[ $k ] ) ) { $all_chosen = false; break; }
+			}
+
+			// Pick the most specific compatible variation. An empty ('') variation value
+			// means "Any" and matches whatever the customer chose; a specific value must
+			// match a chosen value (by key, or by value for transliterated keys).
+			if ( $all_chosen ) {
+				$best_spec = -1;
+				foreach ( $product->get_available_variations() as $vd ) {
+					if ( empty( $vd['variation_id'] ) || false === $vd['display_price'] ) {
+						continue;
+					}
+					$attrs = array();
+					$spec  = 0;
+					$ok    = true;
+					foreach ( (array) $vd['attributes'] as $k => $v ) {
+						$dk           = urldecode( (string) $k );
+						$attrs[ $dk ] = (string) $v; // decoded key so add_to_cart matches
+						if ( '' === (string) $v ) {
+							continue; // Any
+						}
+						$match = ( isset( $chosen[ $dk ] ) && $chosen[ $dk ] === (string) $v ) || in_array( (string) $v, $want_vals, true );
+						if ( ! $match ) { $ok = false; break; }
+						$spec++;
+					}
+					if ( $ok && $spec > $best_spec ) {
+						$best_spec       = $spec;
+						$variation_id    = (int) $vd['variation_id'];
+						$base            = (float) $vd['display_price'];
+						// Record the customer's choices, filling "Any" slots with them.
+						foreach ( $chosen as $ck => $cv ) {
+							$attrs[ $ck ] = $cv;
+						}
+						$variation_attrs = $attrs;
+					}
 				}
 			}
 		}
