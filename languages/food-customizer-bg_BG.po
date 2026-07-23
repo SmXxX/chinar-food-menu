@@ -1224,3 +1224,12 @@ msgstr "добави улица…"
 
 msgid "Add"
 msgstr "Добави"
+
+msgid "Your street"
+msgstr "Вашата улица"
+
+msgid "Please choose your street."
+msgstr "Моля, изберете вашата улица."
+
+msgid "We do not deliver to that street yet — please contact us."
+msgstr "Все още не доставяме до тази улица — моля, свържете се с нас."

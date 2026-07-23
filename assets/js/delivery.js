@@ -14,23 +14,25 @@
 		$( '#place_order' ).prop( 'disabled', ! enabled ).toggleClass( 'fc-del-blocked', ! enabled );
 	}
 
-	// Load only the chosen zone's streets (from its neighbourhoods) into the
-	// street dropdown; hide it if the zone has no neighbourhoods configured.
-	function fillStreets() {
-		var v = $( '#fc_delivery_zone' ).val();
-		var streets = ( D.streets && D.streets[ v ] ) ? D.streets[ v ] : [];
-		var $field = $( '#fc_delivery_street_field' ), $sel = $( '#fc_delivery_street' );
-		if ( ! $field.length ) { return; }
-		if ( ! streets.length ) { $field.prop( 'hidden', true ); $sel.empty(); return; }
-		var cur = $sel.val();
-		$sel.empty().append( $( '<option>' ).val( '' ).text( D.streetLabel || '' ) );
-		streets.forEach( function ( s ) { $sel.append( $( '<option>' ).val( s ).text( s ) ); } );
-		if ( cur ) { $sel.val( cur ); }
-		$field.prop( 'hidden', false );
+	// Turn the street <select> into a searchable Select2 (WooCommerce's selectWoo).
+	function initStreetSelect() {
+		var $s = $( '#fc_delivery_street' );
+		if ( ! $s.length || $s.data( 'select2' ) ) { return; }
+		var opts = { width: '100%', placeholder: $s.data( 'placeholder' ) || '', allowClear: true };
+		try {
+			if ( $.fn.selectWoo ) { $s.selectWoo( opts ); }
+			else if ( $.fn.select2 ) { $s.select2( opts ); }
+		} catch ( e ) {}
+	}
+
+	// Resolve the zone from the chosen street and write it to the hidden zone field.
+	function resolveZone() {
+		var street = $( '#fc_delivery_street' ).val();
+		var zi = ( street && D.streetZone && ( street in D.streetZone ) ) ? D.streetZone[ street ] : '';
+		$( '#fc_delivery_zone' ).val( zi === undefined || zi === null ? '' : zi );
 	}
 
 	function refresh() {
-		fillStreets();
 		var z = selectedZone();
 		var $info = $( '.fc-del-info' );
 		var $busy = $( '.fc-del-busy' );
@@ -42,9 +44,8 @@
 			return;
 		}
 
-		// Covered areas + ETA + delivery price.
-		$( '.fc-del-covers-val' ).text( z.areas || '' );
-		$( '.fc-del-covers' ).toggle( !! z.areas );
+		// Resolved zone name + ETA + delivery price.
+		$( '.fc-del-zone-val' ).text( z.name || '' );
 		$( '.fc-del-eta-val' ).text( z.eta || '' );
 		$( '.fc-del-eta' ).toggle( !! z.eta );
 		var priceTxt = ( D.prices && D.prices[ $( '#fc_delivery_zone' ).val() ] ) ? D.prices[ $( '#fc_delivery_zone' ).val() ] : '';
@@ -91,8 +92,9 @@
 		}
 	}
 
-	// On zone change: update the panel, then recalculate totals so the delivery fee updates.
-	$( document ).on( 'change', '#fc_delivery_zone', function () {
+	// On street change: resolve the zone, update the panel, recalc totals (fee).
+	$( document ).on( 'change', '#fc_delivery_street', function () {
+		resolveZone();
 		refresh();
 		$( document.body ).trigger( 'update_checkout' );
 	} );
@@ -101,8 +103,8 @@
 
 	// #place_order lives in the payment column, which WooCommerce re-renders on
 	// update_checkout — re-apply the busy state afterwards.
-	$( document.body ).on( 'updated_checkout', function () { refresh(); placeInOrderColumn(); } );
+	$( document.body ).on( 'updated_checkout', function () { initStreetSelect(); refresh(); placeInOrderColumn(); } );
 
-	$( function () { placeInOrderColumn(); refresh(); timeMode(); } );
+	$( function () { initStreetSelect(); placeInOrderColumn(); resolveZone(); refresh(); timeMode(); } );
 
 } )( jQuery );
